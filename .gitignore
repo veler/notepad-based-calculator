@@ -3,6 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Automatic generated AssemblyVersion file.
+**/[Ss]hared[Aa]ssembly[Vv]ersion*
+
 # User-specific files
 *.rsuser
 *.suo
@@ -361,6 +364,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-
-# Automatic generated AssemblyVersion file.
-SharedAssemblyVersion.cs
