@@ -1,12 +1,9 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- Need to have a TargetFrameworks tag for VS to recognize this as an SDK project. Just use the shared one. -->
     <TargetFrameworks>$(NetCoreAndStandard)</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj" />
   </ItemGroup>
 </Project>
