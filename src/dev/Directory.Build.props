@@ -12,5 +12,6 @@
   <ItemGroup>
     <Compile Include="..\shared\GlobalUsings.cs" Link="Properties\GlobalUsings.cs" />
     <Compile Include="..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <Compile Include="..\shared\SharedAssemblyVersion.cs" Link="Properties\SharedAssemblyVersion.cs" />
   </ItemGroup>
 </Project>

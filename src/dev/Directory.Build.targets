@@ -9,7 +9,7 @@
   <Target Name="UpdateVersionNumber" Condition="Exists('$(SetVersionPath)') AND '$(Configuration)' == 'Release'">
     <Message Text="Updating Version..." />
     <SetVersion
-      FileName="$(RepoRoot)src\dev\shared\SharedAssemblyInfo.cs"
+      FileName="$(RepoRoot)src\dev\shared\SharedAssemblyVersion.cs"
       Version="$(AppVersionNumber)" />
   </Target>
   <Target Name="BeforeBuild" DependsOnTargets="UpdateVersionNumber"/>
