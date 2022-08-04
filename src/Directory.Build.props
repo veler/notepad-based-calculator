@@ -8,13 +8,16 @@
     <NetCoreVersion>net6.0</NetCoreVersion>
     <NetCoreVersionWindows>$(NetCoreVersion)-windows</NetCoreVersionWindows>
     <NetCoreVersionMac>$(NetCoreVersion)-macos10.15</NetCoreVersionMac>
+    <NetCore Condition="$(IsWindows)">$(NetCoreVersionWindows)</NetCore>
+    <NetCore Condition="$(IsMac)">$(NetCoreVersionMac)</NetCore>
     <NetCoreAndStandard Condition="$(IsWindows)">$(NetStandardVersion);$(NetCoreVersionWindows)</NetCoreAndStandard>
     <NetCoreAndStandard Condition="$(IsMac)">$(NetStandardVersion);$(NetCoreVersionMac)</NetCoreAndStandard>
 
     <!-- Define default build configuration -->
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <Platform Condition=" '$(Platform)' == '' ">Any CPU</Platform>
     <RuntimeIdentifiers Condition="$(IsWindows)">win</RuntimeIdentifiers>
+    <Platform>anycpu</Platform>
     <LangVersion>10.0</LangVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 
