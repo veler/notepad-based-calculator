@@ -1,0 +1,11 @@
+<Project>
+  <PropertyGroup>
+    <IsWindows>$([MSBuild]::IsOSPlatform('Windows'))</IsWindows>
+    <IsMac>$([MSBuild]::IsOSPlatform('OSX'))</IsMac>
+    <IsLinux>$([MSBuild]::IsOSPlatform('Linux'))</IsLinux>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants Condition="$(IsMac) == 'true'">$(DefineConstants);MAC</DefineConstants>
+  </PropertyGroup>
+</Project>

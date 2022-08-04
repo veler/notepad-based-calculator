@@ -1,0 +1,16 @@
+<Project>
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <!-- Define .Net and C# configuration -->
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Platform>anycpu</Platform>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\shared\GlobalUsings.cs" Link="Properties\GlobalUsings.cs" />
+    <Compile Include="..\shared\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+  </ItemGroup>
+</Project>

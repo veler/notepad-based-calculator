@@ -1,0 +1,47 @@
+<Project>
+  <Import Project="Environment.props" />
+
+  <PropertyGroup>
+    <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
+
+    <NetStandardVersion>netstandard2.0;netstandard2.1</NetStandardVersion>
+    <NetCoreVersion>net6.0</NetCoreVersion>
+    <NetCoreVersionWindows>$(NetCoreVersion)-windows</NetCoreVersionWindows>
+    <NetCoreVersionMac>$(NetCoreVersion)-macos10.15</NetCoreVersionMac>
+    <NetCoreAndStandard Condition="$(IsWindows)">$(NetStandardVersion);$(NetCoreVersionWindows)</NetCoreAndStandard>
+    <NetCoreAndStandard Condition="$(IsMac)">$(NetStandardVersion);$(NetCoreVersionMac)</NetCoreAndStandard>
+
+    <!-- Define default build configuration -->
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <RuntimeIdentifiers Condition="$(IsWindows)">win</RuntimeIdentifiers>
+    <LangVersion>10.0</LangVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+    <!-- Defines the bin and obj folder paths -->
+    <RepoRoot>$([System.IO.Path]::GetDirectoryName($([MSBuild]::GetPathOfFileAbove('.gitignore', '$(MSBuildThisFileDirectory)'))))\</RepoRoot>
+    <BaseOutputPath>$(RepoRoot)bin\$(Configuration)\$(Platform)\</BaseOutputPath>
+    <OutputPath>$(BaseOutputPath)$(MSBuildProjectName)\</OutputPath>
+    <BaseIntermediateOutputPath>$(RepoRoot)obj\$(Platform)\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+    <GeneratedFilesDir>$(BaseIntermediateOutputPath)Generated Files\</GeneratedFilesDir>
+    <PackagesConfigRestorePath>$(RepoRoot)packages\</PackagesConfigRestorePath>
+
+    <!-- Enable Central Package Management -->
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
+    <!-- Enable generation of .tt files -->
+    <TransformOnBuild>true</TransformOnBuild>
+    <OverwriteReadOnlyOutputFiles>true</OverwriteReadOnlyOutputFiles>
+    <TransformOutOfDateOnly>false</TransformOutOfDateOnly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+    <!-- In Debug mode, don't generate .tt files at each build. -->
+    <TransformOutOfDateOnly>true</TransformOutOfDateOnly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '16.0' ">
+    <VisualStudioVersion>16.0</VisualStudioVersion>
+  </PropertyGroup>
+</Project>
