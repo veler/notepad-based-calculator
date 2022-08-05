@@ -5,6 +5,8 @@
     /// </summary>
     public sealed class Token
     {
+        private string _wholeText;
+
         /// <summary>
         /// Gets the type of token.
         /// </summary>
@@ -25,10 +27,12 @@
         /// </summary>
         public int Length { get; }
 
-        public Token(TokenType type, int startIndex, int endIndex)
+        internal Token(string input, TokenType type, int startIndex, int endIndex)
         {
             Guard.IsGreaterThanOrEqualTo(startIndex, 0);
             Guard.IsGreaterThan(endIndex, startIndex);
+            Guard.IsNotNullOrEmpty(input);
+            _wholeText = input;
 
             Type = type;
             StartIndex = startIndex;
@@ -39,6 +43,21 @@
         public override string ToString()
         {
             return $"{Type} ({StartIndex}, {EndIndex})";
+        }
+
+        public string GetText()
+        {
+            return _wholeText.Substring(StartIndex, Length);
+        }
+
+        public bool IsTokenTextEqualTo(string compareTo, StringComparison comparisonType)
+        {
+            if (string.IsNullOrEmpty(compareTo) || compareTo.Length != Length)
+            {
+                return false;
+            }
+
+            return _wholeText.IndexOf(compareTo, StartIndex, Length, comparisonType) == StartIndex;
         }
     }
 }

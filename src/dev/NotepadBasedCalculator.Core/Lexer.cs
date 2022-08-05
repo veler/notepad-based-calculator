@@ -63,7 +63,7 @@ namespace NotepadBasedCalculator.Core
                 }
             }
 
-            return new Token(tokenType, startIndex, endIndex);
+            return new Token(input, tokenType, startIndex, endIndex);
         }
 
         private static int GetEndPositionOfRepeatedTokenType(string input, int startIndex, TokenType tokenType)

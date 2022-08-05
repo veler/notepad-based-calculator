@@ -29,15 +29,21 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(TokenType.Word, tokens[0][5].Type);
             Assert.Equal(TokenType.Whitespace, tokens[0][6].Type);
 
-            tokens = lexer.Tokenize(" abæçØ ");
+            tokens = lexer.Tokenize("  abæçØ ");
             Assert.Equal(1, tokens.Count);
             Assert.Equal(3, tokens[0].Count);
             Assert.Equal(TokenType.Whitespace, tokens[0][0].Type);
             Assert.Equal(TokenType.Word, tokens[0][1].Type);
-            Assert.Equal(1, tokens[0][1].StartIndex);
+            Assert.Equal(2, tokens[0][1].StartIndex);
             Assert.Equal(5, tokens[0][1].Length);
             Assert.Equal(TokenType.Whitespace, tokens[0][2].Type);
-            Assert.Equal(6, tokens[0][2].StartIndex);
+            Assert.Equal(7, tokens[0][2].StartIndex);
+
+            Assert.True(tokens[0][1].IsTokenTextEqualTo("abæçØ", System.StringComparison.Ordinal));
+            Assert.False(tokens[0][0].IsTokenTextEqualTo("abæçØ", System.StringComparison.Ordinal));
+            Assert.False(tokens[0][1].IsTokenTextEqualTo("a", System.StringComparison.Ordinal));
+            Assert.False(tokens[0][1].IsTokenTextEqualTo("bæçØ", System.StringComparison.Ordinal));
+            Assert.False(tokens[0][1].IsTokenTextEqualTo("baæçØ", System.StringComparison.Ordinal));
         }
 
         [Fact]

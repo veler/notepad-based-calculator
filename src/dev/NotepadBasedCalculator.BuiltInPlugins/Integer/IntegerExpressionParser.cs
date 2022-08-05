@@ -11,12 +11,24 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Integer
             LinkedToken currentToken,
             out Expression? expression)
         {
-            if (currentToken.Token.Type == TokenType.Number)
-            {
+            bool isNegativeNumber = false;
 
+            if (currentToken.Token.Type == TokenType.SymbolOrPunctuation
+                && currentToken.Next is not null
+                && currentToken.Next.Token.Type == TokenType.Number
+                && currentToken.Token.IsTokenTextEqualTo("-", StringComparison.Ordinal))
+            {
+                isNegativeNumber = true;
+                currentToken = currentToken.Next;
             }
 
-            throw new NotImplementedException();
+            if (currentToken.Token.Type == TokenType.Number)
+            {
+                return true;
+            }
+
+            expression = null;
+            return false;
         }
     }
 }
