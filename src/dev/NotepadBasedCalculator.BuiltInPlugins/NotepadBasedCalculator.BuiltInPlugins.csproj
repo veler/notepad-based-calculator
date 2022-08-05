@@ -7,4 +7,7 @@
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="System.Composition" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj" />
+  </ItemGroup>
 </Project>

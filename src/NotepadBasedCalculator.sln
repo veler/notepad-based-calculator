@@ -35,7 +35,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{FB794D
 		dev\shared\SharedAssemblyVersion.cs = dev\shared\SharedAssemblyVersion.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotepadBasedCalculator.Api", "dev\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj", "{8741C698-2C0C-4825-A953-1467411527A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Api", "dev\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj", "{8741C698-2C0C-4825-A953-1467411527A4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotepadBasedCalculator.BuiltInPlugins", "dev\NotepadBasedCalculator.BuiltInPlugins\NotepadBasedCalculator.BuiltInPlugins.csproj", "{A4177E56-2ED5-4F38-829D-903204B86730}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -54,6 +56,10 @@ Global
 		{8741C698-2C0C-4825-A953-1467411527A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8741C698-2C0C-4825-A953-1467411527A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8741C698-2C0C-4825-A953-1467411527A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4177E56-2ED5-4F38-829D-903204B86730}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4177E56-2ED5-4F38-829D-903204B86730}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4177E56-2ED5-4F38-829D-903204B86730}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4177E56-2ED5-4F38-829D-903204B86730}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{0E5EAA59-F0E5-4A41-B9B3-0EBF4E288AF1} = {9A0C5D13-735C-4552-9E60-E7636AFDB476}
 		{FB794DB5-5335-4441-ACE7-8621020F7B19} = {AA55FAFF-4F97-4251-906F-32984538E57C}
 		{8741C698-2C0C-4825-A953-1467411527A4} = {AA55FAFF-4F97-4251-906F-32984538E57C}
+		{A4177E56-2ED5-4F38-829D-903204B86730} = {AA55FAFF-4F97-4251-906F-32984538E57C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BCA00D25-9E3C-482D-8D6C-5A93A12A7232}
