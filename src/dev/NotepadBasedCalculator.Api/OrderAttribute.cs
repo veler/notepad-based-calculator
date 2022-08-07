@@ -2,9 +2,9 @@
 {
     [MetadataAttribute]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class OrderAttribute : ExportAttribute
+    public class OrderAttribute : Attribute
     {
-        public int? Order { get; private set; }
+        public int Order { get; }
 
         public OrderAttribute(int order)
         {

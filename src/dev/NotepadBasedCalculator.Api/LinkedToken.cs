@@ -2,48 +2,68 @@
 {
     public sealed class LinkedToken
     {
+        private readonly ITokenEnumerator _tokenEnumerator;
+
+        private bool _nextTokenRetrieved;
+        private LinkedToken? _nextToken;
+        private int _tokenEndIndexWithCarriageReturn;
+
         public LinkedToken? Previous { get; }
 
-        public LinkedToken? Next { get; private set; }
+        public LinkedToken? Next
+        {
+            get
+            {
+                DiscoverNextToken();
+                return _nextToken;
+            }
+        }
 
         public Token Token { get; }
 
-        private LinkedToken(LinkedToken? previous, LinkedToken? next, Token token)
+        internal int TokenEndIndexWithCarriageReturn
         {
-            Guard.IsNotNull(token);
-
-            Previous = previous;
-            Next = next;
-            Token = token;
+            get
+            {
+                DiscoverNextToken();
+                return _tokenEndIndexWithCarriageReturn;
+            }
         }
 
-        internal static LinkedToken? CreateFromList(IReadOnlyList<Token> tokens)
+        internal LinkedToken(LinkedToken? previous, Token token, ITokenEnumerator tokenEnumerator)
         {
-            if (tokens is null || tokens.Count == 0)
-            {
-                return null;
-            }
+            Guard.IsNotNull(token);
+            Guard.IsNotNull(tokenEnumerator);
 
-            LinkedToken result = null!;
-            LinkedToken? previousToken = null;
-            for (int i = 0; i < tokens.Count; i++)
+            Previous = previous;
+            Token = token;
+            _tokenEnumerator = tokenEnumerator;
+        }
+
+        public override string ToString()
+        {
+            return Token.ToString();
+        }
+
+        private void DiscoverNextToken()
+        {
+            if (!_nextTokenRetrieved)
             {
-                var currentToken = new LinkedToken(previousToken, next: null, tokens[i]);
-                if (previousToken != null)
+                if (_tokenEnumerator.MoveNext())
                 {
-                    previousToken.Next = currentToken;
+                    Guard.IsNotNull(_tokenEnumerator.Current);
+                    _nextToken
+                        = new LinkedToken(
+                            previous: this,
+                            token: _tokenEnumerator.Current,
+                            _tokenEnumerator);
                 }
 
-                previousToken = currentToken;
-
-                if (i == 0)
-                {
-                    result = currentToken;
-                }
+                Guard.IsNotNull(_tokenEnumerator.InternalCurrentToken);
+                _tokenEndIndexWithCarriageReturn = _tokenEnumerator.InternalCurrentToken.EndIndex;
             }
 
-            Guard.IsNotNull(result);
-            return result;
+            _nextTokenRetrieved = true;
         }
     }
 }

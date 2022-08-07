@@ -11,7 +11,7 @@ namespace NotepadBasedCalculator.Core.Mef
     internal sealed class MefComposer : IDisposable
     {
         private readonly Assembly[] _assemblies;
-        private bool isExportProviderDisposed = true;
+        private bool _isExportProviderDisposed = true;
 
         public IMefProvider Provider { get; }
 
@@ -38,7 +38,7 @@ namespace NotepadBasedCalculator.Core.Mef
                 ExportProvider.Dispose();
             }
 
-            isExportProviderDisposed = true;
+            _isExportProviderDisposed = true;
         }
 
         internal void Reset()
@@ -50,7 +50,7 @@ namespace NotepadBasedCalculator.Core.Mef
 
         private CompositionHost InitializeMef()
         {
-            if (!isExportProviderDisposed)
+            if (!_isExportProviderDisposed)
             {
                 return ExportProvider;
             }
@@ -64,7 +64,7 @@ namespace NotepadBasedCalculator.Core.Mef
 
             ExportProvider = configuration.CreateContainer();
 
-            isExportProviderDisposed = false;
+            _isExportProviderDisposed = false;
 
             return ExportProvider;
         }

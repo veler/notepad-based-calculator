@@ -7,6 +7,6 @@
         SymbolOrPunctuation = 2,
         Number = 3,
         Word = 4,
-        NewLine = 5,
+        NewLine = 5
     }
 }

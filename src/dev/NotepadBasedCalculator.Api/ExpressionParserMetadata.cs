@@ -3,6 +3,6 @@
     public sealed class ExpressionParserMetadata
     {
         [DefaultValue(int.MaxValue)]
-        public int? Order { get; set; }
+        public int Order { get; set; }
     }
 }

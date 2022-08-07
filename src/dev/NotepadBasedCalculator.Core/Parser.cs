@@ -10,29 +10,61 @@ namespace NotepadBasedCalculator.Core
         private readonly Lexer _lexer = new();
 
         [ImportingConstructor]
-        public Parser(
-            [ImportMany] IEnumerable<Lazy<IExpressionParser, ExpressionParserMetadata>> expressionParsers)
+        public Parser([ImportMany] IEnumerable<Lazy<IExpressionParser, ExpressionParserMetadata>> expressionParsers)
         {
-            _expressionParsers = expressionParsers;
+            _expressionParsers
+                = expressionParsers
+                .OrderBy(p => p.Metadata.Order);
         }
 
-        internal void Parse(string? input)
+        internal IReadOnlyList<IReadOnlyList<Expression>> Parse(string? input)
         {
-            IReadOnlyList<IReadOnlyList<Token>> tokenLines = _lexer.Tokenize(input);
+            var expressionLines = new List<List<Expression>>();
+            int tokenEndIndexWithCarriageReturn = 0;
+            LinkedToken? lineTokens = _lexer.GetLineTokens(input, startIndex: 0);
 
-            for (int i = 0; i < tokenLines.Count; i++)
+            while (lineTokens is not null)
             {
-                IReadOnlyList<Token> tokens = tokenLines[i];
-                var linkedToken = LinkedToken.CreateFromList(tokens);
+                var expressions = new List<Expression>();
 
-                if (linkedToken is not null)
+                while (lineTokens is not null)
                 {
-                    foreach (Lazy<IExpressionParser, ExpressionParserMetadata>? expressionParser in _expressionParsers)
+                    Expression? expression = ParseExpression(lineTokens);
+                    if (expression is not null)
                     {
-                        expressionParser.Value.TryParseExpression(linkedToken, out Expression? expression);
+                        tokenEndIndexWithCarriageReturn = expression.LastToken.TokenEndIndexWithCarriageReturn;
+                        lineTokens = expression.LastToken.Next;
+                        expressions.Add(expression);
+                    }
+                    else
+                    {
+                        // Ignore the current token. It might be a word that we would simply skip.
+                        tokenEndIndexWithCarriageReturn = lineTokens.TokenEndIndexWithCarriageReturn;
+                        lineTokens = lineTokens.Next;
                     }
                 }
+
+                lineTokens = _lexer.GetLineTokens(input, startIndex: tokenEndIndexWithCarriageReturn);
+                expressionLines.Add(expressions);
             }
+
+            return expressionLines;
+        }
+
+        private Expression? ParseExpression(LinkedToken linkedToken)
+        {
+            Expression? expression = null;
+
+            foreach (Lazy<IExpressionParser, ExpressionParserMetadata>? expressionParser in _expressionParsers)
+            {
+                if (expressionParser.Value.TryParseExpression(linkedToken, out expression)
+                    && expression is not null)
+                {
+                    break;
+                }
+            }
+
+            return expression;
         }
     }
 }

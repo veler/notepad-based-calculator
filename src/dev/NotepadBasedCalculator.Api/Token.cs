@@ -3,9 +3,9 @@
     /// <summary>
     /// Represents a token.
     /// </summary>
-    public sealed class Token
+    public sealed record Token
     {
-        private string _wholeText;
+        private readonly string _wholeText;
 
         /// <summary>
         /// Gets the type of token.
@@ -42,7 +42,7 @@
 
         public override string ToString()
         {
-            return $"{Type} ({StartIndex}, {EndIndex})";
+            return $"{Type} ({StartIndex}, {EndIndex}): \"{GetText()}\"";
         }
 
         public string GetText()

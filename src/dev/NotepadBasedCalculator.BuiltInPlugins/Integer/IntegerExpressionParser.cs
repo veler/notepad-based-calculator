@@ -4,13 +4,13 @@ using NotepadBasedCalculator.Api.AbstractSyntaxTree;
 namespace NotepadBasedCalculator.BuiltInPlugins.Integer
 {
     [Export(typeof(IExpressionParser))]
-    [Shared]
-    public class IntegerExpressionParser : IExpressionParser
+    public sealed class IntegerExpressionParser : IExpressionParser
     {
         public bool TryParseExpression(
             LinkedToken currentToken,
             out Expression? expression)
         {
+            LinkedToken firstToken = currentToken;
             bool isNegativeNumber = false;
 
             if (currentToken.Token.Type == TokenType.SymbolOrPunctuation
@@ -24,7 +24,21 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Integer
 
             if (currentToken.Token.Type == TokenType.Number)
             {
-                return true;
+                string numberString;
+                if (isNegativeNumber)
+                {
+                    numberString = "-" + currentToken.Token.GetText();
+                }
+                else
+                {
+                    numberString = currentToken.Token.GetText();
+                }
+
+                if (int.TryParse(numberString, out int number))
+                {
+                    expression = new IntegerExpression(firstToken, lastToken: currentToken, number);
+                    return true;
+                }
             }
 
             expression = null;

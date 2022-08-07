@@ -9,130 +9,185 @@ namespace NotepadBasedCalculator.Core.Tests
         [Fact]
         public void TokenizeEmpty()
         {
-            var lexer = new Lexer();
-            IReadOnlyList<IReadOnlyList<Token>> tokens = lexer.Tokenize(string.Empty);
-            Assert.Equal(0, tokens.Count);
+            IReadOnlyList<LineInfo> lines = Analyze(string.Empty);
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(0, lines[0].TokenCount);
         }
 
         [Fact]
         public void TokenizeWord()
         {
-            var lexer = new Lexer();
-            IReadOnlyList<IReadOnlyList<Token>> tokens = lexer.Tokenize(" a b c ");
-            Assert.Equal(1, tokens.Count);
-            Assert.Equal(7, tokens[0].Count);
-            Assert.Equal(TokenType.Whitespace, tokens[0][0].Type);
-            Assert.Equal(TokenType.Word, tokens[0][1].Type);
-            Assert.Equal(TokenType.Whitespace, tokens[0][2].Type);
-            Assert.Equal(TokenType.Word, tokens[0][3].Type);
-            Assert.Equal(TokenType.Whitespace, tokens[0][4].Type);
-            Assert.Equal(TokenType.Word, tokens[0][5].Type);
-            Assert.Equal(TokenType.Whitespace, tokens[0][6].Type);
+            IReadOnlyList<LineInfo> lines = Analyze(" a b c ");
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(7, lines[0].TokenCount);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
+            Assert.Equal(TokenType.Word, lines[0].Tokens[1].Type);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[2].Type);
+            Assert.Equal(TokenType.Word, lines[0].Tokens[3].Type);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[4].Type);
+            Assert.Equal(TokenType.Word, lines[0].Tokens[5].Type);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[6].Type);
 
-            tokens = lexer.Tokenize("  abæçØ ");
-            Assert.Equal(1, tokens.Count);
-            Assert.Equal(3, tokens[0].Count);
-            Assert.Equal(TokenType.Whitespace, tokens[0][0].Type);
-            Assert.Equal(TokenType.Word, tokens[0][1].Type);
-            Assert.Equal(2, tokens[0][1].StartIndex);
-            Assert.Equal(5, tokens[0][1].Length);
-            Assert.Equal(TokenType.Whitespace, tokens[0][2].Type);
-            Assert.Equal(7, tokens[0][2].StartIndex);
+            lines = Analyze("  abæçØ ");
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(3, lines[0].Tokens.Count);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
+            Assert.Equal(TokenType.Word, lines[0].Tokens[1].Type);
+            Assert.Equal(2, lines[0].Tokens[1].StartIndex);
+            Assert.Equal(5, lines[0].Tokens[1].Length);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[2].Type);
+            Assert.Equal(7, lines[0].Tokens[2].StartIndex);
 
-            Assert.True(tokens[0][1].IsTokenTextEqualTo("abæçØ", System.StringComparison.Ordinal));
-            Assert.False(tokens[0][0].IsTokenTextEqualTo("abæçØ", System.StringComparison.Ordinal));
-            Assert.False(tokens[0][1].IsTokenTextEqualTo("a", System.StringComparison.Ordinal));
-            Assert.False(tokens[0][1].IsTokenTextEqualTo("bæçØ", System.StringComparison.Ordinal));
-            Assert.False(tokens[0][1].IsTokenTextEqualTo("baæçØ", System.StringComparison.Ordinal));
+            Assert.True(lines[0].Tokens[1].IsTokenTextEqualTo("abæçØ", System.StringComparison.Ordinal));
+            Assert.False(lines[0].Tokens[0].IsTokenTextEqualTo("abæçØ", System.StringComparison.Ordinal));
+            Assert.False(lines[0].Tokens[1].IsTokenTextEqualTo("a", System.StringComparison.Ordinal));
+            Assert.False(lines[0].Tokens[1].IsTokenTextEqualTo("bæçØ", System.StringComparison.Ordinal));
+            Assert.False(lines[0].Tokens[1].IsTokenTextEqualTo("baæçØ", System.StringComparison.Ordinal));
         }
 
         [Fact]
         public void TokenizeNumber()
         {
-            var lexer = new Lexer();
-            IReadOnlyList<IReadOnlyList<Token>> tokens = lexer.Tokenize(" 1 2 3 ");
-            Assert.Equal(1, tokens.Count);
-            Assert.Equal(7, tokens[0].Count);
-            Assert.Equal(TokenType.Whitespace, tokens[0][0].Type);
-            Assert.Equal(TokenType.Number, tokens[0][1].Type);
-            Assert.Equal(TokenType.Whitespace, tokens[0][2].Type);
-            Assert.Equal(TokenType.Number, tokens[0][3].Type);
-            Assert.Equal(TokenType.Whitespace, tokens[0][4].Type);
-            Assert.Equal(TokenType.Number, tokens[0][5].Type);
-            Assert.Equal(TokenType.Whitespace, tokens[0][6].Type);
+            IReadOnlyList<LineInfo> lines = Analyze(" 1 2 3 ");
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(7, lines[0].Tokens.Count);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
+            Assert.Equal(TokenType.Number, lines[0].Tokens[1].Type);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[2].Type);
+            Assert.Equal(TokenType.Number, lines[0].Tokens[3].Type);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[4].Type);
+            Assert.Equal(TokenType.Number, lines[0].Tokens[5].Type);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[6].Type);
 
-            tokens = lexer.Tokenize(" 12 ");
-            Assert.Equal(1, tokens.Count);
-            Assert.Equal(3, tokens[0].Count);
-            Assert.Equal(TokenType.Whitespace, tokens[0][0].Type);
-            Assert.Equal(TokenType.Number, tokens[0][1].Type);
-            Assert.Equal(1, tokens[0][1].StartIndex);
-            Assert.Equal(2, tokens[0][1].Length);
-            Assert.Equal(TokenType.Whitespace, tokens[0][2].Type);
-            Assert.Equal(3, tokens[0][2].StartIndex);
+            lines = Analyze(" 12 ");
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(3, lines[0].Tokens.Count);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
+            Assert.Equal(TokenType.Number, lines[0].Tokens[1].Type);
+            Assert.Equal(1, lines[0].Tokens[1].StartIndex);
+            Assert.Equal(2, lines[0].Tokens[1].Length);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[2].Type);
+            Assert.Equal(3, lines[0].Tokens[2].StartIndex);
         }
 
         [Fact]
         public void TokenizeWhitespace()
         {
-            var lexer = new Lexer();
-            IReadOnlyList<IReadOnlyList<Token>> tokens = lexer.Tokenize(" ");
-            Assert.Equal(1, tokens.Count);
-            Assert.Equal(1, tokens[0].Count);
-            Assert.Equal(TokenType.Whitespace, tokens[0][0].Type);
-            Assert.Equal(0, tokens[0][0].StartIndex);
-            Assert.Equal(1, tokens[0][0].Length);
+            IReadOnlyList<LineInfo> lines = Analyze(" ");
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(1, lines[0].Tokens.Count);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
+            Assert.Equal(0, lines[0].Tokens[0].StartIndex);
+            Assert.Equal(1, lines[0].Tokens[0].Length);
 
-            tokens = lexer.Tokenize("  ");
-            Assert.Equal(1, tokens.Count);
-            Assert.Equal(1, tokens[0].Count);
-            Assert.Equal(TokenType.Whitespace, tokens[0][0].Type);
-            Assert.Equal(0, tokens[0][0].StartIndex);
-            Assert.Equal(2, tokens[0][0].Length);
+            lines = Analyze("  ");
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(1, lines[0].Tokens.Count);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
+            Assert.Equal(0, lines[0].Tokens[0].StartIndex);
+            Assert.Equal(2, lines[0].Tokens[0].Length);
 
-            tokens = lexer.Tokenize("   ");
-            Assert.Equal(1, tokens.Count);
-            Assert.Equal(1, tokens[0].Count);
-            Assert.Equal(TokenType.Whitespace, tokens[0][0].Type);
-            Assert.Equal(0, tokens[0][0].StartIndex);
-            Assert.Equal(3, tokens[0][0].Length);
+            lines = Analyze("   ");
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(1, lines[0].Tokens.Count);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
+            Assert.Equal(0, lines[0].Tokens[0].StartIndex);
+            Assert.Equal(3, lines[0].Tokens[0].Length);
+
+            lines = Analyze(" \t ");
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(1, lines[0].Tokens.Count);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
+            Assert.Equal(0, lines[0].Tokens[0].StartIndex);
+            Assert.Equal(3, lines[0].Tokens[0].Length);
         }
 
         [Fact]
         public void TokenizePunctuationAndSymbols()
         {
-            var lexer = new Lexer();
-            IReadOnlyList<IReadOnlyList<Token>> tokens = lexer.Tokenize("!@#$%^&*()+_=`~[]{}\\|;:'\",<.>/?");
-            Assert.Equal(1, tokens.Count);
-            Assert.Equal(31, tokens[0].Count);
-            for (int i = 0; i < tokens[0].Count; i++)
+            IReadOnlyList<LineInfo> lines = Analyze("!@#$%^&*()+_=`~[]{}\\|;:'\",<.>/?");
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(31, lines[0].Tokens.Count);
+            for (int i = 0; i < lines[0].Tokens.Count; i++)
             {
-                Assert.Equal(TokenType.SymbolOrPunctuation, tokens[0][i].Type);
-                Assert.Equal(1, tokens[0][i].Length);
+                Assert.Equal(TokenType.SymbolOrPunctuation, lines[0].Tokens[i].Type);
+                Assert.Equal(1, lines[0].Tokens[i].Length);
             }
 
-            tokens = lexer.Tokenize("π÷–−×·⋅¿¾½¼»º¹¸·¶µ´³²±°¯®­¬«ª©¨§¦¥¤£¢¡~}|{");
-            Assert.Equal(1, tokens.Count);
-            Assert.Equal(42, tokens[0].Count);
-            for (int i = 0; i < tokens[0].Count; i++)
+            lines = Analyze("π÷–−×·⋅¿¾½¼»º¹¸·¶µ´³²±°¯®­¬«ª©¨§¦¥¤£¢¡~}|{");
+            Assert.Equal(1, lines.Count);
+            Assert.Equal(42, lines[0].Tokens.Count);
+            for (int i = 0; i < lines[0].Tokens.Count; i++)
             {
-                Assert.Equal(TokenType.SymbolOrPunctuation, tokens[0][i].Type);
-                Assert.Equal(1, tokens[0][i].Length);
+                Assert.Equal(TokenType.SymbolOrPunctuation, lines[0].Tokens[i].Type);
+                Assert.Equal(1, lines[0].Tokens[i].Length);
             }
         }
 
         [Fact]
         public void TokenizeMultipleLines()
         {
+            IReadOnlyList<LineInfo> lines = Analyze("    \r\n\r\n\nabc\n \r  ");
+            Assert.Equal(6, lines.Count);
+            Assert.Equal(1, lines[0].TokenCount);
+            Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
+            Assert.Equal(0, lines[1].TokenCount);
+            Assert.Equal(0, lines[2].TokenCount);
+            Assert.Equal(TokenType.Word, lines[3].Tokens[0].Type);
+            Assert.Equal(1, lines[4].TokenCount);
+            Assert.Equal(TokenType.Whitespace, lines[4].Tokens[0].Type);
+            Assert.Equal(1, lines[5].TokenCount);
+            Assert.Equal(TokenType.Whitespace, lines[5].Tokens[0].Type);
+        }
+
+        private static IReadOnlyList<LineInfo> Analyze(string input)
+        {
+            var lines = new List<LineInfo>();
+            int lineCount = 0;
             var lexer = new Lexer();
-            IReadOnlyList<IReadOnlyList<Token>> tokens = lexer.Tokenize("    \r\nabc\n   ");
-            Assert.Equal(3, tokens.Count);
-            Assert.Equal(1, tokens[0].Count);
-            Assert.Equal(TokenType.Whitespace, tokens[0][0].Type);
-            Assert.Equal(1, tokens[1].Count);
-            Assert.Equal(TokenType.Word, tokens[1][0].Type);
-            Assert.Equal(1, tokens[2].Count);
-            Assert.Equal(TokenType.Whitespace, tokens[2][0].Type);
+            LinkedToken lineTokens = lexer.GetLineTokens(input);
+
+            do
+            {
+                lineCount++;
+                var tokens = new List<Token>();
+                if (lineTokens is not null)
+                {
+                    int tokenEndIndexWithCarriageReturn = 0;
+                    while (lineTokens is not null)
+                    {
+                        if (lineTokens.Token.Type != TokenType.NewLine)
+                        {
+                            tokens.Add(lineTokens.Token);
+                        }
+                        tokenEndIndexWithCarriageReturn = lineTokens.TokenEndIndexWithCarriageReturn;
+                        lineTokens = lineTokens.Next;
+                    }
+
+                    lineTokens = lexer.GetLineTokens(input, startIndex: tokenEndIndexWithCarriageReturn);
+                }
+
+                var lineInfo
+                    = new LineInfo
+                    {
+                        LineNumber = lineCount,
+                        TokenCount = tokens.Count,
+                        Tokens = tokens
+                    };
+                lines.Add(lineInfo);
+            }
+            while (lineTokens is not null);
+
+            return lines;
+        }
+
+        private class LineInfo
+        {
+            internal IReadOnlyList<Token> Tokens { get; set; }
+
+            internal int TokenCount { get; set; }
+
+            internal int LineNumber { get; set; }
         }
     }
 }
