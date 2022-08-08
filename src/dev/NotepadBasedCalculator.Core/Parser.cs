@@ -1,4 +1,5 @@
-﻿using NotepadBasedCalculator.Api;
+﻿using System.Globalization;
+using NotepadBasedCalculator.Api;
 using NotepadBasedCalculator.Api.AbstractSyntaxTree;
 
 namespace NotepadBasedCalculator.Core
@@ -19,6 +20,13 @@ namespace NotepadBasedCalculator.Core
 
         internal IReadOnlyList<IReadOnlyList<Expression>> Parse(string? input)
         {
+            return Parse(input, new CultureInfo("en-us"));
+        }
+
+        internal IReadOnlyList<IReadOnlyList<Expression>> Parse(string? input, CultureInfo cultureInfo)
+        {
+            Guard.IsNotNull(cultureInfo);
+
             var expressionLines = new List<List<Expression>>();
             int tokenEndIndexWithCarriageReturn = 0;
             LinkedToken? lineTokens = _lexer.GetLineTokens(input, startIndex: 0);
@@ -29,7 +37,7 @@ namespace NotepadBasedCalculator.Core
 
                 while (lineTokens is not null)
                 {
-                    Expression? expression = ParseExpression(lineTokens);
+                    Expression? expression = ParseExpression(lineTokens, cultureInfo);
                     if (expression is not null)
                     {
                         tokenEndIndexWithCarriageReturn = expression.LastToken.TokenEndIndexWithCarriageReturn;
@@ -51,13 +59,13 @@ namespace NotepadBasedCalculator.Core
             return expressionLines;
         }
 
-        private Expression? ParseExpression(LinkedToken linkedToken)
+        private Expression? ParseExpression(LinkedToken linkedToken, CultureInfo cultureInfo)
         {
             Expression? expression = null;
 
             foreach (Lazy<IExpressionParser, ExpressionParserMetadata>? expressionParser in _expressionParsers)
             {
-                if (expressionParser.Value.TryParseExpression(linkedToken, out expression)
+                if (expressionParser.Value.TryParseExpression(linkedToken, cultureInfo, out expression)
                     && expression is not null)
                 {
                     break;

@@ -6,6 +6,7 @@ namespace NotepadBasedCalculator.Api
     {
         bool TryParseExpression(
             LinkedToken currentToken,
+            CultureInfo cultureInfo,
             out Expression? expression);
     }
 }

@@ -10,4 +10,9 @@
   <ItemGroup>
     <ProjectReference Include="..\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Strings\en-us\numbers.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

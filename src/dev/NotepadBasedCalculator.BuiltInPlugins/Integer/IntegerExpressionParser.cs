@@ -6,9 +6,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Integer
     [Export(typeof(IExpressionParser))]
     public sealed class IntegerExpressionParser : IExpressionParser
     {
-        public bool TryParseExpression(
-            LinkedToken currentToken,
-            out Expression? expression)
+        public bool TryParseExpression(LinkedToken currentToken, CultureInfo cultureInfo, out Expression? expression)
         {
             LinkedToken firstToken = currentToken;
             bool isNegativeNumber = false;
