@@ -1,12 +1,10 @@
-﻿using NotepadBasedCalculator.Api.AbstractSyntaxTree;
-
-namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.Api
 {
     public interface IExpressionParser
     {
         bool TryParseExpression(
             LinkedToken currentToken,
-            CultureInfo cultureInfo,
+            string culture,
             out Expression? expression);
     }
 }

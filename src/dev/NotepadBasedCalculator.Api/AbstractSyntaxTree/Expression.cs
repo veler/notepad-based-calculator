@@ -1,4 +1,4 @@
-﻿namespace NotepadBasedCalculator.Api.AbstractSyntaxTree
+﻿namespace NotepadBasedCalculator.Api
 {
     /// <summary>
     /// Basic class that represents an expression in a statement.

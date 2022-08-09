@@ -1,5 +1,4 @@
 ﻿using NotepadBasedCalculator.Api;
-using NotepadBasedCalculator.Api.AbstractSyntaxTree;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Comment
 {

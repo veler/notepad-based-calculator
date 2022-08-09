@@ -33,10 +33,10 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(3, lines[0].Tokens.Count);
             Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
             Assert.Equal(TokenType.Word, lines[0].Tokens[1].Type);
-            Assert.Equal(2, lines[0].Tokens[1].StartIndex);
+            Assert.Equal(2, lines[0].Tokens[1].StartInLine);
             Assert.Equal(5, lines[0].Tokens[1].Length);
             Assert.Equal(TokenType.Whitespace, lines[0].Tokens[2].Type);
-            Assert.Equal(7, lines[0].Tokens[2].StartIndex);
+            Assert.Equal(7, lines[0].Tokens[2].StartInLine);
 
             Assert.True(lines[0].Tokens[1].IsTokenTextEqualTo("abæçØ", System.StringComparison.Ordinal));
             Assert.False(lines[0].Tokens[0].IsTokenTextEqualTo("abæçØ", System.StringComparison.Ordinal));
@@ -64,10 +64,10 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(3, lines[0].Tokens.Count);
             Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
             Assert.Equal(TokenType.Number, lines[0].Tokens[1].Type);
-            Assert.Equal(1, lines[0].Tokens[1].StartIndex);
+            Assert.Equal(1, lines[0].Tokens[1].StartInLine);
             Assert.Equal(2, lines[0].Tokens[1].Length);
             Assert.Equal(TokenType.Whitespace, lines[0].Tokens[2].Type);
-            Assert.Equal(3, lines[0].Tokens[2].StartIndex);
+            Assert.Equal(3, lines[0].Tokens[2].StartInLine);
         }
 
         [Fact]
@@ -77,28 +77,28 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(1, lines.Count);
             Assert.Equal(1, lines[0].Tokens.Count);
             Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
-            Assert.Equal(0, lines[0].Tokens[0].StartIndex);
+            Assert.Equal(0, lines[0].Tokens[0].StartInLine);
             Assert.Equal(1, lines[0].Tokens[0].Length);
 
             lines = Analyze("  ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(1, lines[0].Tokens.Count);
             Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
-            Assert.Equal(0, lines[0].Tokens[0].StartIndex);
+            Assert.Equal(0, lines[0].Tokens[0].StartInLine);
             Assert.Equal(2, lines[0].Tokens[0].Length);
 
             lines = Analyze("   ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(1, lines[0].Tokens.Count);
             Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
-            Assert.Equal(0, lines[0].Tokens[0].StartIndex);
+            Assert.Equal(0, lines[0].Tokens[0].StartInLine);
             Assert.Equal(3, lines[0].Tokens[0].Length);
 
             lines = Analyze(" \t ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(1, lines[0].Tokens.Count);
             Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
-            Assert.Equal(0, lines[0].Tokens[0].StartIndex);
+            Assert.Equal(0, lines[0].Tokens[0].StartInLine);
             Assert.Equal(3, lines[0].Tokens[0].Length);
         }
 
@@ -127,8 +127,8 @@ namespace NotepadBasedCalculator.Core.Tests
         [Fact]
         public void TokenizeMultipleLines()
         {
-            IReadOnlyList<LineInfo> lines = Analyze("    \r\n\r\n\nabc\n \r  ");
-            Assert.Equal(6, lines.Count);
+            IReadOnlyList<LineInfo> lines = Analyze("    \r\n\r\n\nabc\n  ");
+            Assert.Equal(5, lines.Count);
             Assert.Equal(1, lines[0].TokenCount);
             Assert.Equal(TokenType.Whitespace, lines[0].Tokens[0].Type);
             Assert.Equal(0, lines[1].TokenCount);
@@ -136,56 +136,45 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(TokenType.Word, lines[3].Tokens[0].Type);
             Assert.Equal(1, lines[4].TokenCount);
             Assert.Equal(TokenType.Whitespace, lines[4].Tokens[0].Type);
-            Assert.Equal(1, lines[5].TokenCount);
-            Assert.Equal(TokenType.Whitespace, lines[5].Tokens[0].Type);
         }
 
         private static IReadOnlyList<LineInfo> Analyze(string input)
         {
             var lines = new List<LineInfo>();
-            int lineCount = 0;
             var lexer = new Lexer();
-            LinkedToken lineTokens = lexer.GetLineTokens(input);
+            IReadOnlyList<TokenizedTextLine> tokenizedLines = lexer.Tokenize(input);
 
-            do
+            for (int i = 0; i < tokenizedLines.Count; i++)
             {
-                lineCount++;
                 var tokens = new List<Token>();
-                if (lineTokens is not null)
-                {
-                    int tokenEndIndexWithCarriageReturn = 0;
-                    while (lineTokens is not null)
-                    {
-                        if (lineTokens.Token.Type != TokenType.NewLine)
-                        {
-                            tokens.Add(lineTokens.Token);
-                        }
-                        tokenEndIndexWithCarriageReturn = lineTokens.TokenEndIndexWithCarriageReturn;
-                        lineTokens = lineTokens.Next;
-                    }
 
-                    lineTokens = lexer.GetLineTokens(input, startIndex: tokenEndIndexWithCarriageReturn);
+                LinkedToken linkedToken = tokenizedLines[i].Tokens;
+                while (linkedToken is not null)
+                {
+                    tokens.Add(linkedToken.Token);
+                    linkedToken = linkedToken.Next;
                 }
 
                 var lineInfo
                     = new LineInfo
                     {
-                        LineNumber = lineCount,
-                        TokenCount = tokens.Count,
-                        Tokens = tokens
+                        LineNumber = i + 1,
+                        Tokens = tokens,
+                        TokenizedTextLine = tokenizedLines[i]
                     };
                 lines.Add(lineInfo);
             }
-            while (lineTokens is not null);
 
             return lines;
         }
 
         private class LineInfo
         {
+            internal TokenizedTextLine TokenizedTextLine { get; set; }
+
             internal IReadOnlyList<Token> Tokens { get; set; }
 
-            internal int TokenCount { get; set; }
+            internal int TokenCount => Tokens.Count;
 
             internal int LineNumber { get; set; }
         }

@@ -1,7 +1,4 @@
-﻿using NotepadBasedCalculator.Api;
-using NotepadBasedCalculator.Api.AbstractSyntaxTree;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.Header
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Header
 {
     internal sealed class HeaderExpression : Expression
     {

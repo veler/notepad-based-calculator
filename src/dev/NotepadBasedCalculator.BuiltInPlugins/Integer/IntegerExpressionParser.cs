@@ -1,12 +1,12 @@
 ﻿using NotepadBasedCalculator.Api;
-using NotepadBasedCalculator.Api.AbstractSyntaxTree;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Integer
 {
     [Export(typeof(IExpressionParser))]
+    [Culture(CultureAttribute.Any)]
     public sealed class IntegerExpressionParser : IExpressionParser
     {
-        public bool TryParseExpression(LinkedToken currentToken, CultureInfo cultureInfo, out Expression? expression)
+        public bool TryParseExpression(LinkedToken currentToken, string culture, out Expression? expression)
         {
             LinkedToken firstToken = currentToken;
             bool isNegativeNumber = false;

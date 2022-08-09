@@ -5,14 +5,12 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />
+    <PackageReference Include="Microsoft.Recognizers.Text" />
+    <PackageReference Include="Microsoft.Recognizers.Text.Number" />
+    <PackageReference Include="Microsoft.Recognizers.Text.NumberWithUnit" />
     <PackageReference Include="System.Composition" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="Strings\en-us\numbers.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using NotepadBasedCalculator.Api.AbstractSyntaxTree;
+using NotepadBasedCalculator.Api;
 using Xunit;
 
 namespace NotepadBasedCalculator.Core.Tests

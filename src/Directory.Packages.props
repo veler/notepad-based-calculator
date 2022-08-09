@@ -1,8 +1,18 @@
 <Project>
+  <PropertyGroup>
+    <MicrosoftRecognizersTextVersion>1.8.5</MicrosoftRecognizersTextVersion>
+  </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.0.0" />
     <PackageVersion Include="coverlet.collector" Version="3.1.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
+    <PackageVersion Include="Microsoft.Recognizers.Text" Version="$(MicrosoftRecognizersTextVersion)" />
+    <PackageVersion Include="Microsoft.Recognizers.Text.Number" Version="$(MicrosoftRecognizersTextVersion)" />
+    <PackageVersion Include="Microsoft.Recognizers.Text.NumberWithUnit" Version="$(MicrosoftRecognizersTextVersion)" />
+    <PackageVersion Include="Microsoft.Recognizers.Text.DataTypes.TimexExpression" Version="$(MicrosoftRecognizersTextVersion)" />
+    <PackageVersion Include="Microsoft.Recognizers.Text.DateTime" Version="$(MicrosoftRecognizersTextVersion)" />
+    <PackageVersion Include="Microsoft.Recognizers.Text.Choice" Version="$(MicrosoftRecognizersTextVersion)" />
+    <PackageVersion Include="Microsoft.Recognizers.Text.Sequence" Version="$(MicrosoftRecognizersTextVersion)" />
     <PackageVersion Include="System.Composition" Version="6.0.0" />
     <PackageVersion Include="xunit" Version="2.4.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="2.4.5" />

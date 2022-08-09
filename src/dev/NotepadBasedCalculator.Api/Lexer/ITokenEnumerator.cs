@@ -2,6 +2,5 @@
 {
     internal interface ITokenEnumerator : IEnumerator<Token?>
     {
-        Token? InternalCurrentToken { get; }
     }
 }

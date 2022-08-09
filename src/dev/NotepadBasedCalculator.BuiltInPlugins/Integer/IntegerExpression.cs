@@ -1,7 +1,4 @@
-﻿using NotepadBasedCalculator.Api;
-using NotepadBasedCalculator.Api.AbstractSyntaxTree;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.Integer
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Integer
 {
     internal sealed class IntegerExpression : Expression
     {
