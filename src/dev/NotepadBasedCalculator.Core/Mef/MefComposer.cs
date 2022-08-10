@@ -1,7 +1,6 @@
 ﻿using System.Composition.Hosting;
 using System.Reflection;
-using NotepadBasedCalculator.Api;
-using NotepadBasedCalculator.BuiltInPlugins.Integer;
+using NotepadBasedCalculator.BuiltInPlugins.Data;
 
 namespace NotepadBasedCalculator.Core.Mef
 {
@@ -59,7 +58,7 @@ namespace NotepadBasedCalculator.Core.Mef
 
             ContainerConfiguration? configuration
                 = new ContainerConfiguration()
-                    .WithAssembly(typeof(IntegerExpressionParser).Assembly)
+                    .WithAssembly(typeof(NumberDataParser).Assembly)
                     .WithAssemblies(assemblies);
 
             ExportProvider = configuration.CreateContainer();

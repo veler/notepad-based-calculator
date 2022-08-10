@@ -1,5 +1,4 @@
 ﻿using System.Composition.Hosting;
-using NotepadBasedCalculator.Api;
 
 namespace NotepadBasedCalculator.Core.Mef
 {

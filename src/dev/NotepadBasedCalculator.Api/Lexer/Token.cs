@@ -13,12 +13,12 @@
         public TokenType Type { get; }
 
         /// <summary>
-        /// Gets the position in the document where the token starts.
+        /// Gets the position in the line where the token starts.
         /// </summary>
         public int StartInLine { get; }
 
         /// <summary>
-        /// Gets the position in the document where the token ends.
+        /// Gets the position in the line where the token ends.
         /// </summary>
         public int EndInLine { get; }
 

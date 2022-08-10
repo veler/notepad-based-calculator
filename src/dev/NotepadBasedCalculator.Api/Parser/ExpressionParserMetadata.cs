@@ -1,11 +1,13 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.
+namespace NotepadBasedCalculator.Api
 {
     public sealed class ExpressionParserMetadata
     {
         [DefaultValue(int.MaxValue)]
-        public int Order { get; set; }
+        public int Order { get; }
 
-        [DefaultValue(null)]
-        public string[]? CultureCode { get; set; }
+        [DefaultValue("")]
+        public string[] CultureCode { get; }
     }
 }
+#pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

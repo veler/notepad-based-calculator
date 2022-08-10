@@ -1,13 +1,11 @@
-﻿using NotepadBasedCalculator.Api;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.Comment
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Comment
 {
-    [Export(typeof(IExpressionParser))]
+    [Export(typeof(IStatementParser))]
     [Order(0)]
-    [Culture(CultureAttribute.Any)]
-    internal class CommentExpressionParser : IExpressionParser
+    [Culture(SupportedCultures.Any)]
+    internal class CommentExpressionParser : IStatementParser
     {
-        public bool TryParseExpression(LinkedToken currentToken, string culture, out Expression? expression)
+        public override bool TryParseExpression(string culture, LinkedToken currentToken, out Expression? expression)
         {
             if (currentToken.Token.Type == TokenType.SymbolOrPunctuation
                 && currentToken.Token.IsTokenTextEqualTo("/", StringComparison.InvariantCulture)

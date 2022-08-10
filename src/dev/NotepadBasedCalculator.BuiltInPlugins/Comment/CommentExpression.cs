@@ -1,6 +1,4 @@
-﻿using NotepadBasedCalculator.Api;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.Comment
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Comment
 {
     internal sealed class CommentExpression : Expression
     {

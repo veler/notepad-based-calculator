@@ -1,12 +1,10 @@
-﻿using NotepadBasedCalculator.Api;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.Header
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Header
 {
-    [Export(typeof(IExpressionParser))]
-    [Culture(CultureAttribute.Any)]
-    internal sealed class HeaderExpressionParser : IExpressionParser
+    [Export(typeof(IStatementParser))]
+    [Culture(SupportedCultures.Any)]
+    internal sealed class HeaderExpressionParser : IStatementParser
     {
-        public bool TryParseExpression(LinkedToken currentToken, string culture, out Expression? expression)
+        public override bool TryParseExpression(string culture, LinkedToken currentToken, out Expression? expression)
         {
             if (currentToken.Token.Type == TokenType.SymbolOrPunctuation
                 && currentToken.Token.IsTokenTextEqualTo("#", StringComparison.InvariantCulture))
