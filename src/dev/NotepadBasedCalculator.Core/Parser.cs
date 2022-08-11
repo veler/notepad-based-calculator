@@ -20,12 +20,12 @@ namespace NotepadBasedCalculator.Core
                 .OrderBy(p => p.Metadata.Order);
         }
 
-        internal Task<IReadOnlyList<IReadOnlyList<Expression>>> ParseAsync(string? input)
+        internal Task<ParserResult> ParseAsync(string? input)
         {
             return ParseAsync(input, SupportedCultures.English);
         }
 
-        internal async Task<IReadOnlyList<IReadOnlyList<Expression>>> ParseAsync(string? input, string culture)
+        internal async Task<ParserResult> ParseAsync(string? input, string culture)
         {
             Guard.IsNotNullOrWhiteSpace(culture);
             culture = Culture.MapToNearestLanguage(culture);
@@ -33,14 +33,14 @@ namespace NotepadBasedCalculator.Core
             IReadOnlyList<Lazy<IDataParser, DataParserMetadata>> applicableDataParsers
                 = GetApplicableDataParsers(culture);
 
-            var expressionLines = new List<List<Expression>>();
+            var resultLines = new List<ParserResultLine>();
             IReadOnlyList<TokenizedTextLine> tokenizedLines = _lexer.Tokenize(input);
 
             for (int i = 0; i < tokenizedLines.Count; i++)
             {
                 TokenizedTextLine tokenizedLine = tokenizedLines[i];
 
-                await ParseDataAsync(culture, applicableDataParsers, tokenizedLine);
+                IReadOnlyList<IData> parsedData = await ParseDataAsync(culture, applicableDataParsers, tokenizedLine);
 
                 //var expressions = new List<Expression>();
                 //LinkedToken? nextTokenToParse = tokenizedLine.Tokens;
@@ -60,9 +60,11 @@ namespace NotepadBasedCalculator.Core
                 //}
 
                 //expressionLines.Add(expressions);
+
+                resultLines.Add(new ParserResultLine(tokenizedLine, parsedData));
             }
 
-            return expressionLines;
+            return new ParserResult(resultLines);
         }
 
         private Expression? ParseExpression(LinkedToken linkedToken, string culture)
@@ -90,34 +92,64 @@ namespace NotepadBasedCalculator.Core
                 .ToList();
         }
 
-        private async Task ParseDataAsync(string culture, IReadOnlyList<Lazy<IDataParser, DataParserMetadata>> dataParsers, TokenizedTextLine tokenizedLine)
+        private async Task<IReadOnlyList<IData>> ParseDataAsync(string culture, IReadOnlyList<Lazy<IDataParser, DataParserMetadata>> dataParsers, TokenizedTextLine tokenizedLine)
         {
-            var tasks = new List<Task<IReadOnlyList<IData>?>>();
+            var rawDataBag = new List<IData>();
+            var nonOverlappingData = new List<IData>();
+            var tasks = new List<Task>();
+
             for (int i = 0; i < dataParsers.Count; i++)
             {
                 IDataParser parser = dataParsers[i].Value;
                 tasks.Add(
                     Task.Run(
-                        () => parser.Parse(culture, tokenizedLine)));
+                        () =>
+                        {
+                            IReadOnlyList<IData>? results = parser.Parse(culture, tokenizedLine);
+                            if (results is not null)
+                            {
+                                lock (rawDataBag)
+                                {
+                                    rawDataBag.AddRange(results);
+                                }
+                            }
+                        }));
             }
 
             await Task.WhenAll(tasks);
 
-            IEnumerable<IData> data = tasks.SelectMany(t => t.Result);
-            IReadOnlyList<IData> dataWithNoOverlap = data.Intersect(data, new DataOverlapComparer()).ToList();
+            // For each data we parsed, find whether the data is overlapped by another one. If not, then we keep it.
+            for (int i = 0; i < rawDataBag.Count; i++)
+            {
+                IData currentData = rawDataBag[i];
+                if (currentData is not null
+                    && !IsDataOverlapped(rawDataBag, currentData))
+                {
+                    nonOverlappingData.Add(currentData);
+                }
+            }
+
+            // Sort the non-overlapping items.
+            nonOverlappingData.Sort();
+
+            return nonOverlappingData;
         }
 
-        private class DataOverlapComparer : IEqualityComparer<IData>
+        private bool IsDataOverlapped(IReadOnlyList<IData> allData, IData currentData)
         {
-            public bool Equals(IData x, IData y)
+            for (int i = 0; i < allData.Count; i++)
             {
-                return x.StartInLine < y.EndInLine && y.StartInLine < y.EndInLine;
+                IData data = allData[i];
+                if (data is not null
+                    && currentData != data
+                    && data.StartInLine <= currentData.StartInLine
+                    && data.EndInLine >= currentData.EndInLine)
+                {
+                    return true;
+                }
             }
 
-            public int GetHashCode(IData obj)
-            {
-                return 0; // On purpose so Equals will be called.
-            }
+            return false;
         }
     }
 }

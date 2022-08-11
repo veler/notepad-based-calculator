@@ -30,5 +30,27 @@
             Length = OriginalText.Length;
             EndInLine = StartInLine + Length;
         }
+
+        public bool Equals(IData other)
+        {
+            if (object.ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (other is not null
+                && StartInLine == other.StartInLine
+                && Length == other.Length)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public int CompareTo(IData other)
+        {
+            return StartInLine.CompareTo(other.StartInLine);
+        }
     }
 }

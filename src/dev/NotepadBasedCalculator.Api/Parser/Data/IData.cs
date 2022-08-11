@@ -1,6 +1,6 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public interface IData
+    public interface IData : IEquatable<IData>, IComparable<IData>
     {
         /// <summary>
         /// Gets the position in the line where the data starts.

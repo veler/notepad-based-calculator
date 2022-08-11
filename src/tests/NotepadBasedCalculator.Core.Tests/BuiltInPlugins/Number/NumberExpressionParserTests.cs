@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using NotepadBasedCalculator.Api;
+﻿using System.Threading.Tasks;
 using Xunit;
 
 namespace NotepadBasedCalculator.Core.Tests.BuiltInPlugins.Number
@@ -15,8 +13,8 @@ namespace NotepadBasedCalculator.Core.Tests.BuiltInPlugins.Number
         public async Task WordNumberParsingAsync(string input, int output)
         {
             Parser parser = ExportProvider.Import<Parser>();
-            IReadOnlyList<IReadOnlyList<Expression>> expressionLines = await parser.ParseAsync(input);
-            Assert.Equal(output, int.Parse(expressionLines[0][0].ToString()));
+            ParserResult parserResult = await parser.ParseAsync(input);
+            Assert.Equal(output, int.Parse(parserResult.ToString()));
         }
     }
 }

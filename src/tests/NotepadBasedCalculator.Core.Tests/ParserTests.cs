@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using NotepadBasedCalculator.Api;
+﻿using System.Threading.Tasks;
 using Xunit;
 
 namespace NotepadBasedCalculator.Core.Tests
@@ -17,7 +15,7 @@ namespace NotepadBasedCalculator.Core.Tests
 I got -123 dollars in my pocket. // this is a comment.";
 
             Parser parser = ExportProvider.Import<Parser>();
-            IReadOnlyList<IReadOnlyList<Expression>> expressionLines = await parser.ParseAsync(input);
+            ParserResult parserResult = await parser.ParseAsync(input);
             Assert.Equal(4, expressionLines.Count);
             Assert.Equal(1, expressionLines[0].Count);
             Assert.Equal(0, expressionLines[1].Count);
