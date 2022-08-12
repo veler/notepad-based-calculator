@@ -1,19 +1,16 @@
 ﻿namespace NotepadBasedCalculator.BuiltInPlugins.Comment
 {
-    [Export(typeof(IStatementParser))]
+    [Export(typeof(IExpressionParser))]
     [Order(0)]
     [Culture(SupportedCultures.Any)]
-    internal class CommentExpressionParser : IStatementParser
+    internal sealed class CommentExpressionParser : ParserBase, IExpressionParser
     {
-        public override bool TryParseExpression(string culture, LinkedToken currentToken, out Expression? expression)
+        public bool TryParseExpression(string culture, LinkedToken currentToken, out Expression? expression)
         {
-            if (currentToken.Token.Type == PredefinedTokenAndDataTypeNames.SymbolOrPunctuation
-                && currentToken.Token.IsTokenTextEqualTo("/", StringComparison.InvariantCulture)
-                && currentToken.Next is not null
-                && currentToken.Next.Token.Type == PredefinedTokenAndDataTypeNames.SymbolOrPunctuation
-                && currentToken.Next.Token.IsTokenTextEqualTo("/", StringComparison.InvariantCulture))
+            if (DiscardToken(currentToken, PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, "/", StringComparison.InvariantCulture, out LinkedToken? nextToken)
+                && nextToken is not null
+                && DiscardToken(nextToken, PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, "/", StringComparison.InvariantCulture, ignoreWhitespace: false, out nextToken))
             {
-                LinkedToken? nextToken = currentToken.Next;
                 LinkedToken lastTokenInLine = currentToken;
                 while (nextToken is not null)
                 {
@@ -21,7 +18,7 @@
                     nextToken = nextToken.Next;
                 }
 
-                expression = new CommentExpression(currentToken, lastTokenInLine);
+                expression = new CommentExpression(DiscardWhitespaces(currentToken)!, lastTokenInLine);
                 return true;
             }
 

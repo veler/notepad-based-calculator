@@ -6,12 +6,12 @@ namespace NotepadBasedCalculator.Core
     internal sealed class Parser
     {
         private readonly IEnumerable<Lazy<IDataParser, DataParserMetadata>> _dataParsers;
-        private readonly IEnumerable<Lazy<IStatementParser, ExpressionParserMetadata>> _expressionParsers;
+        private readonly IEnumerable<Lazy<IExpressionParser, ExpressionParserMetadata>> _expressionParsers;
 
         [ImportingConstructor]
         public Parser(
             [ImportMany] IEnumerable<Lazy<IDataParser, DataParserMetadata>> dataParsers,
-            [ImportMany] IEnumerable<Lazy<IStatementParser, ExpressionParserMetadata>> expressionParsers)
+            [ImportMany] IEnumerable<Lazy<IExpressionParser, ExpressionParserMetadata>> expressionParsers)
         {
             _dataParsers = dataParsers;
             _expressionParsers
@@ -43,26 +43,24 @@ namespace NotepadBasedCalculator.Core
 
                 tokenizedLine = Lexer.TokenizeLine(tokenizedLine.Start, tokenizedLine.LineTextIncludingLineBreak, parsedData);
 
-                //var expressions = new List<Expression>();
-                //LinkedToken? nextTokenToParse = tokenizedLine.Tokens;
-                //while (nextTokenToParse is not null)
-                //{
-                //    Expression? expression = ParseExpression(nextTokenToParse, culture);
-                //    if (expression is not null)
-                //    {
-                //        nextTokenToParse = expression.LastToken.Next;
-                //        expressions.Add(expression);
-                //    }
-                //    else
-                //    {
-                //        // Ignore the current token. It might be a word that we would simply skip.
-                //        nextTokenToParse = nextTokenToParse.Next;
-                //    }
-                //}
+                var expressions = new List<Expression>();
+                LinkedToken? nextTokenToParse = tokenizedLine.Tokens;
+                while (nextTokenToParse is not null)
+                {
+                    Expression? expression = ParseExpression(nextTokenToParse, culture);
+                    if (expression is not null)
+                    {
+                        nextTokenToParse = expression.LastToken.Next;
+                        expressions.Add(expression);
+                    }
+                    else
+                    {
+                        // Ignore the current token. It might be a word that we would simply skip.
+                        nextTokenToParse = nextTokenToParse.Next;
+                    }
+                }
 
-                //expressionLines.Add(expressions);
-
-                resultLines.Add(new ParserResultLine(tokenizedLine, parsedData));
+                resultLines.Add(new ParserResultLine(tokenizedLine, parsedData, expressions));
             }
 
             return new ParserResult(resultLines);
@@ -72,7 +70,7 @@ namespace NotepadBasedCalculator.Core
         {
             Expression? expression = null;
 
-            foreach (Lazy<IStatementParser, ExpressionParserMetadata>? expressionParser in _expressionParsers)
+            foreach (Lazy<IExpressionParser, ExpressionParserMetadata>? expressionParser in _expressionParsers)
             {
                 if (expressionParser.Value.TryParseExpression(culture, linkedToken, out expression)
                     && expression is not null)

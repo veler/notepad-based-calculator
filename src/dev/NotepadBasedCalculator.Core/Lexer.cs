@@ -183,7 +183,7 @@ namespace NotepadBasedCalculator.Core
 
                     IToken token = DetectToken(_currentPositionInLine);
 
-                    if (token.Type == PredefinedTokenAndDataTypeNames.NewLine)
+                    if (token.Is(PredefinedTokenAndDataTypeNames.NewLine))
                     {
                         _currentToken = null;
                         return false;

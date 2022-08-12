@@ -28,7 +28,22 @@
             EndInLine = endInLine;
         }
 
-        public bool IsTokenTextEqualTo(string compareTo, StringComparison comparisonType)
+        public bool IsNot(string type)
+        {
+            return !Is(type);
+        }
+
+        public bool Is(string expectedType)
+        {
+            return string.Equals(Type, expectedType, StringComparison.Ordinal);
+        }
+
+        public bool Is(string expectedType, string expectedTokenText, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
+        {
+            return Is(expectedType) && IsTokenTextEqualTo(expectedTokenText, comparisonType);
+        }
+
+        public bool IsTokenTextEqualTo(string compareTo, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
             if (string.IsNullOrEmpty(compareTo) || compareTo.Length != Length)
                 return false;
@@ -43,7 +58,7 @@
 
         public override string ToString()
         {
-            return $"[{Type}] ({StartInLine}, {EndInLine}): \"{GetText()}\"";
+            return $"[{Type}] ({StartInLine}, {EndInLine}): '{GetText()}'";
         }
     }
 }

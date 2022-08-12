@@ -17,7 +17,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Parser parser = ExportProvider.Import<Parser>();
             ParserResult parserResult = await parser.ParseAsync(input);
             Assert.Equal(1, parserResult.Lines[0].Data.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Numeric, parserResult.Lines[0].Data[0].Type);
+            Assert.True(parserResult.Lines[0].Data[0].Is(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Integer, parserResult.Lines[0].Data[0].Subtype);
             Assert.Equal(output, ((IntegerData)parserResult.Lines[0].Data[0]).Value);
         }
@@ -31,7 +31,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Parser parser = ExportProvider.Import<Parser>();
             ParserResult parserResult = await parser.ParseAsync(input);
             Assert.Equal(1, parserResult.Lines[0].Data.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Numeric, parserResult.Lines[0].Data[0].Type);
+            Assert.True(parserResult.Lines[0].Data[0].Is(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Decimal, parserResult.Lines[0].Data[0].Subtype);
             Assert.Equal(output, ((DecimalData)parserResult.Lines[0].Data[0]).Value);
         }
@@ -44,7 +44,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Parser parser = ExportProvider.Import<Parser>();
             ParserResult parserResult = await parser.ParseAsync(input);
             Assert.Equal(1, parserResult.Lines[0].Data.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Numeric, parserResult.Lines[0].Data[0].Type);
+            Assert.True(parserResult.Lines[0].Data[0].Is(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Fraction, parserResult.Lines[0].Data[0].Subtype);
             Assert.Equal(output, ((FractionData)parserResult.Lines[0].Data[0]).Value);
         }
@@ -57,7 +57,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Parser parser = ExportProvider.Import<Parser>();
             ParserResult parserResult = await parser.ParseAsync(input);
             Assert.Equal(1, parserResult.Lines[0].Data.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Numeric, parserResult.Lines[0].Data[0].Type);
+            Assert.True(parserResult.Lines[0].Data[0].Is(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Percentage, parserResult.Lines[0].Data[0].Subtype);
             Assert.Equal(output, ((PercentageData)parserResult.Lines[0].Data[0]).Value);
         }

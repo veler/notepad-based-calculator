@@ -3,7 +3,7 @@
     public interface IToken
     {
         /// <summary>
-        /// Gets an internal non-localized name that represents the type of token.
+        /// Gets an internal non-localized, sensitive name that represents the type of token.
         /// </summary>
         public string Type { get; }
 
@@ -22,7 +22,13 @@
         /// </summary>
         public int Length { get; }
 
-        bool IsTokenTextEqualTo(string compareTo, StringComparison comparisonType);
+        bool IsNot(string type);
+
+        bool Is(string expectedType);
+
+        bool Is(string expectedType, string expectedTokenText, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase);
+
+        bool IsTokenTextEqualTo(string compareTo, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase);
 
         string GetText();
     }

@@ -20,22 +20,22 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<LineInfo> lines = Analyze(" a b c ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(7, lines[0].TokenCount);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[0].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Word, lines[0].Tokens[1].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[2].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Word, lines[0].Tokens[3].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[4].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Word, lines[0].Tokens[5].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[6].Type);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Whitespace));
+            Assert.True(lines[0].Tokens[1].Is(PredefinedTokenAndDataTypeNames.Word));
+            Assert.True(lines[0].Tokens[2].Is(PredefinedTokenAndDataTypeNames.Whitespace));
+            Assert.True(lines[0].Tokens[3].Is(PredefinedTokenAndDataTypeNames.Word));
+            Assert.True(lines[0].Tokens[4].Is(PredefinedTokenAndDataTypeNames.Whitespace));
+            Assert.True(lines[0].Tokens[5].Is(PredefinedTokenAndDataTypeNames.Word));
+            Assert.True(lines[0].Tokens[6].Is(PredefinedTokenAndDataTypeNames.Whitespace));
 
             lines = Analyze("  abæçØ ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(3, lines[0].Tokens.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[0].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Word, lines[0].Tokens[1].Type);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Whitespace));
+            Assert.True(lines[0].Tokens[1].Is(PredefinedTokenAndDataTypeNames.Word));
             Assert.Equal(2, lines[0].Tokens[1].StartInLine);
             Assert.Equal(5, lines[0].Tokens[1].Length);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[2].Type);
+            Assert.True(lines[0].Tokens[2].Is(PredefinedTokenAndDataTypeNames.Whitespace));
             Assert.Equal(7, lines[0].Tokens[2].StartInLine);
 
             Assert.True(lines[0].Tokens[1].IsTokenTextEqualTo("abæçØ", System.StringComparison.Ordinal));
@@ -51,25 +51,25 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<LineInfo> lines = Analyze(" 1 2 3 ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(7, lines[0].Tokens.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[0].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Digit, lines[0].Tokens[1].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[2].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Digit, lines[0].Tokens[3].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[4].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Digit, lines[0].Tokens[5].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[6].Type);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Whitespace));
+            Assert.True(lines[0].Tokens[1].Is(PredefinedTokenAndDataTypeNames.Digit));
+            Assert.True(lines[0].Tokens[2].Is(PredefinedTokenAndDataTypeNames.Whitespace));
+            Assert.True(lines[0].Tokens[3].Is(PredefinedTokenAndDataTypeNames.Digit));
+            Assert.True(lines[0].Tokens[4].Is(PredefinedTokenAndDataTypeNames.Whitespace));
+            Assert.True(lines[0].Tokens[5].Is(PredefinedTokenAndDataTypeNames.Digit));
+            Assert.True(lines[0].Tokens[6].Is(PredefinedTokenAndDataTypeNames.Whitespace));
 
             lines = Analyze(" 12 ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(4, lines[0].Tokens.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[0].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Digit, lines[0].Tokens[1].Type);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Digit, lines[0].Tokens[2].Type);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Whitespace));
+            Assert.True(lines[0].Tokens[1].Is(PredefinedTokenAndDataTypeNames.Digit));
+            Assert.True(lines[0].Tokens[2].Is(PredefinedTokenAndDataTypeNames.Digit));
             Assert.Equal(1, lines[0].Tokens[1].StartInLine);
             Assert.Equal(1, lines[0].Tokens[1].Length);
             Assert.Equal(2, lines[0].Tokens[2].StartInLine);
             Assert.Equal(1, lines[0].Tokens[2].Length);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[3].Type);
+            Assert.True(lines[0].Tokens[3].Is(PredefinedTokenAndDataTypeNames.Whitespace));
             Assert.Equal(3, lines[0].Tokens[3].StartInLine);
         }
 
@@ -79,28 +79,28 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<LineInfo> lines = Analyze(" ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(1, lines[0].Tokens.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[0].Type);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Whitespace));
             Assert.Equal(0, lines[0].Tokens[0].StartInLine);
             Assert.Equal(1, lines[0].Tokens[0].Length);
 
             lines = Analyze("  ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(1, lines[0].Tokens.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[0].Type);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Whitespace));
             Assert.Equal(0, lines[0].Tokens[0].StartInLine);
             Assert.Equal(2, lines[0].Tokens[0].Length);
 
             lines = Analyze("   ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(1, lines[0].Tokens.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[0].Type);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Whitespace));
             Assert.Equal(0, lines[0].Tokens[0].StartInLine);
             Assert.Equal(3, lines[0].Tokens[0].Length);
 
             lines = Analyze(" \t ");
             Assert.Equal(1, lines.Count);
             Assert.Equal(1, lines[0].Tokens.Count);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[0].Type);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Whitespace));
             Assert.Equal(0, lines[0].Tokens[0].StartInLine);
             Assert.Equal(3, lines[0].Tokens[0].Length);
         }
@@ -113,7 +113,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(31, lines[0].Tokens.Count);
             for (int i = 0; i < lines[0].Tokens.Count; i++)
             {
-                Assert.Equal(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, lines[0].Tokens[i].Type);
+                Assert.True(lines[0].Tokens[i].Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation));
                 Assert.Equal(1, lines[0].Tokens[i].Length);
             }
 
@@ -122,7 +122,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(42, lines[0].Tokens.Count);
             for (int i = 0; i < lines[0].Tokens.Count; i++)
             {
-                Assert.Equal(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, lines[0].Tokens[i].Type);
+                Assert.True(lines[0].Tokens[i].Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation));
                 Assert.Equal(1, lines[0].Tokens[i].Length);
             }
         }
@@ -133,12 +133,12 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<LineInfo> lines = Analyze("    \r\n\r\n\nabc\n  ");
             Assert.Equal(5, lines.Count);
             Assert.Equal(1, lines[0].TokenCount);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[0].Tokens[0].Type);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Whitespace));
             Assert.Equal(0, lines[1].TokenCount);
             Assert.Equal(0, lines[2].TokenCount);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Word, lines[3].Tokens[0].Type);
+            Assert.True(lines[3].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Word));
             Assert.Equal(1, lines[4].TokenCount);
-            Assert.Equal(PredefinedTokenAndDataTypeNames.Whitespace, lines[4].Tokens[0].Type);
+            Assert.True(lines[4].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Whitespace));
         }
 
         private static IReadOnlyList<LineInfo> Analyze(string input)
