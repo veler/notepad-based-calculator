@@ -8,7 +8,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
     [Culture(SupportedCultures.Any)]
     public sealed class NumberDataParser : IDataParser
     {
-        private const string SubType = "subtype";
+        private const string Subtype = "subtype";
         private const string Value = "value";
 
         public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine)
@@ -20,19 +20,34 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
             {
                 ModelResult modelResult = modelResults[i];
                 string valueString = (string)modelResult.Resolution[Value];
-                switch (modelResult.Resolution[SubType])
+                switch (modelResult.Resolution[Subtype])
                 {
                     case Constants.INTEGER:
-                        data.Add(new IntegerData(modelResult.Start, modelResult.Text, int.Parse(valueString)));
+                        data.Add(
+                            new IntegerData(
+                                tokenizedTextLine.LineTextIncludingLineBreak,
+                                modelResult.Start,
+                                modelResult.End + 1,
+                                long.Parse(valueString)));
                         break;
 
                     case Constants.DECIMAL:
                     case Constants.POWER:
-                        data.Add(new DecimalData(modelResult.Start, modelResult.Text, float.Parse(valueString)));
+                        data.Add(
+                            new DecimalData(
+                                tokenizedTextLine.LineTextIncludingLineBreak,
+                                modelResult.Start,
+                                modelResult.End + 1,
+                                float.Parse(valueString)));
                         break;
 
                     case Constants.FRACTION:
-                        data.Add(new FractionData(modelResult.Start, modelResult.Text, float.Parse(valueString)));
+                        data.Add(
+                            new FractionData(
+                                tokenizedTextLine.LineTextIncludingLineBreak,
+                                modelResult.Start,
+                                modelResult.End + 1,
+                                float.Parse(valueString)));
                         break;
 
                     default:

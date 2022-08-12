@@ -6,7 +6,7 @@
 
         public DataParserMetadata(IDictionary<string, object> metadata)
         {
-            if (metadata.TryGetValue(nameof(CultureAttribute.CultureCode), out object value))
+            if (metadata.TryGetValue(nameof(CultureAttribute.CultureCode), out object? value) && value is not null)
             {
                 if (value is string culture)
                 {

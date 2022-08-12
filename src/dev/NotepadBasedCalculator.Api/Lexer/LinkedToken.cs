@@ -8,9 +8,9 @@
 
         public LinkedToken? Next => _nextToken.Value;
 
-        public Token Token { get; }
+        public IToken Token { get; }
 
-        internal LinkedToken(LinkedToken? previous, Token token, ITokenEnumerator tokenEnumerator)
+        internal LinkedToken(LinkedToken? previous, IToken token, ITokenEnumerator tokenEnumerator)
         {
             Guard.IsNotNull(token);
             Guard.IsNotNull(tokenEnumerator);
@@ -34,7 +34,7 @@
                 });
         }
 
-        public override string ToString()
+        public override string? ToString()
         {
             return Token.ToString();
         }

@@ -9,6 +9,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
     public sealed class PercentageDataParser : IDataParser
     {
         private const string Value = "value";
+        private const string NullValue = "null";
 
         public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine)
         {
@@ -22,8 +23,16 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                 {
                     case Constants.MODEL_PERCENTAGE:
                         string valueString = (string)modelResult.Resolution[Value];
-                        valueString = valueString.TrimEnd('%');
-                        data.Add(new PercentageData(modelResult.Start, modelResult.Text, float.Parse(valueString)));
+                        if (!string.Equals(NullValue, valueString, StringComparison.OrdinalIgnoreCase))
+                        {
+                            valueString = valueString.TrimEnd('%');
+                            data.Add(
+                                new PercentageData(
+                                    tokenizedTextLine.LineTextIncludingLineBreak,
+                                    modelResult.Start,
+                                    modelResult.End + 1,
+                                    float.Parse(valueString)));
+                        }
                         break;
 
                     default:

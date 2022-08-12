@@ -7,7 +7,6 @@ namespace NotepadBasedCalculator.Core
     {
         private readonly IEnumerable<Lazy<IDataParser, DataParserMetadata>> _dataParsers;
         private readonly IEnumerable<Lazy<IStatementParser, ExpressionParserMetadata>> _expressionParsers;
-        private readonly Lexer _lexer = new();
 
         [ImportingConstructor]
         public Parser(
@@ -34,13 +33,15 @@ namespace NotepadBasedCalculator.Core
                 = GetApplicableDataParsers(culture);
 
             var resultLines = new List<ParserResultLine>();
-            IReadOnlyList<TokenizedTextLine> tokenizedLines = _lexer.Tokenize(input);
+            IReadOnlyList<TokenizedTextLine> tokenizedLines = Lexer.Tokenize(input);
 
             for (int i = 0; i < tokenizedLines.Count; i++)
             {
                 TokenizedTextLine tokenizedLine = tokenizedLines[i];
 
                 IReadOnlyList<IData> parsedData = await ParseDataAsync(culture, applicableDataParsers, tokenizedLine);
+
+                tokenizedLine = Lexer.TokenizeLine(tokenizedLine.Start, tokenizedLine.LineTextIncludingLineBreak, parsedData);
 
                 //var expressions = new List<Expression>();
                 //LinkedToken? nextTokenToParse = tokenizedLine.Tokens;
@@ -92,7 +93,7 @@ namespace NotepadBasedCalculator.Core
                 .ToList();
         }
 
-        private async Task<IReadOnlyList<IData>> ParseDataAsync(string culture, IReadOnlyList<Lazy<IDataParser, DataParserMetadata>> dataParsers, TokenizedTextLine tokenizedLine)
+        private static async Task<IReadOnlyList<IData>> ParseDataAsync(string culture, IReadOnlyList<Lazy<IDataParser, DataParserMetadata>> dataParsers, TokenizedTextLine tokenizedLine)
         {
             var rawDataBag = new List<IData>();
             var nonOverlappingData = new List<IData>();
@@ -135,7 +136,7 @@ namespace NotepadBasedCalculator.Core
             return nonOverlappingData;
         }
 
-        private bool IsDataOverlapped(IReadOnlyList<IData> allData, IData currentData)
+        private static bool IsDataOverlapped(IReadOnlyList<IData> allData, IData currentData)
         {
             for (int i = 0; i < allData.Count; i++)
             {

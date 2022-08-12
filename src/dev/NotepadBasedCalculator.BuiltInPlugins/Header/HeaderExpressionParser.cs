@@ -6,7 +6,7 @@
     {
         public override bool TryParseExpression(string culture, LinkedToken currentToken, out Expression? expression)
         {
-            if (currentToken.Token.Type == TokenType.SymbolOrPunctuation
+            if (currentToken.Token.Type == PredefinedTokenAndDataTypeNames.SymbolOrPunctuation
                 && currentToken.Token.IsTokenTextEqualTo("#", StringComparison.InvariantCulture))
             {
                 LinkedToken? previousToken = currentToken.Previous;
@@ -14,7 +14,7 @@
                 while (previousToken is not null)
                 {
                     firstTokenInLine = previousToken;
-                    if (previousToken.Token.Type != TokenType.Whitespace)
+                    if (previousToken.Token.Type != PredefinedTokenAndDataTypeNames.Whitespace)
                     {
                         expression = null;
                         return false;

@@ -9,6 +9,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
     public sealed class OrdinalDataParser : IDataParser
     {
         private const string Value = "value";
+        private const string NullValue = "null";
 
         public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine)
         {
@@ -22,7 +23,15 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                 switch (modelResult.TypeName)
                 {
                     case Constants.MODEL_ORDINAL:
-                        data.Add(new OrdinalData(modelResult.Start, modelResult.Text, int.Parse(valueString)));
+                        if (!string.Equals(NullValue, valueString, StringComparison.OrdinalIgnoreCase))
+                        {
+                            data.Add(
+                            new OrdinalData(
+                                tokenizedTextLine.LineTextIncludingLineBreak,
+                                modelResult.Start,
+                                modelResult.End + 1,
+                                long.Parse(valueString)));
+                        }
                         break;
 
                     case Constants.MODEL_ORDINAL_RELATIVE:

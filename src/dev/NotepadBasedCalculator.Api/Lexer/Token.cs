@@ -3,46 +3,29 @@
     /// <summary>
     /// Represents a token.
     /// </summary>
-    public sealed record Token
+    public record Token : IToken
     {
         private readonly string _lineTextIncludingLineBreak;
 
-        /// <summary>
-        /// Gets the type of token.
-        /// </summary>
-        public TokenType Type { get; }
+        public string Type { get; }
 
-        /// <summary>
-        /// Gets the position in the line where the token starts.
-        /// </summary>
         public int StartInLine { get; }
 
-        /// <summary>
-        /// Gets the position in the line where the token ends.
-        /// </summary>
         public int EndInLine { get; }
 
-        /// <summary>
-        /// Gets the length of the token.
-        /// </summary>
-        public int Length { get; }
+        public int Length => EndInLine - StartInLine;
 
-        internal Token(string lineTextIncludingLineBreak, TokenType type, int startInLine, int endInLine)
+        internal Token(string lineTextIncludingLineBreak, int startInLine, int endInLine, string tokenType)
         {
             Guard.IsGreaterThanOrEqualTo(startInLine, 0);
             Guard.IsGreaterThan(endInLine, startInLine);
             Guard.IsNotNullOrEmpty(lineTextIncludingLineBreak);
+            Guard.IsNotNullOrWhiteSpace(tokenType);
             _lineTextIncludingLineBreak = lineTextIncludingLineBreak;
 
-            Type = type;
+            Type = tokenType;
             StartInLine = startInLine;
             EndInLine = endInLine;
-            Length = endInLine - startInLine;
-        }
-
-        public override string ToString()
-        {
-            return $"{Type} ({StartInLine}, {EndInLine}): \"{GetText()}\"";
         }
 
         public bool IsTokenTextEqualTo(string compareTo, StringComparison comparisonType)
@@ -56,6 +39,11 @@
         public string GetText()
         {
             return _lineTextIncludingLineBreak.Substring(StartInLine, Length);
+        }
+
+        public override string ToString()
+        {
+            return $"[{Type}] ({StartInLine}, {EndInLine}): \"{GetText()}\"";
         }
     }
 }

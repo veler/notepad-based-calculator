@@ -16,11 +16,12 @@ I got -123 dollars in my pocket. // this is a comment.";
 
             Parser parser = ExportProvider.Import<Parser>();
             ParserResult parserResult = await parser.ParseAsync(input);
-            Assert.Equal(4, expressionLines.Count);
-            Assert.Equal(1, expressionLines[0].Count);
-            Assert.Equal(0, expressionLines[1].Count);
-            Assert.Equal(0, expressionLines[2].Count);
-            Assert.Equal(2, expressionLines[3].Count);
+            Assert.Fail("");
+            //Assert.Equal(4, expressionLines.Count);
+            //Assert.Equal(1, expressionLines[0].Count);
+            //Assert.Equal(0, expressionLines[1].Count);
+            //Assert.Equal(0, expressionLines[2].Count);
+            //Assert.Equal(2, expressionLines[3].Count);
         }
     }
 }

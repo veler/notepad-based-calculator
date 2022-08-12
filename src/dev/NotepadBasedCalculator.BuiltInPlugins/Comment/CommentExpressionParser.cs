@@ -7,10 +7,10 @@
     {
         public override bool TryParseExpression(string culture, LinkedToken currentToken, out Expression? expression)
         {
-            if (currentToken.Token.Type == TokenType.SymbolOrPunctuation
+            if (currentToken.Token.Type == PredefinedTokenAndDataTypeNames.SymbolOrPunctuation
                 && currentToken.Token.IsTokenTextEqualTo("/", StringComparison.InvariantCulture)
                 && currentToken.Next is not null
-                && currentToken.Next.Token.Type == TokenType.SymbolOrPunctuation
+                && currentToken.Next.Token.Type == PredefinedTokenAndDataTypeNames.SymbolOrPunctuation
                 && currentToken.Next.Token.IsTokenTextEqualTo("/", StringComparison.InvariantCulture))
             {
                 LinkedToken? nextToken = currentToken.Next;
