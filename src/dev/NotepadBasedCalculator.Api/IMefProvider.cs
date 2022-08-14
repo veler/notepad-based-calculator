@@ -3,7 +3,7 @@
     /// <summary>
     /// Provides a way to import MEF components on the fly.
     /// </summary>
-    public interface IMefProvider
+    public interface IMefProvider : IServiceProvider
     {
         /// <summary>
         /// Imports the given type.

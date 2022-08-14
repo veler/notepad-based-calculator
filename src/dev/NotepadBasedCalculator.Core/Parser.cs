@@ -5,18 +5,12 @@ namespace NotepadBasedCalculator.Core
     [Export]
     internal sealed class Parser
     {
-        private readonly IEnumerable<Lazy<IDataParser, DataParserMetadata>> _dataParsers;
-        private readonly IEnumerable<Lazy<IExpressionParser, ExpressionParserMetadata>> _expressionParsers;
+        private readonly IParserRepository _parserRepository;
 
         [ImportingConstructor]
-        public Parser(
-            [ImportMany] IEnumerable<Lazy<IDataParser, DataParserMetadata>> dataParsers,
-            [ImportMany] IEnumerable<Lazy<IExpressionParser, ExpressionParserMetadata>> expressionParsers)
+        public Parser(IParserRepository parserRepository)
         {
-            _dataParsers = dataParsers;
-            _expressionParsers
-                = expressionParsers
-                .OrderBy(p => p.Metadata.Order);
+            _parserRepository = parserRepository;
         }
 
         internal Task<ParserResult> ParseAsync(string? input)
@@ -29,9 +23,6 @@ namespace NotepadBasedCalculator.Core
             Guard.IsNotNullOrWhiteSpace(culture);
             culture = Culture.MapToNearestLanguage(culture);
 
-            IReadOnlyList<Lazy<IDataParser, DataParserMetadata>> applicableDataParsers
-                = GetApplicableDataParsers(culture);
-
             var resultLines = new List<ParserResultLine>();
             IReadOnlyList<TokenizedTextLine> tokenizedLines = Lexer.Tokenize(input);
 
@@ -39,72 +30,77 @@ namespace NotepadBasedCalculator.Core
             {
                 TokenizedTextLine tokenizedLine = tokenizedLines[i];
 
-                IReadOnlyList<IData> parsedData = await ParseDataAsync(culture, applicableDataParsers, tokenizedLine);
+                ParserResultLine parserResultLine = await ParseLineAsync(culture, tokenizedLine);
 
-                tokenizedLine = Lexer.TokenizeLine(tokenizedLine.Start, tokenizedLine.LineTextIncludingLineBreak, parsedData);
-
-                var expressions = new List<Expression>();
-                LinkedToken? nextTokenToParse = tokenizedLine.Tokens;
-                while (nextTokenToParse is not null)
-                {
-                    Expression? expression = ParseExpression(nextTokenToParse, culture);
-                    if (expression is not null)
-                    {
-                        nextTokenToParse = expression.LastToken.Next;
-                        expressions.Add(expression);
-                    }
-                    else
-                    {
-                        // Ignore the current token. It might be a word that we would simply skip.
-                        nextTokenToParse = nextTokenToParse.Next;
-                    }
-                }
-
-                resultLines.Add(new ParserResultLine(tokenizedLine, parsedData, expressions));
+                resultLines.Add(parserResultLine);
             }
 
             return new ParserResult(resultLines);
         }
 
-        private Expression? ParseExpression(LinkedToken linkedToken, string culture)
+        private async Task<ParserResultLine> ParseLineAsync(string culture, TokenizedTextLine tokenizedLine)
         {
-            Expression? expression = null;
+            IReadOnlyList<IData> parsedData = await ParseDataAsync(culture, tokenizedLine);
 
-            foreach (Lazy<IExpressionParser, ExpressionParserMetadata>? expressionParser in _expressionParsers)
+            tokenizedLine = Lexer.TokenizeLine(tokenizedLine.Start, tokenizedLine.LineTextIncludingLineBreak, parsedData);
+
+            IReadOnlyList<Statement> statements = ParseStatements(culture, tokenizedLine);
+
+            return new ParserResultLine(tokenizedLine, parsedData, statements);
+        }
+
+        private IReadOnlyList<Statement> ParseStatements(string culture, TokenizedTextLine tokenizedLine)
+        {
+            var statements = new List<Statement>();
+
+            LinkedToken? nextTokenToParse = tokenizedLine.Tokens;
+            while (nextTokenToParse is not null)
             {
-                if (expressionParser.Value.TryParseExpression(culture, linkedToken, out expression)
-                    && expression is not null)
+                Statement? statement = ParseNextStatement(culture, nextTokenToParse);
+                if (statement is not null)
+                {
+                    nextTokenToParse = statement.LastToken.Next;
+                    statements.Add(statement);
+                }
+                else
+                {
+                    // Ignore the current token. It might be a word that we would simply skip.
+                    nextTokenToParse = nextTokenToParse.Next;
+                }
+            }
+
+            return statements;
+        }
+
+        private Statement? ParseNextStatement(string culture, LinkedToken linkedToken)
+        {
+            Statement? statement = null;
+
+            foreach (IStatementParser statementParser in _parserRepository.GetApplicableStatementParsers(culture))
+            {
+                if (statementParser.TryParseStatement(culture, linkedToken, out statement)
+                    && statement is not null)
                 {
                     break;
                 }
             }
 
-            return expression;
+            return statement;
         }
 
-        private IReadOnlyList<Lazy<IDataParser, DataParserMetadata>> GetApplicableDataParsers(string culture)
-        {
-            return _dataParsers.Where(
-                p => p.Metadata.CultureCodes.Any(
-                    c => c == SupportedCultures.Any
-                        || string.Equals(c, culture, StringComparison.OrdinalIgnoreCase)))
-                .ToList();
-        }
-
-        private static async Task<IReadOnlyList<IData>> ParseDataAsync(string culture, IReadOnlyList<Lazy<IDataParser, DataParserMetadata>> dataParsers, TokenizedTextLine tokenizedLine)
+        private async Task<IReadOnlyList<IData>> ParseDataAsync(string culture, TokenizedTextLine tokenizedLine)
         {
             var rawDataBag = new List<IData>();
             var nonOverlappingData = new List<IData>();
             var tasks = new List<Task>();
 
-            for (int i = 0; i < dataParsers.Count; i++)
+            foreach (IDataParser dataParser in _parserRepository.GetApplicableDataParsers(culture))
             {
-                IDataParser parser = dataParsers[i].Value;
                 tasks.Add(
                     Task.Run(
                         () =>
                         {
-                            IReadOnlyList<IData>? results = parser.Parse(culture, tokenizedLine);
+                            IReadOnlyList<IData>? results = dataParser.Parse(culture, tokenizedLine);
                             if (results is not null)
                             {
                                 lock (rawDataBag)

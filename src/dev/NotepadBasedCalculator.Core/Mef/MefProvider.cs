@@ -3,10 +3,16 @@
 namespace NotepadBasedCalculator.Core.Mef
 {
     [Export(typeof(IMefProvider))]
+    [Export(typeof(IServiceProvider))]
     [Shared]
     internal sealed class MefProvider : IMefProvider
     {
         internal CompositionHost? ExportProvider { get; set; }
+
+        public object GetService(Type serviceType)
+        {
+            return ExportProvider!.GetExport(serviceType);
+        }
 
         public TExport Import<TExport>()
         {

@@ -6,16 +6,16 @@
 
         internal IReadOnlyList<IData> Data { get; }
 
-        internal IReadOnlyList<Expression> Expressions { get; }
+        internal IReadOnlyList<Statement> Statements { get; }
 
-        internal ParserResultLine(TokenizedTextLine tokenizedTextLine, IReadOnlyList<IData> data, IReadOnlyList<Expression> expressions)
+        internal ParserResultLine(TokenizedTextLine tokenizedTextLine, IReadOnlyList<IData> data, IReadOnlyList<Statement> statements)
         {
             Guard.IsNotNull(tokenizedTextLine);
             Guard.IsNotNull(data);
-            Guard.IsNotNull(expressions);
+            Guard.IsNotNull(statements);
             TokenizedTextLine = tokenizedTextLine;
             Data = data;
-            Expressions = expressions;
+            Statements = statements;
         }
     }
 }

@@ -1,13 +1,12 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Header
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Header
 {
-    [Export(typeof(IExpressionParser))]
+    [Export(typeof(IStatementParser))]
     [Culture(SupportedCultures.Any)]
-    internal sealed class HeaderExpressionParser : IExpressionParser
+    internal sealed class HeaderStatementParser : ParserBase, IStatementParser
     {
-        public bool TryParseExpression(string culture, LinkedToken currentToken, out Expression? expression)
+        public bool TryParseStatement(string culture, LinkedToken currentToken, out Statement? statement)
         {
-            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation)
-                && currentToken.Token.IsTokenTextEqualTo("#", StringComparison.InvariantCulture))
+            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, "#", StringComparison.InvariantCulture))
             {
                 LinkedToken? previousToken = currentToken.Previous;
                 LinkedToken firstTokenInLine = currentToken;
@@ -16,7 +15,7 @@
                     firstTokenInLine = previousToken;
                     if (previousToken.Token.IsNot(PredefinedTokenAndDataTypeNames.Whitespace))
                     {
-                        expression = null;
+                        statement = null;
                         return false;
                     }
 
@@ -31,11 +30,11 @@
                     nextToken = nextToken.Next;
                 }
 
-                expression = new HeaderExpression(firstTokenInLine, lastTokenInLine);
+                statement = new HeaderStatement(firstTokenInLine, lastTokenInLine);
                 return true;
             }
 
-            expression = null;
+            statement = null;
             return false;
         }
     }

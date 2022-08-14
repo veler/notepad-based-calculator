@@ -1,11 +1,11 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Comment
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Comment
 {
-    [Export(typeof(IExpressionParser))]
+    [Export(typeof(IStatementParser))]
     [Order(0)]
     [Culture(SupportedCultures.Any)]
-    internal sealed class CommentExpressionParser : ParserBase, IExpressionParser
+    internal sealed class CommentStatementParser : ParserBase, IStatementParser
     {
-        public bool TryParseExpression(string culture, LinkedToken currentToken, out Expression? expression)
+        public bool TryParseStatement(string culture, LinkedToken currentToken, out Statement? expression)
         {
             if (DiscardToken(currentToken, PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, "/", StringComparison.InvariantCulture, out LinkedToken? nextToken)
                 && nextToken is not null
@@ -18,7 +18,7 @@
                     nextToken = nextToken.Next;
                 }
 
-                expression = new CommentExpression(DiscardWhitespaces(currentToken)!, lastTokenInLine);
+                expression = new CommentStatement(DiscardWhitespaces(currentToken)!, lastTokenInLine);
                 return true;
             }
 

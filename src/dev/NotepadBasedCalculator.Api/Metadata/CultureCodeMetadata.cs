@@ -1,10 +1,10 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed class DataParserMetadata
+    public class CultureCodeMetadata
     {
         public string[] CultureCodes { get; set; }
 
-        public DataParserMetadata(IDictionary<string, object> metadata)
+        public CultureCodeMetadata(IDictionary<string, object> metadata)
         {
             if (metadata.TryGetValue(nameof(CultureAttribute.CultureCode), out object? value) && value is not null)
             {

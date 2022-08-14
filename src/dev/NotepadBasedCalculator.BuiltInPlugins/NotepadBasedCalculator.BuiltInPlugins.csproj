@@ -13,4 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Expressions\" />
+  </ItemGroup>
 </Project>

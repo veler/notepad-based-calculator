@@ -2,8 +2,22 @@
 {
     public abstract class ParserBase
     {
-        [ImportMany]
-        private IEnumerable<Lazy<IExpressionParser, ExpressionParserMetadata>>? ExpressionParsers { get; }
+        private readonly Lazy<IParserRepository> _parserRepository;
+
+        public IServiceProvider? ServiceProvider { get; set; }
+
+        protected ParserBase()
+        {
+            _parserRepository = new(() =>
+            {
+                if (ServiceProvider is null)
+                {
+                    ThrowHelper.ThrowInvalidOperationException($"Please set the {nameof(ServiceProvider)} property. Generally, this property is set through a MEF import.");
+                }
+
+                return (IParserRepository)ServiceProvider.GetService(typeof(IParserRepository));
+            });
+        }
 
         /// <summary>
         /// Discard the current token and switch to the next one.
@@ -89,27 +103,6 @@
             return false;
         }
 
-        protected Expression? ParseExpression(LinkedToken linkedToken, string culture)
-        {
-            if (ExpressionParsers is null)
-            {
-                ThrowHelper.ThrowInvalidOperationException("Unable to find any expression parser to use. Make sure to MEF export the class.");
-            }
-
-            Expression? expression = null;
-
-            foreach (Lazy<IExpressionParser, ExpressionParserMetadata>? expressionParser in ExpressionParsers)
-            {
-                if (expressionParser.Value.TryParseExpression(culture, linkedToken, out expression)
-                    && expression is not null)
-                {
-                    break;
-                }
-            }
-
-            return expression;
-        }
-
         protected LinkedToken? DiscardWhitespaces(LinkedToken? currentToken)
         {
             while (currentToken is not null && currentToken.Token.Is(PredefinedTokenAndDataTypeNames.Whitespace))
@@ -118,6 +111,22 @@
             }
 
             return currentToken;
+        }
+
+        protected Expression? ParseExpression(LinkedToken linkedToken, string culture)
+        {
+            Expression? expression = null;
+
+            foreach (IExpressionParser expressionParser in _parserRepository.Value.GetApplicableExpressionParsers(culture))
+            {
+                if (expressionParser.TryParseExpression(culture, linkedToken, out expression)
+                    && expression is not null)
+                {
+                    break;
+                }
+            }
+
+            return expression;
         }
     }
 }
