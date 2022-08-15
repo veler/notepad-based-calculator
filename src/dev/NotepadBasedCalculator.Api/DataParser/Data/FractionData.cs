@@ -12,5 +12,10 @@
                   PredefinedTokenAndDataTypeNames.SubDataTypeNames.Fraction)
         {
         }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }

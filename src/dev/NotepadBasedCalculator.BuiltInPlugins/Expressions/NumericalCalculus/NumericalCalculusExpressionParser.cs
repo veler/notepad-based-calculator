@@ -24,15 +24,15 @@
 
             if (expression is not null)
             {
-                LinkedToken? operatorToken = JumpToNextTokenOfType(nextToken, PredefinedTokenAndDataTypeNames.SymbolOrPunctuation);
+                LinkedToken? operatorToken = DiscardWords(nextToken);
                 while (operatorToken is not null)
                 {
                     BinaryOperatorType binaryOperator;
-                    if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, "+"))
+                    if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.AdditionOperator))
                     {
                         binaryOperator = BinaryOperatorType.Addition;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, "-"))
+                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.SubstractionOperator))
                     {
                         binaryOperator = BinaryOperatorType.Subtraction;
                     }
@@ -46,7 +46,7 @@
                     if (rightExpression is not null)
                     {
                         expression = new BinaryOperatorExpression(expression, binaryOperator, rightExpression);
-                        operatorToken = JumpToNextTokenOfType(nextToken, PredefinedTokenAndDataTypeNames.SymbolOrPunctuation);
+                        operatorToken = DiscardWords(nextToken);
                     }
                     else
                     {
@@ -70,15 +70,15 @@
 
             if (expression is not null)
             {
-                LinkedToken? operatorToken = JumpToNextTokenOfType(nextToken, PredefinedTokenAndDataTypeNames.SymbolOrPunctuation);
+                LinkedToken? operatorToken = DiscardWords(nextToken);
                 while (operatorToken is not null)
                 {
                     BinaryOperatorType binaryOperator;
-                    if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, "*"))
+                    if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.MultiplicationOperator))
                     {
                         binaryOperator = BinaryOperatorType.Multiply;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, "/"))
+                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.DivisionOperator))
                     {
                         binaryOperator = BinaryOperatorType.Division;
                     }
@@ -92,7 +92,7 @@
                     if (rightExpression is not null)
                     {
                         expression = new BinaryOperatorExpression(expression, binaryOperator, rightExpression);
-                        operatorToken = JumpToNextTokenOfType(nextToken, PredefinedTokenAndDataTypeNames.SymbolOrPunctuation);
+                        operatorToken = DiscardWords(nextToken);
                     }
                     else
                     {
@@ -114,34 +114,34 @@
         /// </summary>
         private Expression? ParserPrimaryExpression(string culture, LinkedToken? currentToken, out LinkedToken? nextToken)
         {
-            //while (currentToken is not null)
+            currentToken = DiscardWords(currentToken);
+            if (currentToken is not null)
             {
                 // Detect Numbers, Percentage, Dates...etc.
-
-                currentToken = DiscardWords(currentToken);
-                if (currentToken is not null)
+                if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.Numeric) && currentToken.Token is IData data)
                 {
-                    if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.Numeric) && currentToken.Token is IData data)
-                    {
-                        nextToken = currentToken.Next;
-                        return new DataExpression(currentToken, currentToken, data);
-                    }
-
-                    //  TODO: Detect variable reference.
-
-                    if (DiscardLeftParenth(currentToken, out nextToken))
-                    {
-                        Expression? parsedExpression = ParseExpression(culture, nextToken, out nextToken);
-
-                        if (parsedExpression is not null && DiscardRightParenth(nextToken, out nextToken))
-                        {
-                            return parsedExpression;
-                        }
-                    }
+                    nextToken = currentToken.Next;
+                    return new DataExpression(currentToken, currentToken, data);
                 }
 
-                // Could be a word we just want to ignore. Go to the next token.
-                //    currentToken = currentToken.Next;
+                //  TODO: Detect variable reference.
+
+                // Detect expression between parenthesis.
+                LinkedToken leftParenthToken = currentToken;
+                if (DiscardLeftParenth(leftParenthToken, out nextToken))
+                {
+                    Expression? parsedExpression = ParseExpression(culture, nextToken, out nextToken);
+
+                    LinkedToken? rightParenthToken = nextToken;
+                    if (parsedExpression is not null && DiscardRightParenth(rightParenthToken, out nextToken))
+                    {
+                        // overwrite expression's boundaries to include parenthesis.
+                        // This is helpful for the parser to jump to the next token correctly when there are multiple parenthesis next to each other.
+                        parsedExpression.FirstToken = leftParenthToken;
+                        parsedExpression.LastToken = rightParenthToken!;
+                        return parsedExpression;
+                    }
+                }
             }
 
             nextToken = null;
@@ -152,8 +152,7 @@
         {
             return DiscardToken(
                 currentToken,
-                PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                "(",
+                PredefinedTokenAndDataTypeNames.LeftParenth,
                 ignoreUnknownWords: true,
                 out nextToken);
         }
@@ -162,8 +161,7 @@
         {
             return DiscardToken(
                 currentToken,
-                PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                ")",
+                PredefinedTokenAndDataTypeNames.RightParenth,
                 ignoreUnknownWords: true,
                 out nextToken);
         }

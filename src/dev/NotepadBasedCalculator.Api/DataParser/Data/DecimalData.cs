@@ -12,5 +12,10 @@
                   PredefinedTokenAndDataTypeNames.SubDataTypeNames.Decimal)
         {
         }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }

@@ -17,22 +17,22 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(2, parserResult.Lines[0].Statements.Count);
             Statement statement = parserResult.Lines[0].Statements[1];
             Assert.IsType<CommentStatement>(statement);
-            Assert.Equal("[SymbolOrPunctuation] (5, 7): '//'", statement.FirstToken.ToString());
+            Assert.Equal("[comment_operators] (5, 7): '//'", statement.FirstToken.ToString());
             Assert.Equal("[Word] (7, 14): 'comment'", statement.LastToken.ToString());
 
             parserResult = await parser.ParseAsync(" 132 // comment");
             Assert.Equal(2, parserResult.Lines[0].Statements.Count);
             statement = parserResult.Lines[0].Statements[1];
             Assert.IsType<CommentStatement>(statement);
-            Assert.Equal("[SymbolOrPunctuation] (5, 7): '//'", statement.FirstToken.ToString());
+            Assert.Equal("[comment_operators] (5, 7): '//'", statement.FirstToken.ToString());
             Assert.Equal("[Word] (8, 15): 'comment'", statement.LastToken.ToString());
 
             parserResult = await parser.ParseAsync(" 132 // comment // comment 2");
             Assert.Equal(2, parserResult.Lines[0].Statements.Count);
             statement = parserResult.Lines[0].Statements[1];
             Assert.IsType<CommentStatement>(statement);
-            Assert.Equal("[SymbolOrPunctuation] (5, 7): '//'", statement.FirstToken.ToString());
-            Assert.Equal("IntegerData { Type = Numeric, StartInLine = 27, EndInLine = 28, Length = 1, Subtype = Integer, Value = 2 }", statement.LastToken.ToString());
+            Assert.Equal("[comment_operators] (5, 7): '//'", statement.FirstToken.ToString());
+            Assert.Equal("[Numeric] (27, 28): '2'", statement.LastToken.ToString());
 
             parserResult = await parser.ParseAsync(" 132 / / comment");
             Assert.Single(parserResult.Lines[0].Statements);
@@ -48,21 +48,21 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(parserResult.Lines[0].Statements);
             Statement statement = parserResult.Lines[0].Statements[0];
             Assert.IsType<HeaderStatement>(statement);
-            Assert.Equal("[SymbolOrPunctuation] (0, 1): '#'", statement.FirstToken.ToString());
+            Assert.Equal("[header_operators] (0, 1): '#'", statement.FirstToken.ToString());
             Assert.Equal("[Word] (1, 7): 'Header'", statement.LastToken.ToString());
 
             parserResult = await parser.ParseAsync(" # Header");
             Assert.Single(parserResult.Lines[0].Statements);
             statement = parserResult.Lines[0].Statements[0];
             Assert.IsType<HeaderStatement>(statement);
-            Assert.Equal("[SymbolOrPunctuation] (1, 2): '#'", statement.FirstToken.ToString());
+            Assert.Equal("[header_operators] (1, 2): '#'", statement.FirstToken.ToString());
             Assert.Equal("[Word] (3, 9): 'Header'", statement.LastToken.ToString());
 
             parserResult = await parser.ParseAsync(" ### Header");
             Assert.Single(parserResult.Lines[0].Statements);
             statement = parserResult.Lines[0].Statements[0];
             Assert.IsType<HeaderStatement>(statement);
-            Assert.Equal("[SymbolOrPunctuation] (1, 4): '###'", statement.FirstToken.ToString());
+            Assert.Equal("[header_operators] (1, 4): '###'", statement.FirstToken.ToString());
             Assert.Equal("[Word] (5, 11): 'Header'", statement.LastToken.ToString());
 
             parserResult = await parser.ParseAsync(" 132 # Header");

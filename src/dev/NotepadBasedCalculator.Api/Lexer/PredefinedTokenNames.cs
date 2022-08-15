@@ -14,6 +14,10 @@
 
         public const string NewLine = nameof(NewLine);
 
+        public const string LeftParenth = nameof(LeftParenth);
+
+        public const string RightParenth = nameof(RightParenth);
+
         public const string IsEqualToOperator = "equal_to_operators";
 
         public const string IsNotEqualToOperator = "not_equal_to_operators";
@@ -31,6 +35,10 @@
         public const string ThenIdentifier = "then_identifiers";
 
         public const string ElseIdentifier = "else_identifiers";
+
+        public const string CommentOperator = "comment_operators";
+
+        public const string HeaderOperator = "header_operators";
 
         public const string Numeric = nameof(Numeric);
 

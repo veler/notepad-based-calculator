@@ -36,7 +36,7 @@
 
         public override string ToString()
         {
-            return $"{LeftExpression} {Operator.GetDescription()} {RightExpression}";
+            return $"({LeftExpression} {Operator.GetDescription()} {RightExpression})";
         }
     }
 }

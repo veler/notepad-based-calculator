@@ -2,6 +2,6 @@
 {
     public interface IGrammarProvider
     {
-        TokenDefinitionGrammar? LoadTokenDefinitionGrammar(string culture);
+        IReadOnlyList<TokenDefinitionGrammar>? LoadTokenDefinitionGrammar(string culture);
     }
 }

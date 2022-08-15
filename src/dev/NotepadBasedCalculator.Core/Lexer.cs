@@ -161,7 +161,8 @@ namespace NotepadBasedCalculator.Core
                         p => p.Metadata.CultureCodes.Any(
                             c => CultureHelper.IsCultureApplicable(c, culture)))
                     .Select(p => p.Value.LoadTokenDefinitionGrammar(culture))
-                    .Where(g => g is not null)!;
+                    .Where(g => g is not null)
+                    .SelectMany(g => g);
 
                 var definitions = new List<TokenDefinition>();
 
@@ -314,7 +315,6 @@ namespace NotepadBasedCalculator.Core
                             {
                                 case PredefinedTokenAndDataTypeNames.Word:
                                 case PredefinedTokenAndDataTypeNames.Digit:
-                                case PredefinedTokenAndDataTypeNames.SymbolOrPunctuation:
                                     nextCharIndex = GetEndPositionOfRepeatedTokenType(startIndex, tokenType);
                                     if (nextCharIndex > startIndex + 1)
                                     {
@@ -335,6 +335,11 @@ namespace NotepadBasedCalculator.Core
                                             }
                                         }
                                     }
+                                    break;
+
+                                case PredefinedTokenAndDataTypeNames.SymbolOrPunctuation:
+                                case PredefinedTokenAndDataTypeNames.LeftParenth:
+                                case PredefinedTokenAndDataTypeNames.RightParenth:
                                     break;
 
                                 default:
@@ -430,6 +435,16 @@ namespace NotepadBasedCalculator.Core
                 if (char.IsWhiteSpace(c))
                 {
                     return PredefinedTokenAndDataTypeNames.Whitespace;
+                }
+
+                if (c == '(')
+                {
+                    return PredefinedTokenAndDataTypeNames.LeftParenth;
+                }
+
+                if (c == ')')
+                {
+                    return PredefinedTokenAndDataTypeNames.RightParenth;
                 }
 
                 if (char.IsPunctuation(c)

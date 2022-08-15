@@ -11,7 +11,8 @@
     ],
     "addition_operators": [
       "+",
-      "plus"
+      "plus",
+      "and"
     ],
     "substration_operators": [
       "−",
@@ -19,14 +20,19 @@
       "minus"
     ],
     "multiplication_operators": [
+      "*",
       "×",
       "x",
       "⋅",
-      "·"
+      "·",
+      "multiplied by",
+      "multiply by"
     ],
     "division_operators": [
       "÷",
-      "per"
+      "per",
+      "divided by",
+      "divide by"
     ],
     "if_identifiers": [
       "if"

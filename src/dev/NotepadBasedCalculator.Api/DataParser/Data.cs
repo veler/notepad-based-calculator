@@ -40,5 +40,10 @@
         {
             return StartInLine.CompareTo(other?.StartInLine ?? 0);
         }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }

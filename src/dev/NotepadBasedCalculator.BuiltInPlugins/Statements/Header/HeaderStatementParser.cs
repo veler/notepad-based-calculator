@@ -5,20 +5,9 @@
     [Order(int.MinValue)]
     internal sealed class HeaderStatementParser : ParserBase, IStatementParser
     {
-        private static readonly string[] Headers
-            = new[]
-            {
-                "#",
-                "##",
-                "###",
-                "####",
-                "#####",
-                "######"
-            };
-
         public bool TryParseStatement(string culture, LinkedToken currentToken, out Statement? statement)
         {
-            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, Headers, StringComparison.InvariantCulture))
+            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.HeaderOperator))
             {
                 LinkedToken? previousToken = currentToken.Previous;
                 LinkedToken firstTokenInLine = currentToken;

@@ -5,9 +5,9 @@
     /// </summary>
     public abstract class Expression
     {
-        public LinkedToken FirstToken { get; }
+        public LinkedToken FirstToken { get; set; }
 
-        public LinkedToken LastToken { get; }
+        public LinkedToken LastToken { get; set; }
 
         protected Expression(LinkedToken firstToken, LinkedToken lastToken)
         {

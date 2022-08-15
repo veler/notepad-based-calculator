@@ -5,9 +5,11 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Grammars\en-us\TokenDefinition.json" />
+    <None Remove="Grammars\SpecialTokenDefinition.json" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Grammars\en-us\TokenDefinition.json" />
+    <EmbeddedResource Include="Grammars\SpecialTokenDefinition.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />

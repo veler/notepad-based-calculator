@@ -12,5 +12,10 @@
                   PredefinedTokenAndDataTypeNames.SubDataTypeNames.Percentage)
         {
         }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }

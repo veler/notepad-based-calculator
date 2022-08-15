@@ -7,7 +7,7 @@
     {
         public bool TryParseStatement(string culture, LinkedToken currentToken, out Statement? expression)
         {
-            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, "//", StringComparison.InvariantCulture))
+            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.CommentOperator))
             {
                 LinkedToken lastTokenInLine = currentToken;
                 LinkedToken? nextToken = currentToken.Next;

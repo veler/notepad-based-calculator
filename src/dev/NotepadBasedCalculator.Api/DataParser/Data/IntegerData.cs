@@ -12,5 +12,10 @@
                   PredefinedTokenAndDataTypeNames.SubDataTypeNames.Integer)
         {
         }
+
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }
