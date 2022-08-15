@@ -7,5 +7,9 @@
         IEnumerable<IExpressionParser> GetApplicableExpressionParsers(string culture);
 
         IEnumerable<IStatementParser> GetApplicableStatementParsers(string culture);
+
+        IExpressionParser? GetExpressionParser(string culture, string expressionParserName);
+
+        IStatementParser? GetStatementParser(string culture, string expressionParserName);
     }
 }

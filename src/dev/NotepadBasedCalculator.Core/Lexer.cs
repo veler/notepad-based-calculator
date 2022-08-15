@@ -1,13 +1,28 @@
 ﻿using System.Collections;
+using System.Collections.Immutable;
 
 namespace NotepadBasedCalculator.Core
 {
-    internal static class Lexer
+    [Export(typeof(Lexer))]
+    [Shared]
+    internal sealed class Lexer
     {
-        internal static readonly string[] LineBreakers = new[] { "\r\n", "\n" };
+        private readonly IEnumerable<Lazy<IGrammarProvider, CultureCodeMetadata>> _grammarProviders;
+        private readonly Dictionary<string, IReadOnlyList<TokenDefinition>> _tokenDefinitionGrammars = new();
 
-        internal static IReadOnlyList<TokenizedTextLine> Tokenize(string? wholeDocument)
+        internal readonly string[] LineBreakers = new[] { "\r\n", "\n" };
+
+        [ImportingConstructor]
+        public Lexer(
+            [ImportMany] IEnumerable<Lazy<IGrammarProvider, CultureCodeMetadata>> grammarProviders)
         {
+            _grammarProviders = grammarProviders;
+        }
+
+        internal IReadOnlyList<TokenizedTextLine> Tokenize(string culture, string? wholeDocument)
+        {
+            IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars = GetTokenDefinitionGrammars(culture);
+
             var tokenizedLines = new List<TokenizedTextLine>();
 
             if (!string.IsNullOrEmpty(wholeDocument))
@@ -18,7 +33,7 @@ namespace NotepadBasedCalculator.Core
                 int i = 0;
                 while (i < lines.Count)
                 {
-                    TokenizedTextLine tokenizedLine = TokenizeLineInternal(lines[i], previousTokenizedLine);
+                    TokenizedTextLine tokenizedLine = TokenizeLineInternal(lines[i], previousTokenizedLine, orderedTokenDefinitionGrammars);
                     tokenizedLines.Add(tokenizedLine);
 
                     previousTokenizedLine = tokenizedLine;
@@ -46,13 +61,15 @@ namespace NotepadBasedCalculator.Core
         /// <param name="lineTextIncludingLineBreak"></param>
         /// <param name="knownData">An ordered list of <see cref="IData"/> that have already been parsed in the <paramref name="lineTextIncludingLineBreak"/>.</param>
         /// <returns></returns>
-        internal static TokenizedTextLine TokenizeLine(int startPositionInDocument, string lineTextIncludingLineBreak, IReadOnlyList<IData>? knownData = null)
+        internal TokenizedTextLine TokenizeLine(string culture, int startPositionInDocument, string lineTextIncludingLineBreak, IReadOnlyList<IData>? knownData = null)
         {
             Guard.IsGreaterThanOrEqualTo(startPositionInDocument, 0);
 
+            IReadOnlyList<TokenDefinition> tokenDefinitionGrammars = GetTokenDefinitionGrammars(culture);
+
             if (!string.IsNullOrEmpty(lineTextIncludingLineBreak))
             {
-                return TokenizeLineInternal(startPositionInDocument, lineTextIncludingLineBreak, knownData);
+                return TokenizeLineInternal(startPositionInDocument, lineTextIncludingLineBreak, tokenDefinitionGrammars, knownData);
             }
             else
             {
@@ -60,17 +77,17 @@ namespace NotepadBasedCalculator.Core
             }
         }
 
-        private static TokenizedTextLine TokenizeLineInternal(string lineTextIncludingLineBreak, TokenizedTextLine? previousTokenizedLine, IReadOnlyList<IData>? knownData = null)
+        private TokenizedTextLine TokenizeLineInternal(string lineTextIncludingLineBreak, TokenizedTextLine? previousTokenizedLine, IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars, IReadOnlyList<IData>? knownData = null)
         {
             int lineStart = previousTokenizedLine?.EndIncludingLineBreak ?? 0;
-            return TokenizeLineInternal(lineStart, lineTextIncludingLineBreak, knownData);
+            return TokenizeLineInternal(lineStart, lineTextIncludingLineBreak, orderedTokenDefinitionGrammars, knownData);
         }
 
-        private static TokenizedTextLine TokenizeLineInternal(int startPositionInDocument, string lineTextIncludingLineBreak, IReadOnlyList<IData>? knownData = null)
+        private TokenizedTextLine TokenizeLineInternal(int startPositionInDocument, string lineTextIncludingLineBreak, IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars, IReadOnlyList<IData>? knownData = null)
         {
             Guard.IsGreaterThanOrEqualTo(startPositionInDocument, 0);
 
-            var tokenEnumerator = new LineTokenEnumerator(lineTextIncludingLineBreak, knownData);
+            var tokenEnumerator = new LineTokenEnumerator(lineTextIncludingLineBreak, orderedTokenDefinitionGrammars, knownData);
 
             int lineBreakLength = 0;
             for (int i = 0; i < LineBreakers.Length; i++)
@@ -105,7 +122,7 @@ namespace NotepadBasedCalculator.Core
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
-        private static IReadOnlyList<string> SplitLines(string input)
+        private IReadOnlyList<string> SplitLines(string input)
         {
             var lines = new List<string>() { input };
 
@@ -129,10 +146,67 @@ namespace NotepadBasedCalculator.Core
             return lines;
         }
 
+        private IReadOnlyList<TokenDefinition> GetTokenDefinitionGrammars(string culture)
+        {
+            lock (_tokenDefinitionGrammars)
+            {
+                string key = culture;
+                if (_tokenDefinitionGrammars.TryGetValue(key, out IReadOnlyList<TokenDefinition>? tokenDefinitions) && tokenDefinitions is not null)
+                {
+                    return tokenDefinitions;
+                }
+
+                IEnumerable<TokenDefinitionGrammar> grammars
+                    = _grammarProviders.Where(
+                        p => p.Metadata.CultureCodes.Any(
+                            c => CultureHelper.IsCultureApplicable(c, culture)))
+                    .Select(p => p.Value.LoadTokenDefinitionGrammar(culture))
+                    .Where(g => g is not null)!;
+
+                var definitions = new List<TokenDefinition>();
+
+                foreach (TokenDefinitionGrammar grammar in grammars)
+                {
+                    if (grammar.CommonTokens is not null)
+                    {
+                        foreach (KeyValuePair<string, string[]> item in grammar.CommonTokens)
+                        {
+                            foreach (string identifier in item.Value)
+                            {
+                                definitions.Add(new TokenDefinition { TokenText = identifier, TokenType = item.Key });
+                            }
+                        }
+                    }
+                }
+
+                tokenDefinitions = definitions.ToImmutableSortedSet(new DescendingComparer<TokenDefinition>());
+                _tokenDefinitionGrammars[key] = tokenDefinitions;
+                return tokenDefinitions;
+            }
+        }
+
+        private record TokenDefinition : IComparable<TokenDefinition>
+        {
+            public string TokenText { get; set; } = default!;
+
+            public string TokenType { get; set; } = default!;
+
+            public int CompareTo(TokenDefinition? other)
+            {
+                int result = TokenText.Length.CompareTo(other!.TokenText.Length);
+                if (result == 0)
+                {
+                    result = TokenText.CompareTo(other.TokenText);
+                }
+                return result;
+            }
+        }
+
         private class LineTokenEnumerator : ITokenEnumerator
         {
             private readonly object _syncLock = new();
             private readonly string _lineTextIncludingLineBreak;
+            private readonly IReadOnlyList<TokenDefinition> _orderedTokenDefinitionGrammars;
             private readonly IReadOnlyList<IData>? _knownData;
 
             private bool _disposed;
@@ -153,10 +227,11 @@ namespace NotepadBasedCalculator.Core
 
             object? IEnumerator.Current => Current;
 
-            public LineTokenEnumerator(string lineTextIncludingLineBreak, IReadOnlyList<IData>? knownData)
+            public LineTokenEnumerator(string lineTextIncludingLineBreak, IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars, IReadOnlyList<IData>? knownData)
             {
                 Guard.IsNotNull(lineTextIncludingLineBreak);
                 _lineTextIncludingLineBreak = lineTextIncludingLineBreak;
+                _orderedTokenDefinitionGrammars = orderedTokenDefinitionGrammars;
                 _knownData = knownData;
             }
 
@@ -181,9 +256,9 @@ namespace NotepadBasedCalculator.Core
                         return false;
                     }
 
-                    IToken token = DetectToken(_currentPositionInLine);
+                    IToken? token = DetectToken(_currentPositionInLine);
 
-                    if (token.Is(PredefinedTokenAndDataTypeNames.NewLine))
+                    if (token is null || token.Is(PredefinedTokenAndDataTypeNames.NewLine))
                     {
                         _currentToken = null;
                         return false;
@@ -212,53 +287,69 @@ namespace NotepadBasedCalculator.Core
                 }
             }
 
-            private IToken DetectToken(int startIndex)
+            private IToken? DetectToken(int startIndex)
             {
-                if (TryFindDataAtPosition(startIndex, out IData? foundData) && foundData is not null)
+                while (_lineTextIncludingLineBreak.Length > startIndex)
                 {
-                    return foundData;
-                }
-
-                char startChar = _lineTextIncludingLineBreak[startIndex];
-                int endIndex = startIndex + 1;
-
-                string tokenType = DetectTokenType(startChar);
-
-                if (_lineTextIncludingLineBreak.Length > startIndex)
-                {
-                    int nextCharIndex;
-                    switch (tokenType)
+                    if (TryFindDataAtPosition(startIndex, out IData? foundData) && foundData is not null)
                     {
-                        case PredefinedTokenAndDataTypeNames.Word:
-                        case PredefinedTokenAndDataTypeNames.Whitespace:
-                            nextCharIndex = GetEndPositionOfRepeatedTokenType(startIndex, tokenType);
-                            if (nextCharIndex > startIndex + 1)
-                            {
-                                endIndex = nextCharIndex;
-                            }
-                            break;
-
-                        case PredefinedTokenAndDataTypeNames.NewLine:
-                            if (startChar == '\r')
-                            {
-                                nextCharIndex = startIndex + 1;
-                                if (_lineTextIncludingLineBreak.Length > nextCharIndex)
-                                {
-                                    char nextChar = _lineTextIncludingLineBreak[nextCharIndex];
-                                    if (nextChar == '\n')
-                                    {
-                                        endIndex = nextCharIndex + 1;
-                                    }
-                                }
-                            }
-                            break;
-
-                        default:
-                            break;
+                        return foundData;
                     }
+                    else if (TryDetectTokenFromGrammarAtPosition(startIndex, out Token? foundToken) && foundToken is not null)
+                    {
+                        return foundToken;
+                    }
+
+                    char startChar = _lineTextIncludingLineBreak[startIndex];
+                    int endIndex = startIndex + 1;
+
+                    string tokenType = DetectTokenType(startChar);
+
+                    if (tokenType != PredefinedTokenAndDataTypeNames.Whitespace)
+                    {
+                        if (_lineTextIncludingLineBreak.Length > startIndex)
+                        {
+                            int nextCharIndex;
+                            switch (tokenType)
+                            {
+                                case PredefinedTokenAndDataTypeNames.Word:
+                                case PredefinedTokenAndDataTypeNames.Digit:
+                                case PredefinedTokenAndDataTypeNames.SymbolOrPunctuation:
+                                    nextCharIndex = GetEndPositionOfRepeatedTokenType(startIndex, tokenType);
+                                    if (nextCharIndex > startIndex + 1)
+                                    {
+                                        endIndex = nextCharIndex;
+                                    }
+                                    break;
+
+                                case PredefinedTokenAndDataTypeNames.NewLine:
+                                    if (startChar == '\r')
+                                    {
+                                        nextCharIndex = startIndex + 1;
+                                        if (_lineTextIncludingLineBreak.Length > nextCharIndex)
+                                        {
+                                            char nextChar = _lineTextIncludingLineBreak[nextCharIndex];
+                                            if (nextChar == '\n')
+                                            {
+                                                endIndex = nextCharIndex + 1;
+                                            }
+                                        }
+                                    }
+                                    break;
+
+                                default:
+                                    ThrowHelper.ThrowNotSupportedException();
+                                    break;
+                            }
+                        }
+
+                        return new Token(_lineTextIncludingLineBreak, startIndex, endIndex, tokenType);
+                    }
+
+                    startIndex++;
                 }
 
-                return new Token(_lineTextIncludingLineBreak, startIndex, endIndex, tokenType);
+                return null;
             }
 
             private bool TryFindDataAtPosition(int startIndex, out IData? foundData)
@@ -289,6 +380,28 @@ namespace NotepadBasedCalculator.Core
                 }
 
                 foundData = null;
+                return false;
+            }
+
+            private bool TryDetectTokenFromGrammarAtPosition(int startIndex, out Token? foundToken)
+            {
+                if (_orderedTokenDefinitionGrammars is not null)
+                {
+                    for (int i = 0; i < _orderedTokenDefinitionGrammars.Count; i++)
+                    {
+                        TokenDefinition tokenDefinition = _orderedTokenDefinitionGrammars[i];
+                        if (_lineTextIncludingLineBreak.Length >= startIndex + tokenDefinition.TokenText.Length)
+                        {
+                            if (_lineTextIncludingLineBreak.IndexOf(tokenDefinition.TokenText, startIndex, tokenDefinition.TokenText.Length, StringComparison.OrdinalIgnoreCase) == startIndex)
+                            {
+                                foundToken = new Token(_lineTextIncludingLineBreak, startIndex, startIndex + tokenDefinition.TokenText.Length, tokenDefinition.TokenType);
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                foundToken = null;
                 return false;
             }
 

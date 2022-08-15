@@ -5,12 +5,16 @@ namespace NotepadBasedCalculator.Core
     [Export]
     internal sealed class Parser
     {
+        private readonly ILogger _logger;
         private readonly IParserRepository _parserRepository;
+        private readonly Lexer _lexer;
 
         [ImportingConstructor]
-        public Parser(IParserRepository parserRepository)
+        public Parser(ILogger logger, IParserRepository parserRepository, Lexer lexer)
         {
+            _logger = logger;
             _parserRepository = parserRepository;
+            _lexer = lexer;
         }
 
         internal Task<ParserResult> ParseAsync(string? input)
@@ -24,7 +28,7 @@ namespace NotepadBasedCalculator.Core
             culture = Culture.MapToNearestLanguage(culture);
 
             var resultLines = new List<ParserResultLine>();
-            IReadOnlyList<TokenizedTextLine> tokenizedLines = Lexer.Tokenize(input);
+            IReadOnlyList<TokenizedTextLine> tokenizedLines = _lexer.Tokenize(culture, input);
 
             for (int i = 0; i < tokenizedLines.Count; i++)
             {
@@ -42,7 +46,7 @@ namespace NotepadBasedCalculator.Core
         {
             IReadOnlyList<IData> parsedData = await ParseDataAsync(culture, tokenizedLine);
 
-            tokenizedLine = Lexer.TokenizeLine(tokenizedLine.Start, tokenizedLine.LineTextIncludingLineBreak, parsedData);
+            tokenizedLine = _lexer.TokenizeLine(culture, tokenizedLine.Start, tokenizedLine.LineTextIncludingLineBreak, parsedData);
 
             IReadOnlyList<Statement> statements = ParseStatements(culture, tokenizedLine);
 
@@ -78,10 +82,20 @@ namespace NotepadBasedCalculator.Core
 
             foreach (IStatementParser statementParser in _parserRepository.GetApplicableStatementParsers(culture))
             {
-                if (statementParser.TryParseStatement(culture, linkedToken, out statement)
-                    && statement is not null)
+                try
                 {
-                    break;
+                    if (statementParser.TryParseStatement(culture, linkedToken, out statement)
+                        && statement is not null)
+                    {
+                        break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogFault(
+                        "Parser.ParseNextStatement.Fault",
+                        ex,
+                        ("ParserName", statementParser.GetType().FullName));
                 }
             }
 
@@ -100,13 +114,23 @@ namespace NotepadBasedCalculator.Core
                     Task.Run(
                         () =>
                         {
-                            IReadOnlyList<IData>? results = dataParser.Parse(culture, tokenizedLine);
-                            if (results is not null)
+                            try
                             {
-                                lock (rawDataBag)
+                                IReadOnlyList<IData>? results = dataParser.Parse(culture, tokenizedLine);
+                                if (results is not null)
                                 {
-                                    rawDataBag.AddRange(results);
+                                    lock (rawDataBag)
+                                    {
+                                        rawDataBag.AddRange(results);
+                                    }
                                 }
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogFault(
+                                    "Parser.ParseData.Fault",
+                                    ex,
+                                    ("DataParserName", dataParser.GetType().FullName));
                             }
                         }));
             }

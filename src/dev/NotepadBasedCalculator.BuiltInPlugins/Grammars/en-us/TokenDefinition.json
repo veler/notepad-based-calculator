@@ -1,0 +1,41 @@
+{
+  "common_tokens": {
+    "equal_to_operators": [
+      "==",
+      "equal"
+    ],
+    "not_equal_to_operators": [
+      "!=",
+      "=!",
+      "not equal"
+    ],
+    "addition_operators": [
+      "+",
+      "plus"
+    ],
+    "substration_operators": [
+      "−",
+      "–",
+      "minus"
+    ],
+    "multiplication_operators": [
+      "×",
+      "x",
+      "⋅",
+      "·"
+    ],
+    "division_operators": [
+      "÷",
+      "per"
+    ],
+    "if_identifiers": [
+      "if"
+    ],
+    "then_identifiers": [
+      "then"
+    ],
+    "else_identifiers": [
+      "else"
+    ]
+  }
+}

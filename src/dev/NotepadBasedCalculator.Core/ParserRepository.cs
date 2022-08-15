@@ -1,6 +1,9 @@
-﻿namespace NotepadBasedCalculator.Core
+﻿using Microsoft.Recognizers.Text;
+
+namespace NotepadBasedCalculator.Core
 {
     [Export(typeof(IParserRepository))]
+    [Shared]
     internal sealed class ParserRepository : IParserRepository
     {
         private readonly IServiceProvider _serviceProvider;
@@ -42,12 +45,12 @@
 
                 parsers = _dataParsers.Where(
                     p => p.Metadata.CultureCodes.Any(
-                        c => IsCultureApplicable(c, culture)))
+                        c => CultureHelper.IsCultureApplicable(c, culture)))
                     .Select(p =>
                     {
                         if (p.Value is ParserBase parserBase)
                         {
-                            parserBase.ServiceProvider = _serviceProvider;
+                            parserBase.ServiceProvider ??= _serviceProvider;
                         }
                         return p.Value;
                     });
@@ -69,12 +72,12 @@
 
                 parsers = _expressionParsers.Where(
                     p => p.Metadata.CultureCodes.Any(
-                        c => IsCultureApplicable(c, culture)))
+                        c => CultureHelper.IsCultureApplicable(c, culture)))
                     .Select(p =>
                     {
                         if (p.Value is ParserBase parserBase)
                         {
-                            parserBase.ServiceProvider = _serviceProvider;
+                            parserBase.ServiceProvider ??= _serviceProvider;
                         }
                         return p.Value;
                     });
@@ -96,12 +99,12 @@
 
                 parsers = _statementParsers.Where(
                     p => p.Metadata.CultureCodes.Any(
-                        c => IsCultureApplicable(c, culture)))
+                        c => CultureHelper.IsCultureApplicable(c, culture)))
                     .Select(p =>
                     {
                         if (p.Value is ParserBase parserBase)
                         {
-                            parserBase.ServiceProvider = _serviceProvider;
+                            parserBase.ServiceProvider ??= _serviceProvider;
                         }
                         return p.Value;
                     });
@@ -111,9 +114,38 @@
             }
         }
 
-        private static bool IsCultureApplicable(string culture, string targetCulture)
+        public IExpressionParser? GetExpressionParser(string culture, string expressionParserName)
         {
-            return culture == SupportedCultures.Any || string.Equals(culture, targetCulture, StringComparison.OrdinalIgnoreCase);
+            IExpressionParser? parser
+                = _expressionParsers
+                    .Where(
+                        p => string.Equals(p.Metadata.Name, expressionParserName, StringComparison.Ordinal)
+                            && p.Metadata.CultureCodes.Any(c => CultureHelper.IsCultureApplicable(c, culture)))
+                    .SingleOrDefault()?.Value;
+
+            if (parser is ParserBase parserBase)
+            {
+                parserBase.ServiceProvider ??= _serviceProvider;
+            }
+
+            return parser;
+        }
+
+        public IStatementParser? GetStatementParser(string culture, string expressionParserName)
+        {
+            IStatementParser? parser
+                = _statementParsers
+                    .Where(
+                        p => string.Equals(p.Metadata.Name, expressionParserName, StringComparison.Ordinal)
+                            && p.Metadata.CultureCodes.Any(c => CultureHelper.IsCultureApplicable(c, culture)))
+                    .SingleOrDefault()?.Value;
+
+            if (parser is ParserBase parserBase)
+            {
+                parserBase.ServiceProvider ??= _serviceProvider;
+            }
+
+            return parser;
         }
 
         private struct SearchQuery : IEquatable<SearchQuery>

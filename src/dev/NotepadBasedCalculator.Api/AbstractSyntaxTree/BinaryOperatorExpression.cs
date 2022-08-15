@@ -1,0 +1,42 @@
+﻿namespace NotepadBasedCalculator.Api
+{
+    /// <summary>
+    /// Represents a binary conditional expression
+    /// </summary>
+    public sealed class BinaryOperatorExpression : Expression
+    {
+        /// <summary>
+        /// Gets or sets the left expression
+        /// </summary>
+        public Expression LeftExpression { get; set; }
+
+        /// <summary>
+        /// Gets the binary operator
+        /// </summary>
+        public BinaryOperatorType Operator { get; }
+
+        /// <summary>
+        /// Gets or sets the right expression
+        /// </summary>
+        public Expression RightExpression { get; set; }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BinaryOperatorExpression"/> class.
+        /// </summary>
+        /// <param name="leftExpression">The left expression</param>
+        /// <param name="conditionalOperator">The binary operator</param>
+        /// <param name="rightExpression">The right expression</param>
+        public BinaryOperatorExpression(Expression leftExpression, BinaryOperatorType conditionalOperator, Expression rightExpression)
+            : base(leftExpression.FirstToken, rightExpression.LastToken)
+        {
+            LeftExpression = leftExpression;
+            Operator = conditionalOperator;
+            RightExpression = rightExpression;
+        }
+
+        public override string ToString()
+        {
+            return $"{LeftExpression} {Operator.GetDescription()} {RightExpression}";
+        }
+    }
+}

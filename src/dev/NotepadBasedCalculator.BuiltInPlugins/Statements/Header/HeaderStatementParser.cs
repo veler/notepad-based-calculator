@@ -2,11 +2,23 @@
 {
     [Export(typeof(IStatementParser))]
     [Culture(SupportedCultures.Any)]
+    [Order(int.MinValue)]
     internal sealed class HeaderStatementParser : ParserBase, IStatementParser
     {
+        private static readonly string[] Headers
+            = new[]
+            {
+                "#",
+                "##",
+                "###",
+                "####",
+                "#####",
+                "######"
+            };
+
         public bool TryParseStatement(string culture, LinkedToken currentToken, out Statement? statement)
         {
-            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, "#", StringComparison.InvariantCulture))
+            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, Headers, StringComparison.InvariantCulture))
             {
                 LinkedToken? previousToken = currentToken.Previous;
                 LinkedToken firstTokenInLine = currentToken;

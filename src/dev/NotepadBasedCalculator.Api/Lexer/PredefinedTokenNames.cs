@@ -14,6 +14,24 @@
 
         public const string NewLine = nameof(NewLine);
 
+        public const string IsEqualToOperator = "equal_to_operators";
+
+        public const string IsNotEqualToOperator = "not_equal_to_operators";
+
+        public const string AdditionOperator = "addition_operators";
+
+        public const string SubstractionOperator = "substration_operators";
+
+        public const string MultiplicationOperator = "multiplication_operators";
+
+        public const string DivisionOperator = "division_operators";
+
+        public const string IfIdentifier = "if_identifiers";
+
+        public const string ThenIdentifier = "then_identifiers";
+
+        public const string ElseIdentifier = "else_identifiers";
+
         public const string Numeric = nameof(Numeric);
 
         public static class SubDataTypeNames

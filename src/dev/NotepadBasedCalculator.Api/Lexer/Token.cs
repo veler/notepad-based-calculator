@@ -43,6 +43,23 @@
             return Is(expectedType) && IsTokenTextEqualTo(expectedTokenText, comparisonType);
         }
 
+        public bool Is(string expectedType, string[] expectedTokenTexts, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
+        {
+            Guard.IsNotNull(expectedTokenTexts);
+            if (Is(expectedType))
+            {
+                for (int i = 0; i < expectedTokenTexts.Length; i++)
+                {
+                    if (IsTokenTextEqualTo(expectedTokenTexts[i], comparisonType))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public bool IsTokenTextEqualTo(string compareTo, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
             if (string.IsNullOrEmpty(compareTo) || compareTo.Length != Length)

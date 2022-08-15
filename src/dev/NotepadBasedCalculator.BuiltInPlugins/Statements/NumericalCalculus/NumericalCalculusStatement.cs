@@ -1,0 +1,18 @@
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus
+{
+    internal sealed class NumericalCalculusStatement : Statement
+    {
+        internal Expression NumericalCalculusExpression { get; }
+
+        internal NumericalCalculusStatement(LinkedToken firstToken, LinkedToken lastToken, Expression numericalCalculusExpression)
+            : base(firstToken, lastToken)
+        {
+            NumericalCalculusExpression = numericalCalculusExpression;
+        }
+
+        public override string ToString()
+        {
+            return "Numerical Calculus";
+        }
+    }
+}

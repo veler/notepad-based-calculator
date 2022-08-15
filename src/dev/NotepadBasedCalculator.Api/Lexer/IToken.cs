@@ -28,6 +28,8 @@
 
         bool Is(string expectedType, string expectedTokenText, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase);
 
+        bool Is(string expectedType, string[] expectedTokenText, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase);
+
         bool IsTokenTextEqualTo(string compareTo, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase);
 
         string GetText();

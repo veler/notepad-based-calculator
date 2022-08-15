@@ -1,0 +1,49 @@
+﻿using System.Collections;
+using Newtonsoft.Json;
+
+namespace NotepadBasedCalculator.Api
+{
+    public class DictionaryWithSpecialEnumKeyConverter<T> : JsonConverter where T : struct, Enum
+    {
+        public override bool CanWrite => false;
+
+        public override bool CanConvert(Type objectType)
+        {
+            return true;
+        }
+
+        public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+        {
+            if (reader.TokenType == JsonToken.Null)
+            {
+                return null;
+            }
+
+            Type valueType = objectType.GetGenericArguments()[1];
+            Type intermediateDictionaryType = typeof(Dictionary<,>).MakeGenericType(typeof(string), valueType);
+
+            var intermediateDictionary = Activator.CreateInstance(intermediateDictionaryType) as IDictionary;
+            var finalDictionary = Activator.CreateInstance(objectType) as IDictionary;
+
+            if (intermediateDictionary is not null && finalDictionary is not null)
+            {
+                serializer.Populate(reader, intermediateDictionary);
+                foreach (DictionaryEntry pair in intermediateDictionary)
+                {
+                    string? key = pair.Key.ToString();
+                    if (!string.IsNullOrEmpty(key))
+                    {
+                        finalDictionary.Add(key.ToEnum<T>(), pair.Value);
+                    }
+                }
+            }
+
+            return finalDictionary;
+        }
+
+        public override void WriteJson(JsonWriter writer, object? value, JsonSerializer serializer)
+        {
+            throw new NotSupportedException();
+        }
+    }
+}

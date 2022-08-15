@@ -1,8 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <!-- Need to have a TargetFrameworks tag for VS to recognize this as an SDK project. Just use the shared one. -->
     <TargetFrameworks>$(NetCoreAndStandard)</TargetFrameworks>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Grammars\en-us\TokenDefinition.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Grammars\en-us\TokenDefinition.json" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Microsoft.Recognizers.Text" />
@@ -13,7 +19,5 @@
   <ItemGroup>
     <ProjectReference Include="..\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Expressions\" />
-  </ItemGroup>
+  <ProjectExtensions><VisualStudio><UserProperties /></VisualStudio></ProjectExtensions>
 </Project>
