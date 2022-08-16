@@ -74,6 +74,7 @@
                 while (operatorToken is not null)
                 {
                     BinaryOperatorType binaryOperator;
+                    LinkedToken? expressionStartToken = operatorToken.Next;
                     if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.MultiplicationOperator))
                     {
                         binaryOperator = BinaryOperatorType.Multiply;
@@ -82,12 +83,30 @@
                     {
                         binaryOperator = BinaryOperatorType.Division;
                     }
+                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.LeftParenth))
+                    {
+                        binaryOperator = BinaryOperatorType.Multiply;
+                        expressionStartToken = operatorToken;
+                    }
+                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.Numeric))
+                    {
+                        if (operatorToken.Token is INumericData numericData && numericData.IsNegative)
+                        {
+                            binaryOperator = BinaryOperatorType.Addition;
+                        }
+                        else
+                        {
+                            binaryOperator = BinaryOperatorType.Multiply;
+                        }
+
+                        expressionStartToken = operatorToken;
+                    }
                     else
                     {
                         return expression;
                     }
 
-                    Expression? rightExpression = ParserPrimaryExpression(culture, operatorToken.Next, out nextToken);
+                    Expression? rightExpression = ParserPrimaryExpression(culture, expressionStartToken, out nextToken);
 
                     if (rightExpression is not null)
                     {
@@ -133,12 +152,9 @@
                     Expression? parsedExpression = ParseExpression(culture, nextToken, out nextToken);
 
                     LinkedToken? rightParenthToken = nextToken;
-                    if (parsedExpression is not null && DiscardRightParenth(rightParenthToken, out nextToken))
+                    if (parsedExpression is not null && DiscardRightParenth(rightParenthToken, out nextToken) && rightParenthToken is not null)
                     {
-                        // overwrite expression's boundaries to include parenthesis.
-                        // This is helpful for the parser to jump to the next token correctly when there are multiple parenthesis next to each other.
-                        parsedExpression.FirstToken = leftParenthToken;
-                        parsedExpression.LastToken = rightParenthToken!;
+                        parsedExpression = new GroupExpression(leftParenthToken, rightParenthToken, parsedExpression);
                         return parsedExpression;
                     }
                 }

@@ -22,6 +22,14 @@
 
         public const string IsNotEqualToOperator = "not_equal_to_operators";
 
+        public const string LessThanOrEqualToOperator = "less_than_or_equal_to_operators";
+
+        public const string LessThanOperator = "less_than_operators";
+
+        public const string GreaterThanOrEqualToOperator = "greater_than_or_equal_to_operators";
+
+        public const string GreaterThanOperator = "greater_than_operators";
+
         public const string AdditionOperator = "addition_operators";
 
         public const string SubstractionOperator = "substration_operators";

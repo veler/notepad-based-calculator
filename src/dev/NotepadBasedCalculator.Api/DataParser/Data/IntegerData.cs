@@ -1,7 +1,9 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed record IntegerData : Data<long>
+    public sealed record IntegerData : Data<long>, INumericData
     {
+        public bool IsNegative => Value < 0;
+
         public IntegerData(string lineTextIncludingLineBreak, int startInLine, int endInLine, long value)
             : base(
                   lineTextIncludingLineBreak,

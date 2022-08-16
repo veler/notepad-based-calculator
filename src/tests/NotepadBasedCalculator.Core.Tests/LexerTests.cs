@@ -79,9 +79,9 @@ namespace NotepadBasedCalculator.Core.Tests
         [Fact]
         public void TokenizePunctuationAndSymbols()
         {
-            IReadOnlyList<LineInfo> lines = Analyze("!@$%^&_=`~[]{}\\|;:'\",<.>/?");
+            IReadOnlyList<LineInfo> lines = Analyze("!@$%^&_=`~[]{}\\|;:'\",./?");
             Assert.Equal(1, lines.Count);
-            Assert.Equal(26, lines[0].Tokens.Count);
+            Assert.Equal(24, lines[0].Tokens.Count);
             for (int i = 0; i < lines[0].Tokens.Count; i++)
             {
                 Assert.Equal(PredefinedTokenAndDataTypeNames.SymbolOrPunctuation, lines[0].Tokens[i].Type);

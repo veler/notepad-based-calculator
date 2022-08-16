@@ -8,4 +8,7 @@
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="System.Composition" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interpreter\" />
+  </ItemGroup>
 </Project>

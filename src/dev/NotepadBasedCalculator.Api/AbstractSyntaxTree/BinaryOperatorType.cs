@@ -18,67 +18,51 @@
         NoEquality = 1,
 
         /// <summary>
-        /// Boolean or operator. This represents a short circuiting operator. A short circuiting
-        /// operator will evaluate only as many expressions as necessary before returning
-        /// a correct value.
-        /// </summary>
-        [Description("OR")]
-        LogicalOr = 2,
-
-        /// <summary>
-        /// Boolean and operator. This represents a short circuiting operator. A short circuiting
-        /// operator will evaluate only as many expressions as necessary before returning
-        /// a correct value.
-        /// </summary>
-        [Description("AND")]
-        LogicalAnd = 3,
-
-        /// <summary>
         /// Less than operator
         /// </summary>
         [Description("<")]
-        LessThan = 4,
+        LessThan = 2,
 
         /// <summary>
         /// Less than or equal operator
         /// </summary>
         [Description("<=")]
-        LessThanOrEqualTo = 5,
+        LessThanOrEqualTo = 3,
 
         /// <summary>
         /// Greater than operator
         /// </summary>
         [Description(">")]
-        GreaterThan = 6,
+        GreaterThan = 4,
 
         /// <summary>
         /// Greater than or equal operator
         /// </summary>
         [Description(">=")]
-        GreaterThanOrEqualTo = 7,
+        GreaterThanOrEqualTo = 5,
 
         /// <summary>
         /// Addition operator
         /// </summary>
         [Description("+")]
-        Addition = 8,
+        Addition = 6,
 
         /// <summary>
         /// Subtraction operator
         /// </summary>
         [Description("-")]
-        Subtraction = 9,
+        Subtraction = 7,
 
         /// <summary>
         /// Multiplication operator
         /// </summary>
         [Description("*")]
-        Multiply = 10,
+        Multiply = 8,
 
         /// <summary>
         /// Division operator
         /// </summary>
         [Description("/")]
-        Division = 11,
+        Division = 9,
     }
 }

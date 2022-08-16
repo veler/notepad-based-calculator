@@ -1,4 +1,6 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Linq.Expressions;
+
+namespace NotepadBasedCalculator.Api
 {
     /// <summary>
     /// Represents a binary conditional expression
@@ -8,7 +10,7 @@
         /// <summary>
         /// Gets or sets the left expression
         /// </summary>
-        public Expression LeftExpression { get; set; }
+        public Expression LeftExpression { get; }
 
         /// <summary>
         /// Gets the binary operator
@@ -18,7 +20,7 @@
         /// <summary>
         /// Gets or sets the right expression
         /// </summary>
-        public Expression RightExpression { get; set; }
+        public Expression RightExpression { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BinaryOperatorExpression"/> class.
@@ -29,6 +31,8 @@
         public BinaryOperatorExpression(Expression leftExpression, BinaryOperatorType conditionalOperator, Expression rightExpression)
             : base(leftExpression.FirstToken, rightExpression.LastToken)
         {
+            Guard.IsNotNull(leftExpression);
+            Guard.IsNotNull(rightExpression);
             LeftExpression = leftExpression;
             Operator = conditionalOperator;
             RightExpression = rightExpression;

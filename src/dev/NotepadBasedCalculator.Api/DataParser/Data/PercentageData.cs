@@ -1,7 +1,9 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed record PercentageData : Data<float>
+    public sealed record PercentageData : Data<float>, INumericData
     {
+        public bool IsNegative => Value < 0;
+
         public PercentageData(string lineTextIncludingLineBreak, int startInLine, int endInLine, float value)
             : base(
                   lineTextIncludingLineBreak,

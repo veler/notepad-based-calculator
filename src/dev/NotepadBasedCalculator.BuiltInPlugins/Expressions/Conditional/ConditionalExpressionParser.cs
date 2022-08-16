@@ -6,70 +6,8 @@
     {
         public bool TryParseExpression(string culture, LinkedToken currentToken, out Expression? expression)
         {
-            expression = ParseConditionalOrExpression(culture, currentToken);
+            expression = ParseEqualityExpression(culture, currentToken);
             return expression is not null;
-        }
-
-        /// <summary>
-        /// Parse expression that contains a logical 'or' operator.
-        /// 
-        /// Corresponding grammar :
-        ///     Conditional_And_Expression ('OR' Conditional_And_Expression)*
-        /// </summary>
-        private Expression? ParseConditionalOrExpression(string culture, LinkedToken currentToken)
-        {
-            Expression? expression = ParseConditionalAndExpression(culture, currentToken, out LinkedToken? nextToken);
-
-            if (expression is not null)
-            {
-                LinkedToken? operatorToken = JumpToNextTokenOfType(nextToken, PredefinedTokenAndDataTypeNames.Word, "or");
-                while (operatorToken is not null)
-                {
-                    Expression? rightExpression = ParseConditionalAndExpression(culture, operatorToken.Next, out nextToken);
-                    if (rightExpression is not null)
-                    {
-                        expression = new BinaryOperatorExpression(expression, BinaryOperatorType.LogicalOr, rightExpression);
-                        operatorToken = JumpToNextTokenOfType(nextToken, PredefinedTokenAndDataTypeNames.Word, "or");
-                    }
-                    else
-                    {
-                        return expression;
-                    }
-                }
-            }
-
-            return expression;
-        }
-
-        /// <summary>
-        /// Parse expression that contains a logical 'and' operator.
-        /// 
-        /// Corresponding grammar :
-        ///     Equality_Expression ('AND' Equality_Expression)*
-        /// </summary>
-        private Expression? ParseConditionalAndExpression(string culture, LinkedToken? currentToken, out LinkedToken? nextToken)
-        {
-            Expression? expression = ParseEqualityExpression(culture, currentToken, out nextToken);
-
-            if (expression is not null)
-            {
-                LinkedToken? operatorToken = JumpToNextTokenOfType(nextToken, PredefinedTokenAndDataTypeNames.Word, "and");
-                while (operatorToken is not null)
-                {
-                    Expression? rightExpression = ParseEqualityExpression(culture, operatorToken.Next, out nextToken);
-                    if (rightExpression is not null)
-                    {
-                        expression = new BinaryOperatorExpression(expression, BinaryOperatorType.LogicalAnd, rightExpression);
-                        operatorToken = JumpToNextTokenOfType(nextToken, PredefinedTokenAndDataTypeNames.Word, "and");
-                    }
-                    else
-                    {
-                        return expression;
-                    }
-                }
-            }
-
-            return expression;
         }
 
         /// <summary>
@@ -78,28 +16,23 @@
         /// Corresponding grammar :
         ///     Relational_Expression (('=' | '!=') Relational_Expression)*
         /// </summary>
-        private Expression? ParseEqualityExpression(string culture, LinkedToken? currentToken, out LinkedToken? nextToken)
+        private Expression? ParseEqualityExpression(string culture, LinkedToken? currentToken)
         {
-            Expression? expression = ParseRelationalExpression(culture, currentToken, out nextToken);
+            Expression? expression = ParseRelationalExpression(culture, currentToken, out LinkedToken? nextToken);
 
             if (expression is not null)
             {
-                while (nextToken is not null)
+                LinkedToken? operatorToken = DiscardWords(nextToken);
+                while (operatorToken is not null)
                 {
-                    // TODO: can be optimized.
                     BinaryOperatorType binaryOperator;
-                    bool isNotEqualToOperator = IsNotEqualToOperator(nextToken, out LinkedToken? nextTokenAfterNotEqualOperator);
-                    bool isEqualToOperator = IsEqualToOperator(nextToken, out LinkedToken? nextTokenAfterEqualOperator);
-
-                    if (isNotEqualToOperator && !isEqualToOperator)
-                    {
-                        binaryOperator = BinaryOperatorType.NoEquality;
-                        nextToken = nextTokenAfterNotEqualOperator;
-                    }
-                    else if (!isNotEqualToOperator && isEqualToOperator)
+                    if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.IsEqualToOperator))
                     {
                         binaryOperator = BinaryOperatorType.Equality;
-                        nextToken = nextTokenAfterEqualOperator;
+                    }
+                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.IsNotEqualToOperator))
+                    {
+                        binaryOperator = BinaryOperatorType.NoEquality;
                     }
                     else
                     {
@@ -110,6 +43,7 @@
                     if (rightExpression is not null)
                     {
                         expression = new BinaryOperatorExpression(expression, binaryOperator, rightExpression);
+                        operatorToken = DiscardWords(nextToken);
                     }
                     else
                     {
@@ -133,34 +67,25 @@
 
             if (expression is not null)
             {
-                while (nextToken is not null)
+                LinkedToken? operatorToken = DiscardWords(nextToken);
+                while (operatorToken is not null)
                 {
-                    // TODO: can be optimized.
                     BinaryOperatorType binaryOperator;
-                    bool isLessThanOrEqualToOperator = IsLessThanOrEqualToOperator(nextToken, out LinkedToken? nextTokenAfterLessThanOrEqualToOperator);
-                    bool isGreaterThanOrEqualToOperator = IsGreaterThanOrEqualToOperator(nextToken, out LinkedToken? nextTokenAfterGreaterThanOrEqualToOperator);
-                    bool isLessThanOperator = IsLessThanOperator(nextToken, out LinkedToken? nextTokenAfterLessThanOperator);
-                    bool isGreaterThanOperator = IsGreaterThanOperator(nextToken, out LinkedToken? nextTokenAfterGreaterThanOperator);
-
-                    if (isLessThanOrEqualToOperator)
+                    if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.LessThanOrEqualToOperator))
                     {
                         binaryOperator = BinaryOperatorType.LessThanOrEqualTo;
-                        nextToken = nextTokenAfterLessThanOrEqualToOperator;
                     }
-                    else if (isGreaterThanOrEqualToOperator)
-                    {
-                        binaryOperator = BinaryOperatorType.GreaterThanOrEqualTo;
-                        nextToken = nextTokenAfterGreaterThanOrEqualToOperator;
-                    }
-                    else if (isLessThanOperator)
+                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.LessThanOperator))
                     {
                         binaryOperator = BinaryOperatorType.LessThan;
-                        nextToken = nextTokenAfterLessThanOperator;
                     }
-                    else if (isGreaterThanOperator)
+                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.GreaterThanOrEqualToOperator))
+                    {
+                        binaryOperator = BinaryOperatorType.GreaterThanOrEqualTo;
+                    }
+                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.GreaterThanOperator))
                     {
                         binaryOperator = BinaryOperatorType.GreaterThan;
-                        nextToken = nextTokenAfterGreaterThanOperator;
                     }
                     else
                     {
@@ -171,6 +96,7 @@
                     if (rightExpression is not null)
                     {
                         expression = new BinaryOperatorExpression(expression, binaryOperator, rightExpression);
+                        operatorToken = DiscardWords(nextToken);
                     }
                     else
                     {
@@ -180,106 +106,6 @@
             }
 
             return expression;
-        }
-
-        private bool IsEqualToOperator(LinkedToken? currentToken, out LinkedToken? nextToken)
-        {
-            return
-                DiscardToken(
-                    currentToken,
-                    PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                    "=",
-                    ignoreUnknownWords: true,
-                    out nextToken)
-                && nextToken is not null
-                && DiscardToken(
-                    currentToken,
-                    PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                    "=",
-                    ignoreUnknownWords: false,
-                    out nextToken)
-                && nextToken is not null;
-        }
-
-        private bool IsNotEqualToOperator(LinkedToken? currentToken, out LinkedToken? nextToken)
-        {
-            return
-                DiscardToken(
-                    currentToken,
-                    PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                    "!",
-                    ignoreUnknownWords: true,
-                    out nextToken)
-                && nextToken is not null
-                && DiscardToken(
-                    currentToken,
-                    PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                    "=",
-                    ignoreUnknownWords: false,
-                    out nextToken)
-                && nextToken is not null;
-        }
-
-        private bool IsLessThanOperator(LinkedToken? currentToken, out LinkedToken? nextToken)
-        {
-            return
-                DiscardToken(
-                    currentToken,
-                    PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                    "<",
-                    ignoreUnknownWords: true,
-                    out nextToken)
-                && nextToken is not null;
-        }
-
-        private bool IsLessThanOrEqualToOperator(LinkedToken? currentToken, out LinkedToken? nextToken)
-        {
-            return
-                DiscardToken(
-                    currentToken,
-                    PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                    "<",
-                    ignoreUnknownWords: true,
-                    out nextToken)
-                && nextToken is not null
-                && DiscardToken(
-                    currentToken,
-                    PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                    "=",
-                    ignoreUnknownWords: false,
-                    out nextToken)
-                && nextToken is not null;
-        }
-
-        private bool IsGreaterThanOperator(LinkedToken? currentToken, out LinkedToken? nextToken)
-        {
-            return
-                DiscardToken(
-                    currentToken,
-                    PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                    ">",
-                    ignoreUnknownWords: true,
-                    out nextToken)
-                && nextToken is not null;
-        }
-
-        private bool IsGreaterThanOrEqualToOperator(LinkedToken? currentToken, out LinkedToken? nextToken)
-        {
-            return
-                DiscardToken(
-                    currentToken,
-                    PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                    ">",
-                    ignoreUnknownWords: true,
-                    out nextToken)
-                && nextToken is not null
-                && DiscardToken(
-                    currentToken,
-                    PredefinedTokenAndDataTypeNames.SymbolOrPunctuation,
-                    "=",
-                    ignoreUnknownWords: false,
-                    out nextToken)
-                && nextToken is not null;
         }
     }
 }

@@ -9,6 +9,24 @@
       "=!",
       "not equal"
     ],
+    "less_than_or_equal_to_operators": [
+      "<=",
+      "=<",
+      "less than or equal to"
+    ],
+    "less_than_operators": [
+      "<",
+      "less than"
+    ],
+    "greater_than_or_equal_to_operators": [
+      ">=",
+      "=>",
+      "greater than or equal to"
+    ],
+    "greater_than_operators": [
+      ">",
+      "greater than"
+    ],
     "addition_operators": [
       "+",
       "plus",
