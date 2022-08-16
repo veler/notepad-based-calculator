@@ -1,12 +1,13 @@
 ﻿namespace NotepadBasedCalculator.BuiltInPlugins.Expressions.Conditional
 {
     [Export(typeof(IExpressionParser))]
+    [Name(PredefinedExpressionParserNames.ConditionalExpression)]
     [Culture(SupportedCultures.Any)]
     internal sealed class ConditionalExpressionParser : ParserBase, IExpressionParser
     {
         public bool TryParseExpression(string culture, LinkedToken currentToken, out Expression? expression)
         {
-            expression = ParseEqualityExpression(culture, currentToken);
+            expression = ParseEqualityAndRelationalExpression(culture, currentToken);
             return expression is not null;
         }
 
@@ -14,16 +15,17 @@
         /// Parse expression that contains equality symbols.
         /// 
         /// Corresponding grammar :
-        ///     Relational_Expression (('=' | '!=') Relational_Expression)*
+        ///     NumericalCalculus_Expression (('==' | '!=' | '<' | '>' | '<=' | '>=') NumericalCalculus_Expression)
         /// </summary>
-        private Expression? ParseEqualityExpression(string culture, LinkedToken? currentToken)
+        private Expression? ParseEqualityAndRelationalExpression(string culture, LinkedToken? currentToken)
         {
-            Expression? expression = ParseRelationalExpression(culture, currentToken, out LinkedToken? nextToken);
+            Expression? expression = ParseExpression(PredefinedExpressionParserNames.NumericalCalculusExpression, culture, currentToken, out LinkedToken? nextToken);
 
             if (expression is not null)
             {
                 LinkedToken? operatorToken = DiscardWords(nextToken);
-                while (operatorToken is not null)
+
+                if (operatorToken is not null)
                 {
                     BinaryOperatorType binaryOperator;
                     if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.IsEqualToOperator))
@@ -34,44 +36,7 @@
                     {
                         binaryOperator = BinaryOperatorType.NoEquality;
                     }
-                    else
-                    {
-                        return expression;
-                    }
-
-                    Expression? rightExpression = ParseRelationalExpression(culture, nextToken, out nextToken);
-                    if (rightExpression is not null)
-                    {
-                        expression = new BinaryOperatorExpression(expression, binaryOperator, rightExpression);
-                        operatorToken = DiscardWords(nextToken);
-                    }
-                    else
-                    {
-                        return expression;
-                    }
-                }
-            }
-
-            return expression;
-        }
-
-        /// <summary>
-        /// Parse expression that contains lesser than or greater than symbols.
-        /// 
-        /// Corresponding grammar :
-        ///     Additive_Expression (('<' | '>' | '<=' | '>=') Additive_Expression)*
-        /// </summary>
-        private Expression? ParseRelationalExpression(string culture, LinkedToken? currentToken, out LinkedToken? nextToken)
-        {
-            Expression? expression = ParseExpression(PredefinedExpressionParserNames.NumericalCalculusExpression, culture, currentToken, out nextToken);
-
-            if (expression is not null)
-            {
-                LinkedToken? operatorToken = DiscardWords(nextToken);
-                while (operatorToken is not null)
-                {
-                    BinaryOperatorType binaryOperator;
-                    if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.LessThanOrEqualToOperator))
+                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.LessThanOrEqualToOperator))
                     {
                         binaryOperator = BinaryOperatorType.LessThanOrEqualTo;
                     }
@@ -92,15 +57,10 @@
                         return expression;
                     }
 
-                    Expression? rightExpression = ParseExpression(PredefinedExpressionParserNames.NumericalCalculusExpression, culture, nextToken, out nextToken);
+                    Expression? rightExpression = ParseExpression(PredefinedExpressionParserNames.NumericalCalculusExpression, culture, operatorToken.Next, out _);
                     if (rightExpression is not null)
                     {
                         expression = new BinaryOperatorExpression(expression, binaryOperator, rightExpression);
-                        operatorToken = DiscardWords(nextToken);
-                    }
-                    else
-                    {
-                        return expression;
                     }
                 }
             }

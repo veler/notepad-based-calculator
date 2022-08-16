@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using NotepadBasedCalculator.Api;
 using NotepadBasedCalculator.BuiltInPlugins.Statements.Comment;
+using NotepadBasedCalculator.BuiltInPlugins.Statements.Condition;
 using NotepadBasedCalculator.BuiltInPlugins.Statements.Header;
 using NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus;
 using Xunit;
@@ -74,33 +75,35 @@ namespace NotepadBasedCalculator.Core.Tests
         [Fact]
         public async Task ConditionStatement()
         {
+            Parser parser = ExportProvider.Import<Parser>();
+            ParserResult parserResult = await parser.ParseAsync(" if 23 less than or equal to twenty four then ");
+            Assert.Equal(1, parserResult.Lines[0].Statements.Count);
+            var statement = (ConditionStatement)parserResult.Lines[0].Statements[0];
+            var condition = (BinaryOperatorExpression)statement.Condition;
+            Assert.Equal("([Numeric] (4, 6): '23' <= [Numeric] (29, 40): 'twenty four')", condition.ToString());
+
+            parserResult = await parser.ParseAsync("23 == twenty three");
+            Assert.Equal(1, parserResult.Lines[0].Statements.Count);
+            statement = (ConditionStatement)parserResult.Lines[0].Statements[0];
+            condition = (BinaryOperatorExpression)statement.Condition;
+            Assert.Equal("([Numeric] (0, 2): '23' == [Numeric] (6, 18): 'twenty three')", condition.ToString());
+
+            parserResult = await parser.ParseAsync("23 <= twenty three == 23");
+            Assert.Equal(2, parserResult.Lines[0].Statements.Count);
+            statement = (ConditionStatement)parserResult.Lines[0].Statements[0];
+            condition = (BinaryOperatorExpression)statement.Condition;
+            Assert.Equal("([Numeric] (0, 2): '23' <= [Numeric] (6, 18): 'twenty three')", condition.ToString());
+            var statement2 = (NumericalCalculusStatement)parserResult.Lines[0].Statements[1];
+            Expression expression = statement2.NumericalCalculusExpression;
+            Assert.Equal("[Numeric] (22, 24): '23'", expression.ToString());
+
             string input = "if one hundred thousand dollars of income + (30% tax / two people) > 150k then test";
 
-            Parser parser = ExportProvider.Import<Parser>();
-            ParserResult parserResult = await parser.ParseAsync(input);
+            parserResult = await parser.ParseAsync(input);
             Assert.Single(parserResult.Lines[0].Statements);
-            Statement statement = parserResult.Lines[0].Statements[0];
-            //Assert.IsType<HeaderStatement>(statement);
-            //Assert.Equal("[SymbolOrPunctuation] (0, 1): '#'", statement.FirstToken.ToString());
-            //Assert.Equal("[Word] (1, 7): 'Header'", statement.LastToken.ToString());
-
-            input = "if one > 2 or 3 <= 4 <= 2 then test";
-            parserResult = await parser.ParseAsync(" # Header");
-            Assert.Single(parserResult.Lines[0].Statements);
-            statement = parserResult.Lines[0].Statements[0];
-            Assert.IsType<HeaderStatement>(statement);
-            Assert.Equal("[Whitespace] (0, 1): ' '", statement.FirstToken.ToString());
-            Assert.Equal("[Word] (3, 9): 'Header'", statement.LastToken.ToString());
-
-            parserResult = await parser.ParseAsync(" ### Header");
-            Assert.Single(parserResult.Lines[0].Statements);
-            statement = parserResult.Lines[0].Statements[0];
-            Assert.IsType<HeaderStatement>(statement);
-            Assert.Equal("[Whitespace] (0, 1): ' '", statement.FirstToken.ToString());
-            Assert.Equal("[Word] (5, 11): 'Header'", statement.LastToken.ToString());
-
-            parserResult = await parser.ParseAsync(" 132 # Header");
-            Assert.Empty(parserResult.Lines[0].Statements);
+            statement = (ConditionStatement)parserResult.Lines[0].Statements[0];
+            condition = (BinaryOperatorExpression)statement.Condition;
+            Assert.Equal("([Numeric] (0, 2): '23' == [Numeric] (6, 18): 'twenty three')", condition.ToString());
         }
     }
 }

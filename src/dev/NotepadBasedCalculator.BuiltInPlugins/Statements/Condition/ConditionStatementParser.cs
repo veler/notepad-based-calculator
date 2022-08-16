@@ -1,4 +1,6 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Condition
+﻿using NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus;
+
+namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Condition
 {
     [Export(typeof(IStatementParser))]
     [Culture(SupportedCultures.Any)]
@@ -8,11 +10,35 @@
         {
             if (DiscardIf(currentToken, out currentToken))
             {
-                Expression? expression = ParseExpression(culture, currentToken, out LinkedToken? nextToken);
+                LinkedToken ifToken = currentToken.Previous!;
 
-                if (expression is not null && DiscardThen(nextToken, out nextToken))
+                Expression? expression = ParseExpression(PredefinedExpressionParserNames.ConditionalExpression, culture, currentToken, out LinkedToken? nextToken);
+
+                if (expression is not null)
                 {
-
+                    LinkedToken? thenToken = DiscardWords(nextToken);
+                    if (thenToken is not null && DiscardThen(thenToken, out _))
+                    {
+                        // TODO: parse Then and Else.
+                        statement = new ConditionStatement(ifToken, thenToken, expression);
+                        return true;
+                    }
+                }
+            }
+            else
+            {
+                Expression? expression = ParseExpression(PredefinedExpressionParserNames.ConditionalExpression, culture, currentToken, out LinkedToken? _);
+                if (expression is not null
+                    && expression is BinaryOperatorExpression binaryOperatorExpression
+                    && (binaryOperatorExpression.Operator == BinaryOperatorType.Equality
+                        || binaryOperatorExpression.Operator == BinaryOperatorType.NoEquality
+                        || binaryOperatorExpression.Operator == BinaryOperatorType.LessThan
+                        || binaryOperatorExpression.Operator == BinaryOperatorType.LessThanOrEqualTo
+                        || binaryOperatorExpression.Operator == BinaryOperatorType.GreaterThan
+                        || binaryOperatorExpression.Operator == BinaryOperatorType.GreaterThanOrEqualTo))
+                {
+                    statement = new ConditionStatement(expression.FirstToken, expression.LastToken, expression);
+                    return true;
                 }
             }
 
@@ -24,9 +50,7 @@
         {
             return DiscardToken(
                 currentToken,
-                PredefinedTokenAndDataTypeNames.Word,
-                "if",
-                StringComparison.OrdinalIgnoreCase,
+                PredefinedTokenAndDataTypeNames.IfIdentifier,
                 ignoreUnknownWords: true,
                 out nextToken!)
                 && nextToken is not null;
@@ -34,23 +58,11 @@
 
         private bool DiscardThen(LinkedToken? currentToken, out LinkedToken? nextToken)
         {
-            nextToken = currentToken;
-            do
-            {
-                if (DiscardToken(
-                    nextToken,
-                    PredefinedTokenAndDataTypeNames.Word,
-                 "then",
-                    StringComparison.OrdinalIgnoreCase,
-                    ignoreUnknownWords: true,
-                    out nextToken!)
-                    && nextToken is not null)
-                {
-                    return true;
-                }
-            } while (nextToken is not null);
-
-            return false;
+            return DiscardToken(
+                currentToken,
+                PredefinedTokenAndDataTypeNames.ThenIdentifier,
+                ignoreUnknownWords: true,
+                out nextToken!);
         }
     }
 }

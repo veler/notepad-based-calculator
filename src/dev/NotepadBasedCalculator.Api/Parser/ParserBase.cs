@@ -79,6 +79,7 @@
         /// <param name="expectedTokenType">The token type that is expect to be discarded.</param>
         protected bool DiscardToken(LinkedToken? currentToken, string expectedTokenType, bool ignoreUnknownWords, out LinkedToken? nextToken)
         {
+            LinkedToken? backupToken = currentToken;
             if (ignoreUnknownWords)
             {
                 currentToken = DiscardWords(currentToken);
@@ -86,7 +87,7 @@
 
             if (currentToken is null || currentToken.Token.IsNot(expectedTokenType))
             {
-                nextToken = null;
+                nextToken = backupToken;
                 return false;
             }
 
