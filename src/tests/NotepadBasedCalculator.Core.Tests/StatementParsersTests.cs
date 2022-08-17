@@ -103,7 +103,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(parserResult.Lines[0].Statements);
             statement = (ConditionStatement)parserResult.Lines[0].Statements[0];
             condition = (BinaryOperatorExpression)statement.Condition;
-            Assert.Equal("([Numeric] (0, 2): '23' == [Numeric] (6, 18): 'twenty three')", condition.ToString());
+            Assert.Equal("(([Numeric] (3, 23): 'one hundred thousand' + (([Numeric] (45, 48): '30%' / [Numeric] (55, 58): 'two'))) > [Numeric] (69, 73): '150k')", condition.ToString());
         }
     }
 }

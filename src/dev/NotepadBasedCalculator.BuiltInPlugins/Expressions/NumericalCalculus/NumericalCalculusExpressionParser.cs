@@ -151,7 +151,7 @@
                 {
                     Expression? parsedExpression = ParseExpression(culture, nextToken, out nextToken);
 
-                    LinkedToken? rightParenthToken = nextToken;
+                    LinkedToken? rightParenthToken = DiscardWords(nextToken);
                     if (parsedExpression is not null && DiscardRightParenth(rightParenthToken, out nextToken) && rightParenthToken is not null)
                     {
                         parsedExpression = new GroupExpression(leftParenthToken, rightParenthToken, parsedExpression);
