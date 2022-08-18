@@ -1,7 +1,12 @@
-﻿namespace NotepadBasedCalculator.Api.Interpreter
+﻿namespace NotepadBasedCalculator.Api
 {
     public interface IExpressionInterpreter
     {
-        Task<IData?> InterpretAsync(string culture, Expression expression, CancellationToken cancellationToken);
+        Task<IData?> InterpretExpressionAsync(
+            string culture,
+            IVariableService variableService,
+            IExpressionInterpreter expressionInterpreter,
+            Expression expression,
+            CancellationToken cancellationToken);
     }
 }

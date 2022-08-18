@@ -1,6 +1,4 @@
-﻿using NotepadBasedCalculator.Api.Interpreter;
-
-namespace NotepadBasedCalculator.Core
+﻿namespace NotepadBasedCalculator.Core
 {
     [Export]
     internal sealed class InterpreterFactory

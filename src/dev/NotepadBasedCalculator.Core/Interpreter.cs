@@ -1,15 +1,16 @@
 ﻿using Microsoft.Recognizers.Text;
-using NotepadBasedCalculator.Api.Interpreter;
 
 namespace NotepadBasedCalculator.Core
 {
-    internal sealed class Interpreter : IDisposable
+    internal sealed class Interpreter : IExpressionInterpreter, IDisposable
     {
         private readonly string _culture;
         private readonly Lexer _lexer;
         private readonly Parser _parser;
         private readonly IEnumerable<Lazy<IStatementInterpreter, InterpreterMetadata>> _statementInterpreters;
         private readonly IEnumerable<Lazy<IExpressionInterpreter, InterpreterMetadata>> _expressionInterpreters;
+        private readonly VariableService _variableService = new VariableService();
+        private readonly List<IReadOnlyDictionary<string, IData?>> _variablePerLineBackup = new();
         private readonly TextDocument _textDocument;
 
         private CancellationTokenSource _cancellationTokenSource = new();
@@ -93,10 +94,27 @@ namespace NotepadBasedCalculator.Core
 
             Guard.IsNotNull(parserResult);
 
+            if (lineFromWhichSomethingHasChanged - 1 >= 0 && lineFromWhichSomethingHasChanged - 1 < _variablePerLineBackup.Count)
+            {
+                _variableService.RestoreBackup(_variablePerLineBackup[lineFromWhichSomethingHasChanged - 1]);
+            }
+            else
+            {
+                _variableService.RestoreBackup(null);
+            }
+
             // Interpret the whole document starting from the line that changed.
             for (int i = lineFromWhichSomethingHasChanged; i < parserResult.Lines.Count; i++)
             {
-                await InterpretLineAsync(parserResult.Lines[i], cancellationToken).ConfigureAwait(true);
+                IData? lineResult = await InterpretLineAsync(parserResult.Lines[i], cancellationToken).ConfigureAwait(true);
+                if (_variablePerLineBackup.Count > i)
+                {
+                    _variablePerLineBackup[i] = _variableService.CreateBackup();
+                }
+                else
+                {
+                    _variablePerLineBackup.Add(_variableService.CreateBackup());
+                }
 
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -119,8 +137,10 @@ namespace NotepadBasedCalculator.Core
                 IStatementInterpreter statementInterpreter = GetApplicableStatementInterpreter(statementType);
 
                 IData? statementResult
-                    = await statementInterpreter.InterpretAsync(
+                    = await statementInterpreter.InterpretStatementAsync(
                         _culture,
+                        _variableService,
+                        this,
                         statement,
                         cancellationToken)
                     .ConfigureAwait(true);
@@ -143,6 +163,41 @@ namespace NotepadBasedCalculator.Core
             }
 
             return null; // TODO
+        }
+
+        async Task<IData?> IExpressionInterpreter.InterpretExpressionAsync(
+            string culture,
+            IVariableService variableService,
+            IExpressionInterpreter expressionInterpreter,
+            Expression expression,
+            CancellationToken cancellationToken)
+        {
+            Guard.IsNotNullOrWhiteSpace(culture);
+            Guard.IsNotNull(variableService);
+
+            if (expression is null)
+            {
+                return null;
+            }
+
+            Type expressionType = expression.GetType();
+            IExpressionInterpreter interpreter = GetApplicableExpressionInterpreter(expressionType);
+
+            if (interpreter is null)
+            {
+                return null;
+            }
+
+            IData? expressionResult
+                = await interpreter.InterpretExpressionAsync(
+                    culture,
+                    variableService,
+                    this,
+                    expression,
+                    cancellationToken)
+                .ConfigureAwait(true);
+
+            return expressionResult;
         }
 
         private static int DetermineLineFromWhichSomethingHasChanged(ParserResult? oldParserResult, IReadOnlyList<TokenizedTextLine> newTokenizedTextLines)
@@ -173,7 +228,7 @@ namespace NotepadBasedCalculator.Core
         {
             return _statementInterpreters.Where(
                     p => p.Metadata.CultureCodes.Any(c => CultureHelper.IsCultureApplicable(c, _culture))
-                        && p.Metadata.Type == type)
+                        && p.Metadata.Types.Any(t => t == type))
                     .Single().Value;
         }
 
@@ -181,7 +236,7 @@ namespace NotepadBasedCalculator.Core
         {
             return _expressionInterpreters.Where(
                     p => p.Metadata.CultureCodes.Any(c => CultureHelper.IsCultureApplicable(c, _culture))
-                        && p.Metadata.Type == type)
+                        && p.Metadata.Types.Any(t => t == type))
                     .Single().Value;
         }
     }

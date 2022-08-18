@@ -2,14 +2,25 @@
 {
     public sealed class InterpreterMetadata : CultureCodeMetadata
     {
-        public Type Type { get; }
+        public Type[] Types { get; }
 
         public InterpreterMetadata(IDictionary<string, object> metadata)
             : base(metadata)
         {
-            if (metadata.TryGetValue(nameof(SupportedStatementTypeAttribute.Type), out object? value) && value is Type type)
+            if (metadata.TryGetValue(nameof(SupportedStatementTypeAttribute.Type), out object? value) && value is not null)
             {
-                Type = type;
+                if (value is Type type)
+                {
+                    Types = new[] { type };
+                }
+                else if (value is Type[] types)
+                {
+                    Types = types;
+                }
+                else
+                {
+                    ThrowHelper.ThrowInvalidDataException($"Unable to understand MEF's '{nameof(SupportedStatementTypeAttribute.Type)}' information.");
+                }
             }
             else
             {

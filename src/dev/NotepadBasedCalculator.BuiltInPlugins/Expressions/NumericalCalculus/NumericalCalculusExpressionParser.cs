@@ -1,6 +1,4 @@
-﻿using NotepadBasedCalculator.Api.AbstractSyntaxTree;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.Expressions.NumericalCalculus
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Expressions.NumericalCalculus
 {
     [Export(typeof(IExpressionParser))]
     [Name(PredefinedExpressionParserNames.NumericalCalculusExpression)]

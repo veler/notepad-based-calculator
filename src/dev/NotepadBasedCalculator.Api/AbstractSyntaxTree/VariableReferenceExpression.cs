@@ -1,4 +1,4 @@
-﻿namespace NotepadBasedCalculator.Api.AbstractSyntaxTree
+﻿namespace NotepadBasedCalculator.Api
 {
     public sealed class VariableReferenceExpression : ReferenceExpression
     {
