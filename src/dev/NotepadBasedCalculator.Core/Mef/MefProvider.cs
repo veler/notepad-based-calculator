@@ -19,6 +19,11 @@ namespace NotepadBasedCalculator.Core.Mef
             return ExportProvider!.GetExport<TExport>();
         }
 
+        public object Import(Type type)
+        {
+            return ExportProvider!.GetExport(type);
+        }
+
         public IEnumerable<TExport> ImportMany<TExport>()
         {
             return ExportProvider!.GetExports<TExport>();

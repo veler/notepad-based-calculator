@@ -13,6 +13,11 @@
         /// <summary>
         /// Imports the given type.
         /// </summary>
+        object Import(Type type);
+
+        /// <summary>
+        /// Imports the given type.
+        /// </summary>
         IEnumerable<TExport> ImportMany<TExport>();
     }
 }

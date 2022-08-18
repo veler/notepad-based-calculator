@@ -7,18 +7,30 @@ namespace NotepadBasedCalculator.Core.Tests
     public sealed class InterpreterTests : MefBaseTest
     {
         [Fact]
+        public async Task Intepreter_VariableDeclaration()
+        {
+            InterpreterFactory interpreterFactory = ExportProvider.Import<InterpreterFactory>();
+            var textDocument = new TextDocument();
+            using Interpreter interpreter = interpreterFactory.CreateInterpreter(SupportedCultures.English, textDocument);
+
+            textDocument.Text = "test = 2";
+
+            await interpreter.WaitAsync();
+        }
+
+        [Fact]
         public async Task Intepreter_DocumentChange()
         {
             InterpreterFactory interpreterFactory = ExportProvider.Import<InterpreterFactory>();
             var textDocument = new TextDocument();
-            Interpreter interpreter = interpreterFactory.CreateInterpreter(SupportedCultures.English, textDocument);
+            using Interpreter interpreter = interpreterFactory.CreateInterpreter(SupportedCultures.English, textDocument);
 
-            AppendToTextDocument(textDocument, "123");
+            TypeInDocument(textDocument, "test = 2");
 
-            await Task.Delay(5000);
+            await interpreter.WaitAsync();
         }
 
-        private void AppendToTextDocument(TextDocument textDocument, string text)
+        private static void TypeInDocument(TextDocument textDocument, string text)
         {
             for (int i = 0; i < text.Length; i++)
             {

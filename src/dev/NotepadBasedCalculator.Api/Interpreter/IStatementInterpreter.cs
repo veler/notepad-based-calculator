@@ -1,6 +1,7 @@
 ﻿namespace NotepadBasedCalculator.Api.Interpreter
 {
-    internal interface IStatementInterpreter
+    public interface IStatementInterpreter
     {
+        Task<IData?> InterpretAsync(string culture, Statement statement, CancellationToken cancellationToken);
     }
 }

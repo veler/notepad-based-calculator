@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using Microsoft.Recognizers.Text;
-using NotepadBasedCalculator.Api;
 
 namespace NotepadBasedCalculator.Core
 {
@@ -42,7 +40,8 @@ namespace NotepadBasedCalculator.Core
                         culture,
                         tokenizedLine,
                         AggregateAllKnownVariableNames(resultLines),
-                        cancellationToken);
+                        cancellationToken)
+                    .ConfigureAwait(true);
 
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -86,7 +85,8 @@ namespace NotepadBasedCalculator.Core
                         culture,
                         tokenizedLine,
                         AggregateAllKnownVariableNames(resultLines),
-                        cancellationToken);
+                        cancellationToken)
+                    .ConfigureAwait(true);
 
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -101,7 +101,7 @@ namespace NotepadBasedCalculator.Core
 
         private async Task<ParserResultLine> ParseLineAsync(string culture, TokenizedTextLine tokenizedLine, IReadOnlyList<string> orderedKnownVariableNames, CancellationToken cancellationToken)
         {
-            IReadOnlyList<IData> parsedData = await ParseDataAsync(culture, tokenizedLine, cancellationToken);
+            IReadOnlyList<IData> parsedData = await ParseDataAsync(culture, tokenizedLine, cancellationToken).ConfigureAwait(true);
 
             tokenizedLine = _lexer.TokenizeLine(culture, tokenizedLine.Start, tokenizedLine.LineTextIncludingLineBreak, orderedKnownVariableNames, parsedData);
 
@@ -202,7 +202,7 @@ namespace NotepadBasedCalculator.Core
                 return nonOverlappingData;
             }
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ConfigureAwait(true);
 
             if (cancellationToken.IsCancellationRequested)
             {
