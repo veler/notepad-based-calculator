@@ -18,6 +18,8 @@
 
         public const string RightParenth = nameof(RightParenth);
 
+        public const string VariableReference = nameof(VariableReference);
+
         public const string IsEqualToOperator = "equal_to_operators";
 
         public const string IsNotEqualToOperator = "not_equal_to_operators";

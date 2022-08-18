@@ -1,6 +1,4 @@
-﻿using NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Condition
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Condition
 {
     [Export(typeof(IStatementParser))]
     [Culture(SupportedCultures.Any)]

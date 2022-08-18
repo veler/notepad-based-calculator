@@ -1,10 +1,7 @@
-﻿using System.Linq.Expressions;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using NotepadBasedCalculator.Api;
-using NotepadBasedCalculator.BuiltInPlugins.Statements.Condition;
 using NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus;
 using Xunit;
-using Expression = NotepadBasedCalculator.Api.Expression;
 
 namespace NotepadBasedCalculator.Core.Tests
 {

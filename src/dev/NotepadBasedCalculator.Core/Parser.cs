@@ -1,4 +1,7 @@
-﻿using Microsoft.Recognizers.Text;
+﻿using System.Collections.Generic;
+using System.Collections.Immutable;
+using Microsoft.Recognizers.Text;
+using NotepadBasedCalculator.Api;
 
 namespace NotepadBasedCalculator.Core
 {
@@ -17,12 +20,12 @@ namespace NotepadBasedCalculator.Core
             _lexer = lexer;
         }
 
-        internal Task<ParserResult> ParseAsync(string? input)
+        internal Task<ParserResult?> ParseAsync(string? input, CancellationToken cancellationToken = default)
         {
-            return ParseAsync(input, SupportedCultures.English);
+            return ParseAsync(input, SupportedCultures.English, cancellationToken);
         }
 
-        internal async Task<ParserResult> ParseAsync(string? input, string culture)
+        internal async Task<ParserResult?> ParseAsync(string? input, string culture, CancellationToken cancellationToken)
         {
             Guard.IsNotNullOrWhiteSpace(culture);
             culture = Culture.MapToNearestLanguage(culture);
@@ -34,7 +37,17 @@ namespace NotepadBasedCalculator.Core
             {
                 TokenizedTextLine tokenizedLine = tokenizedLines[i];
 
-                ParserResultLine parserResultLine = await ParseLineAsync(culture, tokenizedLine);
+                ParserResultLine parserResultLine
+                    = await ParseLineAsync(
+                        culture,
+                        tokenizedLine,
+                        AggregateAllKnownVariableNames(resultLines),
+                        cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return null;
+                }
 
                 resultLines.Add(parserResultLine);
             }
@@ -42,25 +55,69 @@ namespace NotepadBasedCalculator.Core
             return new ParserResult(resultLines);
         }
 
-        private async Task<ParserResultLine> ParseLineAsync(string culture, TokenizedTextLine tokenizedLine)
+        internal async Task<ParserResult?> ParseAndMergeWithOlderResultAsync(
+            ParserResult? oldParserResult,
+            IReadOnlyList<TokenizedTextLine> newTokenizedTextLines,
+            int lineFromWhichSomethingHasChanged,
+            string culture,
+            CancellationToken cancellationToken)
         {
-            IReadOnlyList<IData> parsedData = await ParseDataAsync(culture, tokenizedLine);
+            Guard.IsInRange(lineFromWhichSomethingHasChanged, 0, newTokenizedTextLines.Count);
+            Guard.IsNotNull(newTokenizedTextLines);
+            Guard.IsNotNullOrWhiteSpace(culture);
+            culture = Culture.MapToNearestLanguage(culture);
 
-            tokenizedLine = _lexer.TokenizeLine(culture, tokenizedLine.Start, tokenizedLine.LineTextIncludingLineBreak, parsedData);
+            var resultLines = new List<ParserResultLine>();
 
-            IReadOnlyList<Statement> statements = ParseStatements(culture, tokenizedLine);
+            if (oldParserResult is not null)
+            {
+                for (int i = 0; i < lineFromWhichSomethingHasChanged; i++)
+                {
+                    resultLines.Add(oldParserResult.Lines[i]);
+                }
+            }
+
+            for (int i = lineFromWhichSomethingHasChanged; i < newTokenizedTextLines.Count; i++)
+            {
+                TokenizedTextLine tokenizedLine = newTokenizedTextLines[i];
+
+                ParserResultLine parserResultLine
+                    = await ParseLineAsync(
+                        culture,
+                        tokenizedLine,
+                        AggregateAllKnownVariableNames(resultLines),
+                        cancellationToken);
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return null;
+                }
+
+                resultLines.Add(parserResultLine);
+            }
+
+            return new ParserResult(resultLines);
+        }
+
+        private async Task<ParserResultLine> ParseLineAsync(string culture, TokenizedTextLine tokenizedLine, IReadOnlyList<string> orderedKnownVariableNames, CancellationToken cancellationToken)
+        {
+            IReadOnlyList<IData> parsedData = await ParseDataAsync(culture, tokenizedLine, cancellationToken);
+
+            tokenizedLine = _lexer.TokenizeLine(culture, tokenizedLine.Start, tokenizedLine.LineTextIncludingLineBreak, orderedKnownVariableNames, parsedData);
+
+            IReadOnlyList<Statement> statements = ParseStatements(culture, tokenizedLine, cancellationToken);
 
             return new ParserResultLine(tokenizedLine, parsedData, statements);
         }
 
-        private IReadOnlyList<Statement> ParseStatements(string culture, TokenizedTextLine tokenizedLine)
+        private IReadOnlyList<Statement> ParseStatements(string culture, TokenizedTextLine tokenizedLine, CancellationToken cancellationToken)
         {
             var statements = new List<Statement>();
 
             LinkedToken? nextTokenToParse = tokenizedLine.Tokens;
-            while (nextTokenToParse is not null)
+            while (nextTokenToParse is not null && !cancellationToken.IsCancellationRequested)
             {
-                Statement? statement = ParseNextStatement(culture, nextTokenToParse);
+                Statement? statement = ParseNextStatement(culture, nextTokenToParse, cancellationToken);
                 if (statement is not null)
                 {
                     nextTokenToParse = statement.LastToken.Next;
@@ -76,12 +133,17 @@ namespace NotepadBasedCalculator.Core
             return statements;
         }
 
-        private Statement? ParseNextStatement(string culture, LinkedToken linkedToken)
+        private Statement? ParseNextStatement(string culture, LinkedToken linkedToken, CancellationToken cancellationToken)
         {
             Statement? statement = null;
 
             foreach (IStatementParser statementParser in _parserRepository.GetApplicableStatementParsers(culture))
             {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    break;
+                }
+
                 try
                 {
                     if (statementParser.TryParseStatement(culture, linkedToken, out statement)
@@ -102,7 +164,7 @@ namespace NotepadBasedCalculator.Core
             return statement;
         }
 
-        private async Task<IReadOnlyList<IData>> ParseDataAsync(string culture, TokenizedTextLine tokenizedLine)
+        private async Task<IReadOnlyList<IData>> ParseDataAsync(string culture, TokenizedTextLine tokenizedLine, CancellationToken cancellationToken)
         {
             var rawDataBag = new List<IData>();
             var nonOverlappingData = new List<IData>();
@@ -135,7 +197,17 @@ namespace NotepadBasedCalculator.Core
                         }));
             }
 
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return nonOverlappingData;
+            }
+
             await Task.WhenAll(tasks);
+
+            if (cancellationToken.IsCancellationRequested)
+            {
+                return nonOverlappingData;
+            }
 
             // For each data we parsed, find whether the data is overlapped by another one. If not, then we keep it.
             for (int i = 0; i < rawDataBag.Count; i++)
@@ -169,6 +241,24 @@ namespace NotepadBasedCalculator.Core
             }
 
             return false;
+        }
+
+        private static IReadOnlyList<string> AggregateAllKnownVariableNames(IReadOnlyList<ParserResultLine> parsedLines)
+        {
+            var knownVariableNames = new HashSet<string>();
+            for (int i = 0; i < parsedLines.Count; i++)
+            {
+                ParserResultLine parsedLine = parsedLines[i];
+                for (int j = 0; j < parsedLine.Statements.Count; j++)
+                {
+                    if (parsedLine.Statements[j] is VariableDeclarationStatement variableDeclarationStatement)
+                    {
+                        knownVariableNames.Add(variableDeclarationStatement.VariableName);
+                    }
+                }
+            }
+
+            return knownVariableNames.ToImmutableSortedSet(new DescendingComparer<string>());
         }
     }
 }

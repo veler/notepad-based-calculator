@@ -61,7 +61,12 @@ namespace NotepadBasedCalculator.Core
         /// <param name="lineTextIncludingLineBreak"></param>
         /// <param name="knownData">An ordered list of <see cref="IData"/> that have already been parsed in the <paramref name="lineTextIncludingLineBreak"/>.</param>
         /// <returns></returns>
-        internal TokenizedTextLine TokenizeLine(string culture, int startPositionInDocument, string lineTextIncludingLineBreak, IReadOnlyList<IData>? knownData = null)
+        internal TokenizedTextLine TokenizeLine(
+            string culture,
+            int startPositionInDocument,
+            string lineTextIncludingLineBreak,
+            IReadOnlyList<string> knownVariableNames,
+            IReadOnlyList<IData>? knownData = null)
         {
             Guard.IsGreaterThanOrEqualTo(startPositionInDocument, 0);
 
@@ -69,7 +74,7 @@ namespace NotepadBasedCalculator.Core
 
             if (!string.IsNullOrEmpty(lineTextIncludingLineBreak))
             {
-                return TokenizeLineInternal(startPositionInDocument, lineTextIncludingLineBreak, tokenDefinitionGrammars, knownData);
+                return TokenizeLineInternal(startPositionInDocument, lineTextIncludingLineBreak, tokenDefinitionGrammars, knownVariableNames, knownData);
             }
             else
             {
@@ -77,17 +82,27 @@ namespace NotepadBasedCalculator.Core
             }
         }
 
-        private TokenizedTextLine TokenizeLineInternal(string lineTextIncludingLineBreak, TokenizedTextLine? previousTokenizedLine, IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars, IReadOnlyList<IData>? knownData = null)
+        private TokenizedTextLine TokenizeLineInternal(
+            string lineTextIncludingLineBreak,
+            TokenizedTextLine? previousTokenizedLine,
+            IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars,
+            IReadOnlyList<string>? orderedKnownVariableNames = null,
+            IReadOnlyList<IData>? knownData = null)
         {
             int lineStart = previousTokenizedLine?.EndIncludingLineBreak ?? 0;
-            return TokenizeLineInternal(lineStart, lineTextIncludingLineBreak, orderedTokenDefinitionGrammars, knownData);
+            return TokenizeLineInternal(lineStart, lineTextIncludingLineBreak, orderedTokenDefinitionGrammars, orderedKnownVariableNames, knownData);
         }
 
-        private TokenizedTextLine TokenizeLineInternal(int startPositionInDocument, string lineTextIncludingLineBreak, IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars, IReadOnlyList<IData>? knownData = null)
+        private TokenizedTextLine TokenizeLineInternal(
+            int startPositionInDocument,
+            string lineTextIncludingLineBreak,
+            IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars,
+            IReadOnlyList<string>? orderedKnownVariableNames = null,
+            IReadOnlyList<IData>? knownData = null)
         {
             Guard.IsGreaterThanOrEqualTo(startPositionInDocument, 0);
 
-            var tokenEnumerator = new LineTokenEnumerator(lineTextIncludingLineBreak, orderedTokenDefinitionGrammars, knownData);
+            var tokenEnumerator = new LineTokenEnumerator(lineTextIncludingLineBreak, orderedTokenDefinitionGrammars, orderedKnownVariableNames, knownData);
 
             int lineBreakLength = 0;
             for (int i = 0; i < LineBreakers.Length; i++)
@@ -162,7 +177,7 @@ namespace NotepadBasedCalculator.Core
                             c => CultureHelper.IsCultureApplicable(c, culture)))
                     .Select(p => p.Value.LoadTokenDefinitionGrammar(culture))
                     .Where(g => g is not null)
-                    .SelectMany(g => g);
+                    .SelectMany(g => g!)!;
 
                 var definitions = new List<TokenDefinition>();
 
@@ -208,6 +223,7 @@ namespace NotepadBasedCalculator.Core
             private readonly object _syncLock = new();
             private readonly string _lineTextIncludingLineBreak;
             private readonly IReadOnlyList<TokenDefinition> _orderedTokenDefinitionGrammars;
+            private readonly IReadOnlyList<string>? _orderedKnownVariableNames;
             private readonly IReadOnlyList<IData>? _knownData;
 
             private bool _disposed;
@@ -228,11 +244,16 @@ namespace NotepadBasedCalculator.Core
 
             object? IEnumerator.Current => Current;
 
-            public LineTokenEnumerator(string lineTextIncludingLineBreak, IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars, IReadOnlyList<IData>? knownData)
+            public LineTokenEnumerator(
+                string lineTextIncludingLineBreak,
+                IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars,
+                IReadOnlyList<string>? orderedKnownVariableNames,
+                IReadOnlyList<IData>? knownData)
             {
                 Guard.IsNotNull(lineTextIncludingLineBreak);
                 _lineTextIncludingLineBreak = lineTextIncludingLineBreak;
                 _orderedTokenDefinitionGrammars = orderedTokenDefinitionGrammars;
+                _orderedKnownVariableNames = orderedKnownVariableNames;
                 _knownData = knownData;
             }
 
@@ -399,7 +420,33 @@ namespace NotepadBasedCalculator.Core
                         {
                             if (_lineTextIncludingLineBreak.IndexOf(tokenDefinition.TokenText, startIndex, tokenDefinition.TokenText.Length, StringComparison.OrdinalIgnoreCase) == startIndex)
                             {
-                                foundToken = new Token(_lineTextIncludingLineBreak, startIndex, startIndex + tokenDefinition.TokenText.Length, tokenDefinition.TokenType);
+                                foundToken
+                                    = new Token(
+                                        _lineTextIncludingLineBreak,
+                                        startIndex,
+                                        startIndex + tokenDefinition.TokenText.Length,
+                                        tokenDefinition.TokenType);
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                if (_orderedKnownVariableNames is not null)
+                {
+                    for (int i = 0; i < _orderedKnownVariableNames.Count; i++)
+                    {
+                        string variableName = _orderedKnownVariableNames[i];
+                        if (_lineTextIncludingLineBreak.Length >= startIndex + variableName.Length)
+                        {
+                            if (_lineTextIncludingLineBreak.IndexOf(variableName, startIndex, variableName.Length, StringComparison.Ordinal) == startIndex)
+                            {
+                                foundToken
+                                    = new Token(
+                                        _lineTextIncludingLineBreak,
+                                        startIndex,
+                                        startIndex + variableName.Length,
+                                        PredefinedTokenAndDataTypeNames.VariableReference);
                                 return true;
                             }
                         }

@@ -1,6 +1,4 @@
-﻿using System.Linq.Expressions;
-
-namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.Api
 {
     /// <summary>
     /// Represents a binary conditional expression

@@ -33,5 +33,7 @@
         bool IsTokenTextEqualTo(string compareTo, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase);
 
         string GetText();
+
+        string GetText(int startInLine, int endInLine);
     }
 }

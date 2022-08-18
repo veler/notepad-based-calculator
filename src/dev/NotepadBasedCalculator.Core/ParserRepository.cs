@@ -1,6 +1,4 @@
-﻿using Microsoft.Recognizers.Text;
-
-namespace NotepadBasedCalculator.Core
+﻿namespace NotepadBasedCalculator.Core
 {
     [Export(typeof(IParserRepository))]
     [Shared]

@@ -1,4 +1,6 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Expressions.NumericalCalculus
+﻿using NotepadBasedCalculator.Api.AbstractSyntaxTree;
+
+namespace NotepadBasedCalculator.BuiltInPlugins.Expressions.NumericalCalculus
 {
     [Export(typeof(IExpressionParser))]
     [Name(PredefinedExpressionParserNames.NumericalCalculusExpression)]
@@ -143,7 +145,12 @@
                     return new DataExpression(currentToken, currentToken, data);
                 }
 
-                //  TODO: Detect variable reference.
+                // Detect variable reference
+                if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.VariableReference))
+                {
+                    nextToken = currentToken.Next;
+                    return new VariableReferenceExpression(currentToken);
+                }
 
                 // Detect expression between parenthesis.
                 LinkedToken leftParenthToken = currentToken;

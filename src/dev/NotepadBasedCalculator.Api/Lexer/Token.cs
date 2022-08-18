@@ -73,6 +73,11 @@
             return _lineTextIncludingLineBreak.Substring(StartInLine, Length);
         }
 
+        public string GetText(int startInLine, int endInLine)
+        {
+            return _lineTextIncludingLineBreak.Substring(startInLine, endInLine - startInLine);
+        }
+
         public override string ToString()
         {
             return $"[{Type}] ({StartInLine}, {EndInLine}): '{GetText()}'";

@@ -5,7 +5,7 @@
         private readonly Lazy<IParserRepository> _parserRepository;
         private readonly Lazy<ILogger> _logger;
 
-        public IServiceProvider? ServiceProvider { get; set; }
+        public IServiceProvider? ServiceProvider { get; internal set; }
 
         protected ParserBase()
         {

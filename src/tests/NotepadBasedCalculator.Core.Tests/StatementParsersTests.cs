@@ -77,13 +77,13 @@ namespace NotepadBasedCalculator.Core.Tests
         {
             Parser parser = ExportProvider.Import<Parser>();
             ParserResult parserResult = await parser.ParseAsync(" if 23 less than or equal to twenty four then ");
-            Assert.Equal(1, parserResult.Lines[0].Statements.Count);
+            Assert.Single(parserResult.Lines[0].Statements);
             var statement = (ConditionStatement)parserResult.Lines[0].Statements[0];
             var condition = (BinaryOperatorExpression)statement.Condition;
             Assert.Equal("([Numeric] (4, 6): '23' <= [Numeric] (29, 40): 'twenty four')", condition.ToString());
 
             parserResult = await parser.ParseAsync("23 == twenty three");
-            Assert.Equal(1, parserResult.Lines[0].Statements.Count);
+            Assert.Single(parserResult.Lines[0].Statements);
             statement = (ConditionStatement)parserResult.Lines[0].Statements[0];
             condition = (BinaryOperatorExpression)statement.Condition;
             Assert.Equal("([Numeric] (0, 2): '23' == [Numeric] (6, 18): 'twenty three')", condition.ToString());
@@ -104,6 +104,50 @@ namespace NotepadBasedCalculator.Core.Tests
             statement = (ConditionStatement)parserResult.Lines[0].Statements[0];
             condition = (BinaryOperatorExpression)statement.Condition;
             Assert.Equal("(([Numeric] (3, 23): 'one hundred thousand' + (([Numeric] (45, 48): '30%' / [Numeric] (55, 58): 'two'))) > [Numeric] (69, 73): '150k')", condition.ToString());
+        }
+
+        [Fact]
+        public async Task VariableDeclarationAndReference()
+        {
+            string input =
+@"hello There = 2
+hello There + 2
+   hello There     =    3
+well hello There = 5
+hello There
+Hum well hello There how are you?
+hello there";
+
+            Parser parser = ExportProvider.Import<Parser>();
+            ParserResult parserResult = await parser.ParseAsync(input);
+
+            Assert.Equal(7, parserResult.Lines.Count);
+
+            Assert.Single(parserResult.Lines[0].Statements);
+            Assert.IsType<VariableDeclarationStatement>(parserResult.Lines[0].Statements[0]);
+            Assert.Equal("Variable $(hello There) = [Numeric] (14, 15): '2'", parserResult.Lines[0].Statements[0].ToString());
+
+            Assert.Single(parserResult.Lines[1].Statements);
+            Assert.IsType<NumericalCalculusStatement>(parserResult.Lines[1].Statements[0]);
+            Assert.Equal("($(hello There) + [Numeric] (14, 15): '2')", parserResult.Lines[1].Statements[0].ToString());
+
+            Assert.Single(parserResult.Lines[2].Statements);
+            Assert.IsType<VariableDeclarationStatement>(parserResult.Lines[2].Statements[0]);
+            Assert.Equal("Variable $(hello There) = [Numeric] (24, 25): '3'", parserResult.Lines[2].Statements[0].ToString());
+
+            Assert.Single(parserResult.Lines[3].Statements);
+            Assert.IsType<VariableDeclarationStatement>(parserResult.Lines[3].Statements[0]);
+            Assert.Equal("Variable $(well hello There) = [Numeric] (19, 20): '5'", parserResult.Lines[3].Statements[0].ToString());
+
+            Assert.Single(parserResult.Lines[4].Statements);
+            Assert.IsType<NumericalCalculusStatement>(parserResult.Lines[4].Statements[0]);
+            Assert.Equal("$(hello There)", parserResult.Lines[4].Statements[0].ToString());
+
+            Assert.Single(parserResult.Lines[5].Statements);
+            Assert.IsType<NumericalCalculusStatement>(parserResult.Lines[5].Statements[0]);
+            Assert.Equal("$(well hello There)", parserResult.Lines[5].Statements[0].ToString());
+
+            Assert.Empty(parserResult.Lines[6].Statements);
         }
     }
 }
