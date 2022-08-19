@@ -23,14 +23,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                 switch (modelResult.Resolution[Subtype])
                 {
                     case Constants.INTEGER:
-                        data.Add(
-                            new IntegerData(
-                                tokenizedTextLine.LineTextIncludingLineBreak,
-                                modelResult.Start,
-                                modelResult.End + 1,
-                                long.Parse(valueString)));
-                        break;
-
                     case Constants.DECIMAL:
                     case Constants.POWER:
                         data.Add(

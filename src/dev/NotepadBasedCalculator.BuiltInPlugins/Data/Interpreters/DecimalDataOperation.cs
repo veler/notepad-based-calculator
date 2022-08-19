@@ -1,12 +1,12 @@
 ﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Interpreters
 {
     [Export(typeof(IDataBinaryOperationInterpreter))]
-    [SupportedDataType(typeof(IntegerData))]
-    internal sealed class IntegerDataOperation : IDataBinaryOperationInterpreter
+    [SupportedDataType(typeof(DecimalData))]
+    internal sealed class DecimalDataOperation : IDataBinaryOperationInterpreter
     {
         public IData? PerformOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
         {
-            if (leftData is null || leftData is not IntegerData integerData)
+            if (leftData is null || leftData is not DecimalData decimalData)
             {
                 return null;
             }
@@ -32,7 +32,7 @@
                     break;
 
                 case BinaryOperatorType.Addition:
-                    return Addition(integerData, rightData);
+                    return Addition(decimalData, rightData);
 
                 case BinaryOperatorType.Subtraction:
                     break;
@@ -51,7 +51,7 @@
             return null;
         }
 
-        private IData? Addition(IntegerData leftData, IData? rightData)
+        private IData? Addition(DecimalData leftData, IData? rightData)
         {
             return null;
         }

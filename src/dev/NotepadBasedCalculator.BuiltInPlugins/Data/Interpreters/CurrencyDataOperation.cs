@@ -1,4 +1,6 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Interpreters
+﻿using NotepadBasedCalculator.Api;
+
+namespace NotepadBasedCalculator.BuiltInPlugins.Data.Interpreters
 {
     [Export(typeof(IDataBinaryOperationInterpreter))]
     [SupportedDataType(typeof(CurrencyData))]
@@ -59,19 +61,7 @@
             }
 
             float currencyValue = leftData.Value.Value;
-            if (rightData is PercentageData percentageData)
-            {
-                currencyValue += percentageData.Value / 100 * currencyValue;
-            }
-            else if (rightData is IntegerData integerData)
-            {
-
-            }
-            else
-            {
-                ThrowHelper.ThrowNotSupportedException();
-                return null;
-            }
+            currencyValue.Add(rightData);
 
             return new CurrencyData(
                 leftData.LineTextIncludingLineBreak,
