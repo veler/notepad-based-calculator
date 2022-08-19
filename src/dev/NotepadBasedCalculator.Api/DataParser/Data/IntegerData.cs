@@ -4,6 +4,8 @@
     {
         public bool IsNegative => Value < 0;
 
+        public override string DisplayText => Value.ToString();
+
         public IntegerData(string lineTextIncludingLineBreak, int startInLine, int endInLine, long value)
             : base(
                   lineTextIncludingLineBreak,

@@ -4,6 +4,15 @@
     [SupportedExpressionType(typeof(BinaryOperatorExpression))]
     internal sealed class BinaryOperatorExpressionInterpreter : IExpressionInterpreter
     {
+        private readonly IEnumerable<Lazy<IDataBinaryOperationInterpreter, InterpreterMetadata>> _binaryOperatorsInterpreters;
+
+        [ImportingConstructor]
+        public BinaryOperatorExpressionInterpreter(
+            [ImportMany] IEnumerable<Lazy<IDataBinaryOperationInterpreter, InterpreterMetadata>> binaryOperatorsInterpreters)
+        {
+            _binaryOperatorsInterpreters = binaryOperatorsInterpreters;
+        }
+
         public async Task<IData?> InterpretExpressionAsync(
             string culture,
             IVariableService variableService,
@@ -34,48 +43,23 @@
                     cancellationToken)
                 .ConfigureAwait(true);
 
-            switch (binaryOperatorExpression.Operator)
+            if (leftData is not null)
             {
-                case BinaryOperatorType.Equality:
-                    return PerformEquality(leftData, rightData, notEqual: false);
+                Type leftDataType = leftData.GetType();
+                IDataBinaryOperationInterpreter binaryOperationInterpreter = GetApplicableBinaryOperatorInterpreter(leftDataType, culture);
 
-                case BinaryOperatorType.NoEquality:
-                    return PerformEquality(leftData, rightData, notEqual: true);
-
-                case BinaryOperatorType.LessThan:
-                case BinaryOperatorType.LessThanOrEqualTo:
-                case BinaryOperatorType.GreaterThan:
-                case BinaryOperatorType.GreaterThanOrEqualTo:
-                    return PerformRelationalComparison(leftData, rightData, binaryOperatorExpression.Operator);
-
-                case BinaryOperatorType.Addition:
-                    break;
-
-                case BinaryOperatorType.Subtraction:
-                    break;
-
-                case BinaryOperatorType.Multiply:
-                    break;
-
-                case BinaryOperatorType.Division:
-                    break;
-
-                default:
-                    ThrowHelper.ThrowNotSupportedException();
-                    break;
+                return binaryOperationInterpreter.PerformOperation(leftData, binaryOperatorExpression.Operator, rightData);
             }
 
             return null;
         }
 
-        private IData? PerformEquality(IData? left, IData? right, bool notEqual)
+        private IDataBinaryOperationInterpreter GetApplicableBinaryOperatorInterpreter(Type type, string culture)
         {
-            return null;
-        }
-
-        private IData? PerformRelationalComparison(IData? left, IData? right, BinaryOperatorType operatorType)
-        {
-            return null;
+            return _binaryOperatorsInterpreters.Where(
+                    p => p.Metadata.CultureCodes.Any(c => CultureHelper.IsCultureApplicable(c, culture))
+                        && p.Metadata.Types.Any(t => t == type))
+                    .Single().Value;
         }
     }
 }

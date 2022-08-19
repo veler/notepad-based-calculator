@@ -4,6 +4,8 @@
     {
         public bool IsNegative => Value < 0;
 
+        public override string DisplayText => Value.ToString(); // TODO: Show "th", "st", "rd"...
+
         public OrdinalData(string lineTextIncludingLineBreak, int startInLine, int endInLine, long value)
             : base(
                   lineTextIncludingLineBreak,

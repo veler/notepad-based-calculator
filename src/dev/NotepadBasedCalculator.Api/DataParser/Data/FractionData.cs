@@ -4,6 +4,8 @@
     {
         public bool IsNegative => Value < 0;
 
+        public override string DisplayText => Value.ToString();
+
         public FractionData(string lineTextIncludingLineBreak, int startInLine, int endInLine, float value)
             : base(
                   lineTextIncludingLineBreak,

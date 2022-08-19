@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Need to have a TargetFrameworks tag for VS to recognize this as an SDK project. Just use the shared one. -->
+    <TargetFrameworks>$(NetCore)</TargetFrameworks>
+
+    <OutputType>Exe</OutputType>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\dev\NotepadBasedCalculator.Core\NotepadBasedCalculator.Core.csproj" />
+  </ItemGroup>
+
+</Project>

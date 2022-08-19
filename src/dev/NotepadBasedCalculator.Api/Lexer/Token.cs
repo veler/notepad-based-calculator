@@ -5,8 +5,6 @@
     /// </summary>
     public record Token : IToken
     {
-        private readonly string _lineTextIncludingLineBreak;
-
         public string Type { get; }
 
         public int StartInLine { get; }
@@ -15,13 +13,15 @@
 
         public int Length => EndInLine - StartInLine;
 
+        public string LineTextIncludingLineBreak { get; }
+
         internal Token(string lineTextIncludingLineBreak, int startInLine, int endInLine, string tokenType)
         {
             Guard.IsGreaterThanOrEqualTo(startInLine, 0);
             Guard.IsGreaterThan(endInLine, startInLine);
             Guard.IsNotNullOrEmpty(lineTextIncludingLineBreak);
             Guard.IsNotNullOrWhiteSpace(tokenType);
-            _lineTextIncludingLineBreak = lineTextIncludingLineBreak;
+            LineTextIncludingLineBreak = lineTextIncludingLineBreak;
 
             Type = tokenType;
             StartInLine = startInLine;
@@ -65,17 +65,17 @@
             if (string.IsNullOrEmpty(compareTo) || compareTo.Length != Length)
                 return false;
 
-            return _lineTextIncludingLineBreak.IndexOf(compareTo, StartInLine, Length, comparisonType) == StartInLine;
+            return LineTextIncludingLineBreak.IndexOf(compareTo, StartInLine, Length, comparisonType) == StartInLine;
         }
 
         public string GetText()
         {
-            return _lineTextIncludingLineBreak.Substring(StartInLine, Length);
+            return LineTextIncludingLineBreak.Substring(StartInLine, Length);
         }
 
         public string GetText(int startInLine, int endInLine)
         {
-            return _lineTextIncludingLineBreak.Substring(startInLine, endInLine - startInLine);
+            return LineTextIncludingLineBreak.Substring(startInLine, endInLine - startInLine);
         }
 
         public override string ToString()

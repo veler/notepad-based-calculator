@@ -6,6 +6,8 @@
 
         public T Value { get; }
 
+        public abstract string DisplayText { get; }
+
         protected Data(
             string lineTextIncludingLineBreak,
             int startInLine,

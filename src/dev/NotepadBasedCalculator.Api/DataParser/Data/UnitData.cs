@@ -1,19 +1,19 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed record PercentageData : Data<float>, INumericData
+    public sealed record UnitData : Data<UnitFloat>, INumericData
     {
-        public bool IsNegative => Value < 0;
+        public bool IsNegative => Value.Value < 0;
 
-        public override string DisplayText => $"{Value} %";
+        public override string DisplayText => $"{Value.Value} {Value.Unit}";
 
-        public PercentageData(string lineTextIncludingLineBreak, int startInLine, int endInLine, float value)
+        public UnitData(string lineTextIncludingLineBreak, int startInLine, int endInLine, string subType, UnitFloat value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Percentage)
+                  subType)
         {
         }
 

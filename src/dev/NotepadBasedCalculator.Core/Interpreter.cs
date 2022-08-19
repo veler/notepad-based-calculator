@@ -14,8 +14,9 @@ namespace NotepadBasedCalculator.Core
         private readonly TextDocument _textDocument;
 
         private CancellationTokenSource _cancellationTokenSource = new();
-        private ParserResult? _parserResult = null;
         private Task _currentInterpretationTask = Task.CompletedTask;
+        private ParserResult? _parserResult = null;
+        private IReadOnlyList<IData?>? _lineResults = null;
 
         internal Interpreter(
             string culture,
@@ -46,9 +47,10 @@ namespace NotepadBasedCalculator.Core
             CancelCurrentInterpretationWork();
         }
 
-        internal Task WaitAsync()
+        internal async Task<IReadOnlyList<IData?>?> WaitAsync()
         {
-            return _currentInterpretationTask;
+            await _currentInterpretationTask.ConfigureAwait(true);
+            return _lineResults;
         }
 
         private void TextDocument_TextChanged(object sender, EventArgs e)
@@ -104,6 +106,7 @@ namespace NotepadBasedCalculator.Core
             }
 
             // Interpret the whole document starting from the line that changed.
+            var lineResults = new List<IData?>();
             for (int i = lineFromWhichSomethingHasChanged; i < parserResult.Lines.Count; i++)
             {
                 IData? lineResult = await InterpretLineAsync(parserResult.Lines[i], cancellationToken).ConfigureAwait(true);
@@ -116,6 +119,8 @@ namespace NotepadBasedCalculator.Core
                     _variablePerLineBackup.Add(_variableService.CreateBackup());
                 }
 
+                lineResults.Add(lineResult);
+
                 if (cancellationToken.IsCancellationRequested)
                 {
                     return;
@@ -123,6 +128,7 @@ namespace NotepadBasedCalculator.Core
             }
 
             Interlocked.Exchange(ref _parserResult, parserResult);
+            Interlocked.Exchange(ref _lineResults, lineResults);
         }
 
         private async Task<IData?> InterpretLineAsync(ParserResultLine line, CancellationToken cancellationToken)
@@ -157,12 +163,22 @@ namespace NotepadBasedCalculator.Core
             }
 
             // If there were multiple statements on the line, let's do the addition of each data produced.
-            for (int i = 0; i < allData.Count; i++)
+            if (allData.Count > 1)
             {
-                // TODO
+                for (int i = 0; i < allData.Count; i++)
+                {
+                    // TODO
+                }
+                return null;
             }
-
-            return null; // TODO
+            else if (allData.Count == 1)
+            {
+                return allData[0];
+            }
+            else
+            {
+                return null;
+            }
         }
 
         async Task<IData?> IExpressionInterpreter.InterpretExpressionAsync(
@@ -221,7 +237,7 @@ namespace NotepadBasedCalculator.Core
                 }
             }
 
-            return Math.Min(oldParserResult?.Lines.Count ?? 0, newTokenizedTextLines.Count);
+            return Math.Max(Math.Min(oldParserResult?.Lines.Count ?? 0, newTokenizedTextLines.Count) - 1, 0);
         }
 
         private IStatementInterpreter GetApplicableStatementInterpreter(Type type)

@@ -137,7 +137,7 @@
             if (currentToken is not null)
             {
                 // Detect Numbers, Percentage, Dates...etc.
-                if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.Numeric) && currentToken.Token is IData data)
+                if (currentToken.Token is IData data)
                 {
                     nextToken = currentToken.Next;
                     return new DataExpression(currentToken, currentToken, data);

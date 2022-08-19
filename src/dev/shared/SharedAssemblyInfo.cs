@@ -23,3 +23,4 @@ using System.Runtime.CompilerServices;
 
 [assembly: InternalsVisibleTo("NotepadBasedCalculator.Core")]
 [assembly: InternalsVisibleTo("NotepadBasedCalculator.Core.Tests")]
+[assembly: InternalsVisibleTo("NotepadBasedCalculator.StandaloneConsoleTestApp")]

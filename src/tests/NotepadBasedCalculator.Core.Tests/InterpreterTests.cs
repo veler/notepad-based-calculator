@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using NotepadBasedCalculator.Api;
 using Xunit;
 
@@ -16,6 +17,20 @@ namespace NotepadBasedCalculator.Core.Tests
             textDocument.Text = "test = 2";
 
             await interpreter.WaitAsync();
+        }
+
+        [Fact]
+        public async Task Intepreter_SimpleCalculus()
+        {
+            InterpreterFactory interpreterFactory = ExportProvider.Import<InterpreterFactory>();
+            var textDocument = new TextDocument();
+            using Interpreter interpreter = interpreterFactory.CreateInterpreter(SupportedCultures.English, textDocument);
+
+            textDocument.Text = "I paid $10 plus 20% tip";
+
+            IReadOnlyList<IData> lineResults = await interpreter.WaitAsync();
+            Assert.Single(lineResults);
+            Assert.Equal("12 Dollar", lineResults[0].DisplayText);
         }
 
         [Fact]

@@ -1,8 +1,8 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.VariableDeclaration
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus
 {
     [Export(typeof(IStatementInterpreter))]
-    [SupportedStatementType(typeof(VariableDeclarationStatement))]
-    internal class VariableDeclarationInterpreter : IStatementInterpreter
+    [SupportedStatementType(typeof(NumericalCalculusStatement))]
+    internal class NumericalCalculusStatementInterpreter : IStatementInterpreter
     {
         public async Task<IData?> InterpretStatementAsync(
             string culture,
@@ -11,7 +11,7 @@
             Statement statement,
             CancellationToken cancellationToken)
         {
-            if (statement is not VariableDeclarationStatement variableDeclarationStatement)
+            if (statement is not NumericalCalculusStatement numericalCalculusStatement)
             {
                 return null;
             }
@@ -21,11 +21,9 @@
                     culture,
                     variableService,
                     expressionInterpreter,
-                    variableDeclarationStatement.AssignedValue,
+                    numericalCalculusStatement.NumericalCalculusExpression,
                     cancellationToken)
                 .ConfigureAwait(true);
-
-            variableService.SetVariableValue(variableDeclarationStatement.VariableName, value);
 
             return value;
         }

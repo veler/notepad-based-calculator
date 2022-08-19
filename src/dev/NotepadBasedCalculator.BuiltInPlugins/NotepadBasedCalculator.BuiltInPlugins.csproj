@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.Recognizers.Text" />
     <PackageReference Include="Microsoft.Recognizers.Text.Number" />
     <PackageReference Include="Microsoft.Recognizers.Text.NumberWithUnit" />
+    <PackageReference Include="Microsoft.Recognizers.Text.DateTime" />
     <PackageReference Include="System.Composition" />
   </ItemGroup>
   <ItemGroup>

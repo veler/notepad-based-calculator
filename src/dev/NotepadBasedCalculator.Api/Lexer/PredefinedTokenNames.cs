@@ -63,6 +63,22 @@
             public const string Ordinal = nameof(Ordinal);
 
             public const string Fraction = nameof(Fraction);
+
+            public const string Currency = nameof(Currency);
+
+            public const string Length = nameof(Length);
+
+            public const string Information = nameof(Information);
+
+            public const string Area = nameof(Area);
+
+            public const string Speed = nameof(Speed);
+
+            public const string Volume = nameof(Volume);
+
+            public const string Weight = nameof(Weight);
+
+            public const string Angle = nameof(Angle);
         }
     }
 }
