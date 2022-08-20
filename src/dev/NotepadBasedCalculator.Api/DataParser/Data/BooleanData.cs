@@ -1,19 +1,17 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed record PercentageData : Data<float>, INumericData
+    public sealed record BooleanData : Data<bool>
     {
-        public bool IsNegative => Value < 0;
+        public override string DisplayText => Value.ToString(); // TODO => Localize. For example, in french, decimal separator is `,` instead of `.`
 
-        public override string DisplayText => $"{Value} %"; // TODO => Localize
-
-        public PercentageData(string lineTextIncludingLineBreak, int startInLine, int endInLine, float value)
+        public BooleanData(string lineTextIncludingLineBreak, int startInLine, int endInLine, bool value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Percentage)
+                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Decimal)
         {
         }
 

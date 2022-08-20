@@ -1,4 +1,4 @@
-﻿using NotepadBasedCalculator.Api;
+﻿using System.Runtime.CompilerServices;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Data.Interpreters
 {
@@ -16,44 +16,29 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Interpreters
             switch (binaryOperatorType)
             {
                 case BinaryOperatorType.Equality:
-                    break;
-
                 case BinaryOperatorType.NoEquality:
-                    break;
-
                 case BinaryOperatorType.LessThan:
-                    break;
-
                 case BinaryOperatorType.LessThanOrEqualTo:
-                    break;
-
                 case BinaryOperatorType.GreaterThan:
-                    break;
-
                 case BinaryOperatorType.GreaterThanOrEqualTo:
-                    break;
+                    return BinaryOperation(currencyData, binaryOperatorType, rightData);
 
                 case BinaryOperatorType.Addition:
-                    return Addition(currencyData, rightData);
-
                 case BinaryOperatorType.Subtraction:
-                    break;
-
                 case BinaryOperatorType.Multiply:
-                    break;
-
                 case BinaryOperatorType.Division:
-                    break;
+                    return AlgebraOperation(currencyData, binaryOperatorType, rightData);
 
                 default:
                     ThrowHelper.ThrowNotSupportedException();
-                    return null;
+                    break;
             }
 
             return null;
         }
 
-        private static IData? Addition(CurrencyData leftData, IData? rightData)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static IData? BinaryOperation(CurrencyData leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
         {
             if (rightData is null)
             {
@@ -61,7 +46,78 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Interpreters
             }
 
             float currencyValue = leftData.Value.Value;
-            currencyValue.Add(rightData);
+            bool result;
+
+            switch (binaryOperatorType)
+            {
+                case BinaryOperatorType.Equality:
+                    result = currencyValue.IsEqualTo(rightData);
+                    break;
+
+                case BinaryOperatorType.NoEquality:
+                    result = !currencyValue.IsEqualTo(rightData);
+                    break;
+
+                case BinaryOperatorType.LessThan:
+                    result = currencyValue.LessThan(rightData);
+                    break;
+
+                case BinaryOperatorType.LessThanOrEqualTo:
+                    result = currencyValue.LessThanOrEqualTo(rightData);
+                    break;
+
+                case BinaryOperatorType.GreaterThan:
+                    result = currencyValue.GreaterThan(rightData);
+                    break;
+
+                case BinaryOperatorType.GreaterThanOrEqualTo:
+                    result = currencyValue.GreaterThanOrEqualTo(rightData);
+                    break;
+
+                default:
+                    ThrowHelper.ThrowNotSupportedException();
+                    return null;
+            }
+
+            return new BooleanData(
+                leftData.LineTextIncludingLineBreak,
+                leftData.StartInLine,
+                rightData.EndInLine,
+                result);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static IData? AlgebraOperation(CurrencyData leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
+        {
+            if (rightData is null)
+            {
+                return leftData;
+            }
+
+            float currencyValue = leftData.Value.Value;
+
+            switch (binaryOperatorType)
+            {
+                case BinaryOperatorType.Addition:
+                    currencyValue.Add(rightData);
+                    break;
+
+                case BinaryOperatorType.Subtraction:
+                    currencyValue.Substract(rightData);
+                    break;
+
+                case BinaryOperatorType.Multiply:
+                    currencyValue.Multiply(rightData);
+                    break;
+
+                case BinaryOperatorType.Division:
+                    currencyValue.Divide(rightData);
+                    break;
+
+                default:
+                    ThrowHelper.ThrowNotSupportedException();
+                    return null;
+            }
 
             return new CurrencyData(
                 leftData.LineTextIncludingLineBreak,

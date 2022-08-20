@@ -6,7 +6,7 @@
     [SupportedExpressionType(typeof(GroupExpression))]
     internal sealed class NumericalCalculusExpressionInterpreter : IExpressionInterpreter
     {
-        public Task<IData?> InterpretExpressionAsync(
+        public async Task<IData?> InterpretExpressionAsync(
             string culture,
             IVariableService variableService,
             IExpressionInterpreter expressionInterpreter,
@@ -15,12 +15,22 @@
         {
             if (expression is DataExpression dataExpression)
             {
-                return Task.FromResult<IData?>(dataExpression.Data);
+                return dataExpression.Data;
             }
 
             if (expression is VariableReferenceExpression variableReferenceExpression)
             {
-                return Task.FromResult(variableService.GetVariableValue(variableReferenceExpression.VariableName));
+                return variableService.GetVariableValue(variableReferenceExpression.VariableName);
+            }
+
+            if (expression is GroupExpression groupExpression)
+            {
+                return await expressionInterpreter.InterpretExpressionAsync(
+                    culture,
+                    variableService,
+                    expressionInterpreter,
+                    groupExpression.InnerExpression,
+                    cancellationToken);
             }
 
             throw new NotImplementedException();

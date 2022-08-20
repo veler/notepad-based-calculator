@@ -4,7 +4,7 @@
     {
         public bool IsNegative => Value < 0;
 
-        public override string DisplayText => Value.ToString();
+        public override string DisplayText => Value.ToString(); // TODO => Localize. For example, in french, decimal separator is `,` instead of `.`
 
         public DecimalData(string lineTextIncludingLineBreak, int startInLine, int endInLine, float value)
             : base(

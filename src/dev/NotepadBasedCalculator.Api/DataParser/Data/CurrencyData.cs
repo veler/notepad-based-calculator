@@ -19,6 +19,7 @@
         {
             _displayText = new Lazy<string>(() =>
             {
+                // TODO => Localize.
                 if (!string.IsNullOrWhiteSpace(Value.IsoCurrency))
                 {
                     return $"{Value.Value} {Value.IsoCurrency}";

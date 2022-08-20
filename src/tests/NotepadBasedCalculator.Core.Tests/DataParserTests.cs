@@ -17,7 +17,7 @@ namespace NotepadBasedCalculator.Core.Tests
             ParserResult parserResult = await parser.ParseAsync(input);
             Assert.Single(parserResult.Lines[0].Data);
             Assert.True(parserResult.Lines[0].Data[0].Is(PredefinedTokenAndDataTypeNames.Numeric));
-            Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Integer, parserResult.Lines[0].Data[0].Subtype);
+            Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Decimal, parserResult.Lines[0].Data[0].Subtype);
             Assert.Equal(output, ((DecimalData)parserResult.Lines[0].Data[0]).Value);
         }
 

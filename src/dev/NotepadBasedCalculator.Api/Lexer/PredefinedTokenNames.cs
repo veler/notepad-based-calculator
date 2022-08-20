@@ -56,8 +56,6 @@
         {
             public const string Decimal = nameof(Decimal);
 
-            public const string Integer = nameof(Integer);
-
             public const string Percentage = nameof(Percentage);
 
             public const string Ordinal = nameof(Ordinal);

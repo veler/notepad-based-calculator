@@ -4,7 +4,7 @@
     {
         public bool IsNegative => Value.Value < 0;
 
-        public override string DisplayText => $"{Value.Value} {Value.Unit}";
+        public override string DisplayText => $"{Value.Value} {Value.Unit}"; // TODO => Localize
 
         public UnitData(string lineTextIncludingLineBreak, int startInLine, int endInLine, string subType, UnitFloat value)
             : base(
