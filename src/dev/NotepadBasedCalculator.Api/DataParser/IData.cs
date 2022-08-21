@@ -5,12 +5,14 @@
         /// <summary>
         /// Gets an optional internal non-localized name that represents the subtype of token.
         /// </summary>
-        public string? Subtype { get; }
+        string? Subtype { get; }
 
         /// <summary>
         /// Gets a string representation of the data that will be displayed to the user.
         /// </summary>
-        public string DisplayText { get; }
+        string DisplayText { get; }
+
+        IData MergeDataLocations(IData otherData);
     }
 
     public interface IData<T> : IData

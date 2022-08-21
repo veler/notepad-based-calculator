@@ -110,6 +110,22 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(0, lines[4].TokenCount);
         }
 
+        [Fact]
+        public void TokenizeCustomTokens()
+        {
+            IReadOnlyList<LineInfo> lines = Analyze("True+False");
+            Assert.Single(lines);
+            Assert.Equal(3, lines[0].TokenCount);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.TrueIdentifier));
+            Assert.True(lines[0].Tokens[1].Is(PredefinedTokenAndDataTypeNames.AdditionOperator));
+            Assert.True(lines[0].Tokens[2].Is(PredefinedTokenAndDataTypeNames.FalseIdentifier));
+
+            lines = Analyze("Truefalse");
+            Assert.Single(lines);
+            Assert.Equal(1, lines[0].TokenCount);
+            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Word));
+        }
+
         private IReadOnlyList<LineInfo> Analyze(string input)
         {
             var lines = new List<LineInfo>();

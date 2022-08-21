@@ -22,6 +22,8 @@
         /// </summary>
         public int Length { get; }
 
+        public string LineTextIncludingLineBreak { get; }
+
         bool IsNot(string type);
 
         bool Is(string expectedType);

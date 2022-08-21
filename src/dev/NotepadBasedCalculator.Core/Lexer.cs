@@ -420,13 +420,27 @@ namespace NotepadBasedCalculator.Core
                         {
                             if (_lineTextIncludingLineBreak.IndexOf(tokenDefinition.TokenText, startIndex, tokenDefinition.TokenText.Length, StringComparison.OrdinalIgnoreCase) == startIndex)
                             {
-                                foundToken
-                                    = new Token(
-                                        _lineTextIncludingLineBreak,
-                                        startIndex,
-                                        startIndex + tokenDefinition.TokenText.Length,
-                                        tokenDefinition.TokenType);
-                                return true;
+                                bool tokenFound = true;
+                                string lastTokenCharacterType = DetectTokenType(tokenDefinition.TokenText[tokenDefinition.TokenText.Length - 1]);
+                                if (lastTokenCharacterType == PredefinedTokenAndDataTypeNames.Word)
+                                {
+                                    int nextCharIndex = GetEndPositionOfRepeatedTokenType(startIndex, lastTokenCharacterType);
+                                    if (nextCharIndex > startIndex + tokenDefinition.TokenText.Length)
+                                    {
+                                        tokenFound = false;
+                                    }
+                                }
+
+                                if (tokenFound)
+                                {
+                                    foundToken
+                                        = new Token(
+                                            _lineTextIncludingLineBreak,
+                                            startIndex,
+                                            startIndex + tokenDefinition.TokenText.Length,
+                                            tokenDefinition.TokenType);
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -441,13 +455,27 @@ namespace NotepadBasedCalculator.Core
                         {
                             if (_lineTextIncludingLineBreak.IndexOf(variableName, startIndex, variableName.Length, StringComparison.Ordinal) == startIndex)
                             {
-                                foundToken
+                                bool tokenFound = true;
+                                string lastTokenCharacterType = DetectTokenType(variableName[variableName.Length - 1]);
+                                if (lastTokenCharacterType == PredefinedTokenAndDataTypeNames.Word)
+                                {
+                                    int nextCharIndex = GetEndPositionOfRepeatedTokenType(startIndex, lastTokenCharacterType);
+                                    if (nextCharIndex > startIndex + variableName.Length)
+                                    {
+                                        tokenFound = false;
+                                    }
+                                }
+
+                                if (tokenFound)
+                                {
+                                    foundToken
                                     = new Token(
                                         _lineTextIncludingLineBreak,
                                         startIndex,
                                         startIndex + variableName.Length,
                                         PredefinedTokenAndDataTypeNames.VariableReference);
-                                return true;
+                                    return true;
+                                }
                             }
                         }
                     }

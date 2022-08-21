@@ -49,8 +49,8 @@ namespace NotepadBasedCalculator.Core.Tests
         }
 
         [Theory]
-        [InlineData("one hundred percents", 100)]
-        [InlineData("per cent of twenty-two", 22)]
+        [InlineData("one hundred percents", 1f)]
+        [InlineData("per cent of twenty-two", 0.22)]
         public async Task PercentageParsingAsync(string input, float output)
         {
             Parser parser = ExportProvider.Import<Parser>();

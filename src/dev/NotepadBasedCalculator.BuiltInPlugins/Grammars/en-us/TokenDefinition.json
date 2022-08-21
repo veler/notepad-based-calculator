@@ -33,8 +33,9 @@
       "and"
     ],
     "substration_operators": [
-      "−",
-      "–",
+      "−", // U+2212
+      "–", // U+2013
+      "-", // U+002D
       "minus"
     ],
     "multiplication_operators": [
@@ -62,6 +63,12 @@
     ],
     "else_identifiers": [
       "else"
+    ],
+    "boolean_true_identifiers": [
+      "true"
+    ],
+    "boolean_false_identifiers": [
+      "false"
     ]
   }
 }

@@ -19,18 +19,25 @@ namespace NotepadBasedCalculator.Core.Tests
             await interpreter.WaitAsync();
         }
 
-        [Fact]
-        public async Task Intepreter_SimpleCalculus()
+        [Theory]
+        [InlineData("30+30", "60")]
+        [InlineData("30+20%", "36")]
+        [InlineData("30 USD + 20%", "36 USD")]
+        [InlineData("20%", "0.2")]
+        [InlineData("20% + 20%", "0.4")]
+        [InlineData("20% + 1", "1.2")]
+        [InlineData("(12)3+(1 +2)(3(2))(1 +2)-3", "87")]
+        public async Task Intepreter_SimpleCalculus(string input, string output)
         {
             InterpreterFactory interpreterFactory = ExportProvider.Import<InterpreterFactory>();
             var textDocument = new TextDocument();
             using Interpreter interpreter = interpreterFactory.CreateInterpreter(SupportedCultures.English, textDocument);
 
-            textDocument.Text = "I paid $10 plus 20% tip";
+            textDocument.Text = input;
 
             IReadOnlyList<IData> lineResults = await interpreter.WaitAsync();
             Assert.Single(lineResults);
-            Assert.Equal("12 Dollar", lineResults[0].DisplayText);
+            Assert.Equal(output, lineResults[0].DisplayText);
         }
 
         [Fact]

@@ -25,6 +25,12 @@
                     cancellationToken)
                 .ConfigureAwait(true);
 
+            if (value is not null)
+            {
+                // We do this to give a change to the data to convert itself into a numeric value, if needed.
+                value = value.MergeDataLocations(value);
+            }
+
             return value;
         }
     }

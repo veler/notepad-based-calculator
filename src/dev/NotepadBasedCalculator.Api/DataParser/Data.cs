@@ -21,6 +21,8 @@
             Value = value;
         }
 
+        public abstract IData MergeDataLocations(IData otherData);
+
         public bool Equals(IData? other)
         {
             if (object.ReferenceEquals(this, other))

@@ -1,165 +1,71 @@
-﻿using NotepadBasedCalculator.Api;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using NotepadBasedCalculator.Api;
 using Xunit;
 
 namespace NotepadBasedCalculator.Core.Tests
 {
-    public sealed class AlgebraTests
+    public sealed class AlgebraTests : MefBaseTest
     {
-        [Theory]
-        [InlineData(1, 25, 1.25)]
-        [InlineData(1.50, 25, 1.875)]
-        public void FloatAddPercentage(float x, float percentage, float expectedResult)
+        private readonly Interpreter _interpreter;
+        private readonly TextDocument _textDocument;
+
+        public AlgebraTests()
         {
-            IData data = new PercentageData(x.ToString(), 0, x.ToString().Length, percentage);
-            x.Add(data);
-            Assert.Equal(expectedResult, x);
+            InterpreterFactory interpreterFactory = ExportProvider.Import<InterpreterFactory>();
+            _textDocument = new TextDocument();
+            _interpreter = interpreterFactory.CreateInterpreter(SupportedCultures.English, _textDocument);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            _interpreter.Dispose();
         }
 
         [Theory]
-        [InlineData(1, 1.25, 2.25)]
-        [InlineData(1.50, 1.25, 2.75)]
-        public void FloatAddDecimal(float x, float y, float expectedResult)
+        [InlineData("1 + 25%", "1.25")]
+        [InlineData("1.50 + 25%", "1.875")]
+        [InlineData("1 + 1.25", "2.25")]
+        [InlineData("1.50 + 1.25", "2.75")]
+        [InlineData("1 + the half", "1.5")]
+        [InlineData("a fifth + 2", "2.2")]
+        [InlineData("1 + True", "2")]
+        [InlineData("1 + False", "1")]
+        [InlineData("1 - 25%", "0.75")]
+        [InlineData("1.50 - 25%", "1.125")]
+        [InlineData("1 - 1.25", "-0.25")]
+        [InlineData("1-1.25", "-0.25")]
+        [InlineData("1.50 - 1.25", "0.25")]
+        [InlineData("1 - the half", "0.5")]
+        [InlineData("1 - True", "0")]
+        [InlineData("1 - False", "1")]
+        [InlineData("1 x 25%", "0.25")]
+        [InlineData("1.50 x 25%", "0.375")]
+        [InlineData("1 x 1.25", "1.25")]
+        [InlineData("1.50 x 1.25", "1.875")]
+        [InlineData("1 x one third", "0.33333334")]
+        [InlineData("1 x True", "1")]
+        [InlineData("1 x False", "0")]
+        [InlineData("True + True", "2")]
+        [InlineData("True + False", "True")]
+        [InlineData("False + False", "False")]
+        [InlineData("True + 1", "2")]
+        [InlineData("True + 0", "True")]
+        [InlineData("1 / 25%", "4")]
+        [InlineData("1.50 / 25%", "6")]
+        [InlineData("1 / 1.25", "0.8")]
+        [InlineData("1.50 / 1.25", "1.2")]
+        [InlineData("1.50 / 0", "∞")]
+        [InlineData("True / True", "True")]
+        [InlineData("True / False", "∞")]
+        public async Task AlgebraAsync(string input, string output)
         {
-            IData data = new DecimalData(x.ToString(), 0, x.ToString().Length, y);
-            x.Add(data);
-            Assert.Equal(expectedResult, x);
-        }
+            _textDocument.Text = input;
 
-        [Theory]
-        [InlineData(1, 2, 1.50)]
-        public void FloatAddFractional(float x, float fraction, float expectedResult)
-        {
-            IData data = new FractionData(x.ToString(), 0, x.ToString().Length, fraction);
-            x.Add(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, true, 2)]
-        [InlineData(1, false, 1)]
-        public void FloatAddBoolean(float x, bool boolean, float expectedResult)
-        {
-            IData data = new BooleanData(x.ToString(), 0, x.ToString().Length, boolean);
-            x.Add(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, 25, 0.75)]
-        [InlineData(1.50, 25, 1.125)]
-        public void FloatSubstractPercentage(float x, float percentage, float expectedResult)
-        {
-            IData data = new PercentageData(x.ToString(), 0, x.ToString().Length, percentage);
-            x.Substract(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, 1.25, -0.25)]
-        [InlineData(1.50, 1.25, 0.25)]
-        public void FloatSubstractDecimal(float x, float y, float expectedResult)
-        {
-            IData data = new DecimalData(x.ToString(), 0, x.ToString().Length, y);
-            x.Substract(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, 2, 0.50)]
-        public void FloatSubstractFractional(float x, float fraction, float expectedResult)
-        {
-            IData data = new FractionData(x.ToString(), 0, x.ToString().Length, fraction);
-            x.Substract(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, true, 0)]
-        [InlineData(1, false, 1)]
-        public void FloatSubstractBoolean(float x, bool boolean, float expectedResult)
-        {
-            IData data = new BooleanData(x.ToString(), 0, x.ToString().Length, boolean);
-            x.Substract(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, 25, 0.25)]
-        [InlineData(1.50, 25, 0.375)]
-        public void FloatMultiplyPercentage(float x, float percentage, float expectedResult)
-        {
-            IData data = new PercentageData(x.ToString(), 0, x.ToString().Length, percentage);
-            x.Multiply(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, 1.25, 1.25)]
-        [InlineData(1.50, 1.25, 1.875)]
-        public void FloatMultiplyDecimal(float x, float y, float expectedResult)
-        {
-            IData data = new DecimalData(x.ToString(), 0, x.ToString().Length, y);
-            x.Multiply(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, 3, 0.333333343)]
-        public void FloatMultiplyFractional(float x, float fraction, float expectedResult)
-        {
-            IData data = new FractionData(x.ToString(), 0, x.ToString().Length, fraction);
-            x.Multiply(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, true, 1)]
-        [InlineData(1, false, 0)]
-        public void FloatMultiplyBoolean(float x, bool boolean, float expectedResult)
-        {
-            IData data = new BooleanData(x.ToString(), 0, x.ToString().Length, boolean);
-            x.Multiply(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, 25, 4)]
-        [InlineData(1.50, 25, 6)]
-        public void FloatDividePercentage(float x, float percentage, float expectedResult)
-        {
-            IData data = new PercentageData(x.ToString(), 0, x.ToString().Length, percentage);
-            x.Divide(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, 1.25, 0.800000012)]
-        [InlineData(1.50, 1.25, 1.20000005)]
-        [InlineData(1.50, 0, float.PositiveInfinity)]
-        public void FloatDivideDecimal(float x, float y, float expectedResult)
-        {
-            IData data = new DecimalData(x.ToString(), 0, x.ToString().Length, y);
-            x.Divide(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, 3, 3)]
-        public void FloatDivideFractional(float x, float fraction, float expectedResult)
-        {
-            IData data = new FractionData(x.ToString(), 0, x.ToString().Length, fraction);
-            x.Divide(data);
-            Assert.Equal(expectedResult, x);
-        }
-
-        [Theory]
-        [InlineData(1, true, 1)]
-        [InlineData(1, false, float.PositiveInfinity)]
-        public void FloatDivideBoolean(float x, bool boolean, float expectedResult)
-        {
-            IData data = new BooleanData(x.ToString(), 0, x.ToString().Length, boolean);
-            x.Divide(data);
-            Assert.Equal(expectedResult, x);
+            IReadOnlyList<IData> lineResults = await _interpreter.WaitAsync();
+            Assert.Single(lineResults);
+            Assert.Equal(output, lineResults[0].DisplayText);
         }
     }
 }

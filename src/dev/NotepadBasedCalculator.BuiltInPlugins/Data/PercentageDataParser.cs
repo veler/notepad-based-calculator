@@ -31,7 +31,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                                     tokenizedTextLine.LineTextIncludingLineBreak,
                                     modelResult.Start,
                                     modelResult.End + 1,
-                                    float.Parse(valueString)));
+                                    float.Parse(valueString) / 100));
                         }
                         break;
 

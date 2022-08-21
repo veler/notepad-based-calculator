@@ -4,6 +4,8 @@
     {
         public bool IsNegative => Value < 0;
 
+        public float NumericValue => Value;
+
         public override string DisplayText => Value.ToString(); // TODO => Localize
 
         public FractionData(string lineTextIncludingLineBreak, int startInLine, int endInLine, float value)
@@ -15,6 +17,31 @@
                   PredefinedTokenAndDataTypeNames.Numeric,
                   PredefinedTokenAndDataTypeNames.SubDataTypeNames.Fraction)
         {
+        }
+
+        public override IData MergeDataLocations(IData otherData)
+        {
+            return new FractionData(LineTextIncludingLineBreak, StartInLine, otherData.EndInLine, Value);
+        }
+
+        public float GetNumericValueToRelativeTo(INumericData? relativeData)
+        {
+            if (relativeData is null)
+            {
+                return NumericValue;
+            }
+
+            return relativeData.NumericValue * NumericValue;
+        }
+
+        public INumericData ToStandardUnit()
+        {
+            return this;
+        }
+
+        public INumericData FromStandardUnit(float newStandardUnitValue)
+        {
+            return new FractionData(LineTextIncludingLineBreak, StartInLine, EndInLine, newStandardUnitValue);
         }
 
         public override string ToString()

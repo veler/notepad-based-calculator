@@ -50,6 +50,10 @@
 
         public const string HeaderOperator = "header_operators";
 
+        public const string TrueIdentifier = "boolean_true_identifiers";
+
+        public const string FalseIdentifier = "boolean_false_identifiers";
+
         public const string Numeric = nameof(Numeric);
 
         public static class SubDataTypeNames

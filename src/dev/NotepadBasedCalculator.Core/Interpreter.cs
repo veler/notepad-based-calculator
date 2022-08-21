@@ -191,7 +191,7 @@ namespace NotepadBasedCalculator.Core
             Guard.IsNotNullOrWhiteSpace(culture);
             Guard.IsNotNull(variableService);
 
-            if (expression is null)
+            if (expression is null || cancellationToken.IsCancellationRequested)
             {
                 return null;
             }
