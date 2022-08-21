@@ -1,6 +1,6 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed record UnitData : Data<UnitFloat>, INumericData
+    public sealed record UnitData : Data<UnitFloat>, IConvertibleNumericData
     {
         public bool IsNegative => Value.Value < 0;
 
@@ -21,7 +21,12 @@
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new UnitData(LineTextIncludingLineBreak, StartInLine, otherData.EndInLine, Subtype!, Value);
+            return new UnitData(
+                LineTextIncludingLineBreak,
+                Math.Min(StartInLine, otherData.StartInLine),
+                Math.Max(EndInLine, otherData.EndInLine),
+                Subtype!,
+                Value);
         }
 
         public float GetNumericValueToRelativeTo(INumericData? relativeData)
@@ -35,6 +40,11 @@
         }
 
         public INumericData FromStandardUnit(float newStandardUnitValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData? ConvertTo(string[] types)
         {
             throw new NotImplementedException();
         }

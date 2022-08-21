@@ -1,6 +1,6 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed record CurrencyData : Data<CurrencyValue>, INumericData
+    public sealed record CurrencyData : Data<CurrencyValue>, INumericData, IConvertibleNumericData
     {
         private readonly Lazy<string> _displayText;
 
@@ -33,7 +33,11 @@
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new CurrencyData(LineTextIncludingLineBreak, StartInLine, otherData.EndInLine, Value);
+            return new CurrencyData(
+                LineTextIncludingLineBreak,
+                Math.Min(StartInLine, otherData.StartInLine),
+                Math.Max(EndInLine, otherData.EndInLine),
+                Value);
         }
 
         public float GetNumericValueToRelativeTo(INumericData? relativeData)
@@ -58,6 +62,11 @@
                     newStandardUnitValue,
                     this.Value.Currency,
                     this.Value.IsoCurrency));
+        }
+
+        public INumericData? ConvertTo(string[] types)
+        {
+            throw new NotImplementedException();
         }
 
         public override string ToString()

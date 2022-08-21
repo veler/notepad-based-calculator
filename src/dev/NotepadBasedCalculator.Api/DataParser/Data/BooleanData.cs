@@ -21,7 +21,11 @@
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new BooleanData(LineTextIncludingLineBreak, StartInLine, otherData.EndInLine, Value);
+            return new BooleanData(
+                LineTextIncludingLineBreak,
+                Math.Min(StartInLine, otherData.StartInLine),
+                Math.Max(EndInLine, otherData.EndInLine),
+                Value);
         }
 
         public float GetNumericValueToRelativeTo(INumericData? relativeData)

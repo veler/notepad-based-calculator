@@ -5,7 +5,7 @@
     [Order(int.MinValue)]
     internal sealed class CommentStatementParser : ParserBase, IStatementParser
     {
-        public bool TryParseStatement(string culture, LinkedToken currentToken, out Statement? expression)
+        public bool TryParseStatement(string culture, LinkedToken currentToken, out Statement? statement)
         {
             if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.CommentOperator))
             {
@@ -17,11 +17,11 @@
                     nextToken = nextToken.Next;
                 }
 
-                expression = new CommentStatement(DiscardWords(currentToken)!, lastTokenInLine);
+                statement = new CommentStatement(DiscardWords(currentToken)!, lastTokenInLine);
                 return true;
             }
 
-            expression = null;
+            statement = null;
             return false;
         }
     }

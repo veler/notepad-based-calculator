@@ -186,7 +186,14 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Expressions
                     return null;
             }
 
-            return leftNumericData.FromStandardUnit(result).MergeDataLocations(rightNumericData);
+            if (leftData is not IConvertibleNumericData && rightData is IConvertibleNumericData)
+            {
+                return rightNumericData.FromStandardUnit(result).MergeDataLocations(leftNumericData);
+            }
+            else
+            {
+                return leftNumericData.FromStandardUnit(result).MergeDataLocations(rightNumericData);
+            }
         }
     }
 }
