@@ -1,4 +1,4 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 {
     public sealed record CurrencyData : Data<CurrencyValue>, INumericData, IConvertibleNumericData
     {
@@ -6,7 +6,7 @@
 
         public bool IsNegative => Value.Value < 0;
 
-        public float NumericValue => Value.Value;
+        public double NumericValue => Value.Value;
 
         public override string DisplayText => _displayText.Value;
 
@@ -40,7 +40,7 @@
                 Value);
         }
 
-        public float GetNumericValueToRelativeTo(INumericData? relativeData)
+        public double GetNumericValueToRelativeTo(INumericData? relativeData)
         {
             return NumericValue;
         }
@@ -51,7 +51,7 @@
             return new CurrencyData(LineTextIncludingLineBreak, StartInLine, EndInLine, Value);
         }
 
-        public INumericData FromStandardUnit(float newStandardUnitValue)
+        public INumericData FromStandardUnit(double newStandardUnitValue)
         {
             // TODO: Convert newStandardUnitValue from USD to the currency defined in the current instance.
             return new CurrencyData(
@@ -64,9 +64,21 @@
                     this.Value.IsoCurrency));
         }
 
-        public INumericData? ConvertTo(string[] types)
+        public INumericData? ConvertFrom(INumericData from)
         {
-            throw new NotImplementedException();
+            return new CurrencyData(
+                from.LineTextIncludingLineBreak,
+                from.StartInLine,
+                from.EndInLine,
+                new CurrencyValue(
+                    from.NumericValue,
+                    this.Value.Currency,
+                    this.Value.IsoCurrency));
+        }
+
+        public bool CanConvertFrom(INumericData from)
+        {
+            return from is DecimalData or CurrencyData;
         }
 
         public override string ToString()

@@ -4,12 +4,12 @@
     {
         bool IsNegative { get; }
 
-        float NumericValue { get; }
+        double NumericValue { get; }
 
-        float GetNumericValueToRelativeTo(INumericData? relativeData);
+        double GetNumericValueToRelativeTo(INumericData? relativeData);
 
         INumericData ToStandardUnit();
 
-        INumericData FromStandardUnit(float newStandardUnitValue);
+        INumericData FromStandardUnit(double newStandardUnitValue);
     }
 }

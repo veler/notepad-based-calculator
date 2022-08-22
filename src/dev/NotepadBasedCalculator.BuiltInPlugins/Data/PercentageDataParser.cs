@@ -1,5 +1,6 @@
 ﻿using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.Number;
+using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 using Constants = Microsoft.Recognizers.Text.Number.Constants;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Data
@@ -31,7 +32,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                                     tokenizedTextLine.LineTextIncludingLineBreak,
                                     modelResult.Start,
                                     modelResult.End + 1,
-                                    float.Parse(valueString) / 100));
+                                    double.Parse(valueString) / 100));
                         }
                         break;
 

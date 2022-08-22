@@ -1,15 +1,15 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 {
     public struct CurrencyValue
     {
-        public CurrencyValue(float value, string currency, string isoCurrency)
+        public CurrencyValue(double value, string currency, string isoCurrency)
         {
             Value = value;
             Currency = currency;
             IsoCurrency = isoCurrency;
         }
 
-        public float Value { get; }
+        public double Value { get; }
 
         public string Currency { get; }
 

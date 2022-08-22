@@ -1,14 +1,14 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 {
-    public sealed record PercentageData : Data<float>, INumericData
+    public sealed record PercentageData : Data<double>, INumericData
     {
         public bool IsNegative => Value < 0;
 
-        public float NumericValue => Value;
+        public double NumericValue => Value;
 
         public override string DisplayText => $"{Value}"; // TODO => Localize
 
-        public PercentageData(string lineTextIncludingLineBreak, int startInLine, int endInLine, float value)
+        public PercentageData(string lineTextIncludingLineBreak, int startInLine, int endInLine, double value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
@@ -28,9 +28,9 @@
                 Value);
         }
 
-        public float GetNumericValueToRelativeTo(INumericData? relativeData)
+        public double GetNumericValueToRelativeTo(INumericData? relativeData)
         {
-            float percentage = NumericValue;
+            double percentage = NumericValue;
 
             if (relativeData is null || relativeData is PercentageData)
             {
@@ -47,7 +47,7 @@
             return this;
         }
 
-        public INumericData FromStandardUnit(float newStandardUnitValue)
+        public INumericData FromStandardUnit(double newStandardUnitValue)
         {
             return new PercentageData(LineTextIncludingLineBreak, StartInLine, EndInLine, newStandardUnitValue);
         }

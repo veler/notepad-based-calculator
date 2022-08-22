@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace NotepadBasedCalculator.Api
 {
-    public class DictionaryWithSpecialEnumKeyConverter<T> : JsonConverter where T : struct, Enum
+    public class DictionaryWithSpecialEnumValueConverter<T> : JsonConverter where T : struct, Enum
     {
         public override bool CanWrite => false;
 
@@ -31,9 +31,10 @@ namespace NotepadBasedCalculator.Api
                 foreach (DictionaryEntry pair in intermediateDictionary)
                 {
                     string? key = pair.Key.ToString();
-                    if (!string.IsNullOrEmpty(key))
+                    string? value = pair.Value.ToString();
+                    if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
                     {
-                        finalDictionary.Add(key.ToEnum<T>(), pair.Value);
+                        finalDictionary.Add(key, value.ToEnum<T>());
                     }
                 }
             }

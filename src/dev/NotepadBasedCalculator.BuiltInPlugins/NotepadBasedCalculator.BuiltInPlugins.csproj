@@ -5,10 +5,14 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="Grammars\en-us\TokenDefinition.json" />
+    <None Remove="Grammars\en-us\UnitNames.json" />
+    <None Remove="Grammars\fr-fr\UnitNames.json" />
     <None Remove="Grammars\SpecialTokenDefinition.json" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Grammars\en-us\UnitNames.json" />
     <EmbeddedResource Include="Grammars\en-us\TokenDefinition.json" />
+    <EmbeddedResource Include="Grammars\fr-fr\UnitNames.json" />
     <EmbeddedResource Include="Grammars\SpecialTokenDefinition.json" />
   </ItemGroup>
   <ItemGroup>
@@ -17,6 +21,7 @@
     <PackageReference Include="Microsoft.Recognizers.Text.Number" />
     <PackageReference Include="Microsoft.Recognizers.Text.NumberWithUnit" />
     <PackageReference Include="Microsoft.Recognizers.Text.DateTime" />
+    <PackageReference Include="UnitsNet" />
     <PackageReference Include="System.Composition" />
   </ItemGroup>
   <ItemGroup>

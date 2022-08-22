@@ -1,14 +1,14 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 {
-    public sealed record FractionData : Data<float>, INumericData
+    public sealed record FractionData : Data<double>, INumericData
     {
         public bool IsNegative => Value < 0;
 
-        public float NumericValue => Value;
+        public double NumericValue => Value;
 
         public override string DisplayText => Value.ToString(); // TODO => Localize
 
-        public FractionData(string lineTextIncludingLineBreak, int startInLine, int endInLine, float value)
+        public FractionData(string lineTextIncludingLineBreak, int startInLine, int endInLine, double value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
@@ -28,7 +28,7 @@
                 Value);
         }
 
-        public float GetNumericValueToRelativeTo(INumericData? relativeData)
+        public double GetNumericValueToRelativeTo(INumericData? relativeData)
         {
             if (relativeData is null)
             {
@@ -43,7 +43,7 @@
             return this;
         }
 
-        public INumericData FromStandardUnit(float newStandardUnitValue)
+        public INumericData FromStandardUnit(double newStandardUnitValue)
         {
             return new FractionData(LineTextIncludingLineBreak, StartInLine, EndInLine, newStandardUnitValue);
         }

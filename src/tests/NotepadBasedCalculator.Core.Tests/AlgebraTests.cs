@@ -44,7 +44,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("1.50 x 25%", "0.375")]
         [InlineData("1 x 1.25", "1.25")]
         [InlineData("1.50 x 1.25", "1.875")]
-        [InlineData("1 x one third", "0.33333334")]
+        [InlineData("1 x one third", "0.333333333333333")]
         [InlineData("1 x True", "1")]
         [InlineData("1 x False", "0")]
         [InlineData("True + True", "2")]

@@ -20,6 +20,8 @@
 
         public const string VariableReference = nameof(VariableReference);
 
+        public const string Numeric = nameof(Numeric);
+
         public const string IsEqualToOperator = "equal_to_operators";
 
         public const string IsNotEqualToOperator = "not_equal_to_operators";
@@ -54,8 +56,6 @@
 
         public const string FalseIdentifier = "boolean_false_identifiers";
 
-        public const string Numeric = nameof(Numeric);
-
         public static class SubDataTypeNames
         {
             public const string Decimal = nameof(Decimal);
@@ -78,7 +78,7 @@
 
             public const string Volume = nameof(Volume);
 
-            public const string Weight = nameof(Weight);
+            public const string Mass = nameof(Mass);
 
             public const string Angle = nameof(Angle);
         }

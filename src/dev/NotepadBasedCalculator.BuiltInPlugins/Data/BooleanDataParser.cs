@@ -1,4 +1,5 @@
 ﻿using Microsoft.Recognizers.Text;
+using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {

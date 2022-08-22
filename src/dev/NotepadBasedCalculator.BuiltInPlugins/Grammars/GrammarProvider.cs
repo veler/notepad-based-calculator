@@ -1,10 +1,12 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using Microsoft.Recognizers.Text;
 
 namespace NotepadBasedCalculator.BuiltInPlugins
 {
     [Export(typeof(IGrammarProvider))]
     [Culture(SupportedCultures.Any)]
+    [Shared]
     internal class GrammarProvider : IGrammarProvider
     {
         public IReadOnlyList<TokenDefinitionGrammar>? LoadTokenDefinitionGrammar(string culture)
@@ -27,6 +29,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins
             return grammars;
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static TokenDefinitionGrammar? LoadGrammar(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();

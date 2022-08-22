@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
+using System.Xml.Linq;
 
 namespace NotepadBasedCalculator.Api
 {
@@ -36,18 +37,24 @@ namespace NotepadBasedCalculator.Api
         internal static T ToEnum<T>(this string str) where T : struct, Enum
         {
             Type enumType = typeof(T);
+
+            if (Enum.TryParse<T>(str, out T result))
+            {
+                return result;
+            }
+
             foreach (string name in Enum.GetNames(enumType))
             {
                 var fieldInfo = enumType.GetField(name)?.GetCustomAttributes(typeof(EnumMemberAttribute), true) as EnumMemberAttribute[];
-                if (fieldInfo is not null)
+                if (fieldInfo is not null && fieldInfo.Length == 1)
                 {
-                    EnumMemberAttribute enumMemberAttribute = fieldInfo.Single();
-                    if (enumMemberAttribute.Value == str)
+                    if (fieldInfo[0].Value == str)
                     {
                         return (T)Enum.Parse(enumType, name);
                     }
                 }
             }
+
             return default(T);
         }
     }

@@ -1,12 +1,12 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 {
     public sealed record BooleanData : Data<bool>, INumericData
     {
-        public override string DisplayText => Value.ToString(); // TODO => Localize. For example, in french, decimal separator is `,` instead of `.`
+        public override string DisplayText => Value.ToString(); // TODO => Localize. For example, in french, double separator is `,` instead of `.`
 
         public bool IsNegative => false;
 
-        public float NumericValue => Convert.ToInt32(Value);
+        public double NumericValue => Convert.ToInt32(Value);
 
         public BooleanData(string lineTextIncludingLineBreak, int startInLine, int endInLine, bool value)
             : base(
@@ -28,7 +28,7 @@
                 Value);
         }
 
-        public float GetNumericValueToRelativeTo(INumericData? relativeData)
+        public double GetNumericValueToRelativeTo(INumericData? relativeData)
         {
             return NumericValue;
         }
@@ -38,7 +38,7 @@
             return this;
         }
 
-        public INumericData FromStandardUnit(float newStandardUnitValue)
+        public INumericData FromStandardUnit(double newStandardUnitValue)
         {
             if (newStandardUnitValue != 0 && newStandardUnitValue != 1)
             {

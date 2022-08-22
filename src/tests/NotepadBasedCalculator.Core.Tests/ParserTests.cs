@@ -25,9 +25,9 @@ I got -123 dollars in my pocket. // this is a comment.";
             Assert.Equal(0, parserResult.Lines[2].Statements.Count);
             Assert.Equal(2, parserResult.Lines[3].Statements.Count);
 
-            Assert.IsType(typeof(HeaderStatement), parserResult.Lines[0].Statements[0]);
-            Assert.IsType(typeof(NumericalCalculusStatement), parserResult.Lines[3].Statements[0]);
-            Assert.IsType(typeof(CommentStatement), parserResult.Lines[3].Statements[1]);
+            Assert.IsType<HeaderStatement>(parserResult.Lines[0].Statements[0]);
+            Assert.IsType<NumericalCalculusStatement>(parserResult.Lines[3].Statements[0]);
+            Assert.IsType<CommentStatement>(parserResult.Lines[3].Statements[1]);
         }
     }
 }

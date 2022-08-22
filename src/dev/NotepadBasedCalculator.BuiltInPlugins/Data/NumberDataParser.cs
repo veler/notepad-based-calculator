@@ -1,5 +1,6 @@
 ﻿using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.Number;
+using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 using Constants = Microsoft.Recognizers.Text.Number.Constants;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Data
@@ -30,7 +31,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                                 tokenizedTextLine.LineTextIncludingLineBreak,
                                 modelResult.Start,
                                 modelResult.End + 1,
-                                float.Parse(valueString)));
+                                double.Parse(valueString)));
                         break;
 
                     case Constants.FRACTION:
@@ -39,7 +40,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                                 tokenizedTextLine.LineTextIncludingLineBreak,
                                 modelResult.Start,
                                 modelResult.End + 1,
-                                float.Parse(valueString)));
+                                double.Parse(valueString)));
                         break;
 
                     default:

@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Expressions
 {
@@ -154,7 +155,24 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Expressions
                 return null;
             }
 
-            float result;
+            if (rightData is IConvertibleNumericData rightConvertibleNumericData)
+            {
+                if (rightConvertibleNumericData.CanConvertFrom(leftNumericData))
+                {
+                    INumericData? newLeftNumericData = rightConvertibleNumericData.ConvertFrom(leftNumericData);
+                    if (newLeftNumericData is null)
+                    {
+                        return null;
+                    }
+                    leftNumericData = newLeftNumericData;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            double result;
             switch (binaryOperatorType)
             {
                 case BinaryOperatorType.Addition:
@@ -176,9 +194,17 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Expressions
                     break;
 
                 case BinaryOperatorType.Division:
-                    result
-                        = leftNumericData.ToStandardUnit().NumericValue
-                        / rightNumericData.ToStandardUnit().NumericValue;
+                    double divisor = rightNumericData.ToStandardUnit().NumericValue;
+                    if (divisor == 0)
+                    {
+                        result = double.PositiveInfinity;
+                    }
+                    else
+                    {
+                        result
+                            = leftNumericData.ToStandardUnit().NumericValue
+                            / divisor;
+                    }
                     break;
 
                 default:
@@ -186,14 +212,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Expressions
                     return null;
             }
 
-            if (leftData is not IConvertibleNumericData && rightData is IConvertibleNumericData)
-            {
-                return rightNumericData.FromStandardUnit(result).MergeDataLocations(leftNumericData);
-            }
-            else
-            {
-                return leftNumericData.FromStandardUnit(result).MergeDataLocations(rightNumericData);
-            }
+            return leftNumericData.FromStandardUnit(result).MergeDataLocations(rightNumericData);
         }
     }
 }

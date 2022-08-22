@@ -1,5 +1,6 @@
 ﻿using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.NumberWithUnit;
+using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {
@@ -37,7 +38,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                                 modelResult.Start,
                                 modelResult.End + 1,
                                 new CurrencyValue(
-                                    float.Parse(valueString),
+                                    double.Parse(valueString),
                                     unit,
                                     isoCurrency)));
 

@@ -1,35 +1,34 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 {
-    public sealed record UnitData : Data<UnitFloat>, IConvertibleNumericData
+    public sealed record OrdinalData : Data<long>, INumericData
     {
-        public bool IsNegative => Value.Value < 0;
+        public bool IsNegative => Value < 0;
 
-        public float NumericValue => Value.Value;
+        public double NumericValue => Value;
 
-        public override string DisplayText => $"{Value.Value} {Value.Unit}"; // TODO => Localize
+        public override string DisplayText => Value.ToString(); // TODO: Show "th", "st", "rd"...
 
-        public UnitData(string lineTextIncludingLineBreak, int startInLine, int endInLine, string subType, UnitFloat value)
+        public OrdinalData(string lineTextIncludingLineBreak, int startInLine, int endInLine, long value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  subType)
+                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Ordinal)
         {
         }
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new UnitData(
+            return new OrdinalData(
                 LineTextIncludingLineBreak,
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
-                Subtype!,
                 Value);
         }
 
-        public float GetNumericValueToRelativeTo(INumericData? relativeData)
+        public double GetNumericValueToRelativeTo(INumericData? relativeData)
         {
             throw new NotImplementedException();
         }
@@ -39,12 +38,7 @@
             throw new NotImplementedException();
         }
 
-        public INumericData FromStandardUnit(float newStandardUnitValue)
-        {
-            throw new NotImplementedException();
-        }
-
-        public INumericData? ConvertTo(string[] types)
+        public INumericData FromStandardUnit(double newStandardUnitValue)
         {
             throw new NotImplementedException();
         }
