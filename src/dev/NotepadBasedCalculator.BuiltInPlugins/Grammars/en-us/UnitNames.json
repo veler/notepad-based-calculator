@@ -93,5 +93,13 @@
   "Angle": {
     "Degree": "Degree",
     "Radian": "Radian"
+  },
+  "Temperature": {
+    "K": "Kelvin",
+    "F": "DegreeFahrenheit",
+    "R": "DegreeRankine",
+    "D": "DegreeDelisle",
+    "C": "DegreeCelsius",
+    "Degree": "DegreeFahrenheit"
   }
 }

@@ -35,6 +35,10 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
         [DataMember(Name = "Angle")]
         public Dictionary<string, AngleUnit> Angle { get; set; } = null!;
 
+        [JsonConverter(typeof(DictionaryWithSpecialEnumValueConverter<TemperatureUnit>))]
+        [DataMember(Name = "Temperature")]
+        public Dictionary<string, TemperatureUnit> Temperature { get; set; } = null!;
+
         public static UnitMap Load(string json)
         {
             UnitMap? result = JsonConvert.DeserializeObject<UnitMap>(json);

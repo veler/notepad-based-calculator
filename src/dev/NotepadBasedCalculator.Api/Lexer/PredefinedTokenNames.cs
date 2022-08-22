@@ -81,6 +81,8 @@
             public const string Mass = nameof(Mass);
 
             public const string Angle = nameof(Angle);
+
+            public const string Temperature = nameof(Temperature);
         }
     }
 }

@@ -171,7 +171,7 @@ namespace NotepadBasedCalculator.Core.Tests
         }
 
         [Theory]
-        [InlineData("three degrees", 3, "Angle", AngleUnit.Degree, false)]
+        [InlineData("three rad", 3, "Angle", AngleUnit.Radian, false)]
         public async Task AngleParsingAsync(string input, double value, string subType, AngleUnit unit, bool isNegative)
         {
             Parser parser = ExportProvider.Import<Parser>();
@@ -181,6 +181,21 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(subType, ((AngleData)parserResult.Lines[0].Data[0]).Subtype);
             Angle unitFloat = ((AngleData)parserResult.Lines[0].Data[0]).Value;
             Assert.Equal(isNegative, ((AngleData)parserResult.Lines[0].Data[0]).IsNegative);
+            Assert.Equal(value, unitFloat.Value);
+            Assert.Equal(unit, unitFloat.Unit);
+        }
+
+        [Theory]
+        [InlineData("three °f", 3, "Temperature", TemperatureUnit.DegreeFahrenheit, false)]
+        public async Task TemperatureParsingAsync(string input, double value, string subType, TemperatureUnit unit, bool isNegative)
+        {
+            Parser parser = ExportProvider.Import<Parser>();
+            ParserResult parserResult = await parser.ParseAsync(input);
+            Assert.Single(parserResult.Lines[0].Data);
+            Assert.True(parserResult.Lines[0].Data[0].Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.Equal(subType, ((TemperatureData)parserResult.Lines[0].Data[0]).Subtype);
+            Temperature unitFloat = ((TemperatureData)parserResult.Lines[0].Data[0]).Value;
+            Assert.Equal(isNegative, ((TemperatureData)parserResult.Lines[0].Data[0]).IsNegative);
             Assert.Equal(value, unitFloat.Value);
             Assert.Equal(unit, unitFloat.Unit);
         }
