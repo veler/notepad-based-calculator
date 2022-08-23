@@ -129,7 +129,7 @@ namespace NotepadBasedCalculator.Core.Tests
         private IReadOnlyList<LineInfo> Analyze(string input)
         {
             var lines = new List<LineInfo>();
-            IReadOnlyList<TokenizedTextLine> tokenizedLines = ExportProvider.Import<Lexer>().Tokenize(SupportedCultures.English, input);
+            IReadOnlyList<TokenizedTextLine> tokenizedLines = ExportProvider.Import<ILexer>().Tokenize(SupportedCultures.English, input);
 
             for (int i = 0; i < tokenizedLines.Count; i++)
             {

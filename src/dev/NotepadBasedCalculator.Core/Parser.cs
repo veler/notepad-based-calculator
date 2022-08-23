@@ -11,11 +11,11 @@ namespace NotepadBasedCalculator.Core
         private readonly Lexer _lexer;
 
         [ImportingConstructor]
-        public Parser(ILogger logger, IParserRepository parserRepository, Lexer lexer)
+        public Parser(ILogger logger, IParserRepository parserRepository, ILexer lexer)
         {
             _logger = logger;
             _parserRepository = parserRepository;
-            _lexer = lexer;
+            _lexer = (Lexer)lexer;
         }
 
         internal Task<ParserResult?> ParseAsync(string? input, CancellationToken cancellationToken = default)

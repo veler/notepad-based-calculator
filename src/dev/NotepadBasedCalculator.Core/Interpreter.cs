@@ -5,7 +5,7 @@ namespace NotepadBasedCalculator.Core
     internal sealed class Interpreter : IExpressionInterpreter, IDisposable
     {
         private readonly string _culture;
-        private readonly Lexer _lexer;
+        private readonly ILexer _lexer;
         private readonly Parser _parser;
         private readonly IEnumerable<Lazy<IStatementInterpreter, InterpreterMetadata>> _statementInterpreters;
         private readonly IEnumerable<Lazy<IExpressionInterpreter, InterpreterMetadata>> _expressionInterpreters;
@@ -20,7 +20,7 @@ namespace NotepadBasedCalculator.Core
 
         internal Interpreter(
             string culture,
-            Lexer lexer,
+            ILexer lexer,
             Parser parser,
             IEnumerable<Lazy<IStatementInterpreter, InterpreterMetadata>> statementInterpreters,
             IEnumerable<Lazy<IExpressionInterpreter, InterpreterMetadata>> expressionInterpreters,

@@ -4,12 +4,14 @@
     <TargetFrameworks>$(NetCoreAndStandard)</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Grammars\en-us\FunctionDefinition.json" />
     <None Remove="Grammars\en-us\TokenDefinition.json" />
     <None Remove="Grammars\en-us\UnitNames.json" />
     <None Remove="Grammars\fr-fr\UnitNames.json" />
     <None Remove="Grammars\SpecialTokenDefinition.json" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Grammars\en-us\FunctionDefinition.json" />
     <EmbeddedResource Include="Grammars\en-us\UnitNames.json" />
     <EmbeddedResource Include="Grammars\en-us\TokenDefinition.json" />
     <EmbeddedResource Include="Grammars\fr-fr\UnitNames.json" />

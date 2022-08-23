@@ -1,0 +1,10 @@
+{
+  "percentage": {
+    "percentOf": [
+      "PERCENTAGE of NUMERIC"
+    ],
+    "percentOff": [
+      "PERCENTAGE off NUMERIC"
+    ]
+  }
+}

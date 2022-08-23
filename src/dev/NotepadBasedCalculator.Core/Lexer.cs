@@ -3,9 +3,9 @@ using System.Collections.Immutable;
 
 namespace NotepadBasedCalculator.Core
 {
-    [Export(typeof(Lexer))]
+    [Export(typeof(ILexer))]
     [Shared]
-    internal sealed class Lexer
+    internal sealed class Lexer : ILexer
     {
         private readonly IEnumerable<Lazy<IGrammarProvider, CultureCodeMetadata>> _grammarProviders;
         private readonly Dictionary<string, IReadOnlyList<TokenDefinition>> _tokenDefinitionGrammars = new();
@@ -19,7 +19,7 @@ namespace NotepadBasedCalculator.Core
             _grammarProviders = grammarProviders;
         }
 
-        internal IReadOnlyList<TokenizedTextLine> Tokenize(string culture, string? wholeDocument)
+        public IReadOnlyList<TokenizedTextLine> Tokenize(string culture, string? wholeDocument)
         {
             IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars = GetTokenDefinitionGrammars(culture);
 

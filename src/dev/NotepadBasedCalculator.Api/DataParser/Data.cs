@@ -14,9 +14,10 @@
             int endInLine,
             T value,
             string dataType,
-            string? subtype = null)
+            string subtype)
             : base(lineTextIncludingLineBreak, startInLine, endInLine, dataType)
         {
+            Guard.IsNotNullOrWhiteSpace(subtype);
             Subtype = subtype;
             Value = value;
         }
