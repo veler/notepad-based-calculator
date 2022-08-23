@@ -27,6 +27,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("20% + 20%", "0.4")]
         [InlineData("20% + 1", "1.2")]
         [InlineData("1 + 2 USD", "3 USD")]
+        [InlineData("June 23 2022 at 4pm + 1h", "6/23/2022 5:00:00 PM")]
         [InlineData("(12)3+(1 +2)(3(2))(1 +2)-3", "87")]
         public async Task Intepreter_SimpleCalculus(string input, string output)
         {

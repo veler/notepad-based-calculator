@@ -83,6 +83,10 @@
             public const string Angle = nameof(Angle);
 
             public const string Temperature = nameof(Temperature);
+
+            public const string Duration = nameof(Duration);
+
+            public const string DateTime = nameof(DateTime);
         }
     }
 }

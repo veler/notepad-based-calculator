@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using NotepadBasedCalculator.Api;
 using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 using UnitsNet;
@@ -198,6 +199,36 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(isNegative, ((TemperatureData)parserResult.Lines[0].Data[0]).IsNegative);
             Assert.Equal(value, unitFloat.Value);
             Assert.Equal(unit, unitFloat.Unit);
+        }
+
+        [Theory]
+        [InlineData("1h", 3600, "Duration", false)]
+        [InlineData("8pm to 5pm", 75600, "Duration", false)]
+        [InlineData("2018 to 2022", 126230400, "Duration", false)]
+        public async Task DurationParsingAsync(string input, double value, string subType, bool isNegative)
+        {
+            Parser parser = ExportProvider.Import<Parser>();
+            ParserResult parserResult = await parser.ParseAsync(input);
+            Assert.Single(parserResult.Lines[0].Data);
+            Assert.True(parserResult.Lines[0].Data[0].Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.Equal(subType, ((DurationData)parserResult.Lines[0].Data[0]).Subtype);
+            TimeSpan unitFloat = ((DurationData)parserResult.Lines[0].Data[0]).Value;
+            Assert.Equal(isNegative, ((DurationData)parserResult.Lines[0].Data[0]).IsNegative);
+            Assert.Equal(value, unitFloat.TotalSeconds);
+        }
+
+        [Theory]
+        [InlineData("June 23 2022 at 4pm", 637915968000000000, "DateTime", false)]
+        public async Task DateTimeParsingAsync(string input, long value, string subType, bool isNegative)
+        {
+            Parser parser = ExportProvider.Import<Parser>();
+            ParserResult parserResult = await parser.ParseAsync(input);
+            Assert.Single(parserResult.Lines[0].Data);
+            Assert.True(parserResult.Lines[0].Data[0].Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.Equal(subType, ((DateTimeData)parserResult.Lines[0].Data[0]).Subtype);
+            DateTime unitFloat = ((DateTimeData)parserResult.Lines[0].Data[0]).Value;
+            Assert.Equal(isNegative, ((DateTimeData)parserResult.Lines[0].Data[0]).IsNegative);
+            Assert.Equal(value, unitFloat.Ticks);
         }
     }
 }

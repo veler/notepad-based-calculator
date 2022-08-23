@@ -155,7 +155,21 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Expressions
                 return null;
             }
 
-            if (rightData is IConvertibleNumericData rightConvertibleNumericData)
+            bool tryToConvertLeftData = true;
+            if (leftData is IConvertibleNumericData leftConvertibleNumericData)
+            {
+                if (leftConvertibleNumericData.CanConvertFrom(rightNumericData))
+                {
+                    INumericData? newRightNumericData = leftConvertibleNumericData.ConvertFrom(rightNumericData);
+                    if (newRightNumericData is not null)
+                    {
+                        rightNumericData = newRightNumericData;
+                        tryToConvertLeftData = false;
+                    }
+                }
+            }
+
+            if (tryToConvertLeftData && rightData is IConvertibleNumericData rightConvertibleNumericData)
             {
                 if (rightConvertibleNumericData.CanConvertFrom(leftNumericData))
                 {
