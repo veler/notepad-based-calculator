@@ -1,10 +1,21 @@
 {
   "percentage": {
     "percentOf": [
-      "PERCENTAGE of NUMERIC"
+      "_PERCENTAGE_ of _NUMERIC_"
     ],
     "percentOff": [
-      "PERCENTAGE off NUMERIC"
+      "_PERCENTAGE_ off _NUMERIC_"
+    ],
+    "isWhatPercentOn": [
+      "_NUMERIC_ is what % on _NUMERIC_",
+      "_NUMERIC_ is what percent on _NUMERIC_",
+      "_NUMERIC_ is what percentage on _NUMERIC_",
+      "_NUMERIC_ as a % on _NUMERIC_",
+      "_NUMERIC_ as % on _NUMERIC_",
+      "_NUMERIC_ as percent on _NUMERIC_",
+      "_NUMERIC_ as a percent on _NUMERIC_",
+      "_NUMERIC_ as percentage on _NUMERIC_",
+      "_NUMERIC_ as a percentage on _NUMERIC_"
     ]
   }
 }
