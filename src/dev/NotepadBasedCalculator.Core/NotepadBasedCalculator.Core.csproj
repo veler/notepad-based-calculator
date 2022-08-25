@@ -11,4 +11,7 @@
     <ProjectReference Include="..\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj" />
     <ProjectReference Include="..\NotepadBasedCalculator.BuiltInPlugins\NotepadBasedCalculator.BuiltInPlugins.csproj" />
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" />
+  </ItemGroup>
 </Project>

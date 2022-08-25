@@ -2,6 +2,6 @@
 {
     public interface IFunctionDefinitionProvider
     {
-        IReadOnlyList<FunctionDefinition> LoadFunctionDefinition(string culture);
+        IReadOnlyList<Dictionary<string, Dictionary<string, string[]>>> LoadFunctionDefinition(string culture);
     }
 }

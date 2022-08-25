@@ -54,49 +54,18 @@ namespace NotepadBasedCalculator.Core
             return new ParserResult(resultLines);
         }
 
-        internal async Task<ParserResult?> ParseAndMergeWithOlderResultAsync(
+        internal IAsyncEnumerable<ParserResultLine?> ParseAndMergeWithOlderResult(
             ParserResult? oldParserResult,
             IReadOnlyList<TokenizedTextLine> newTokenizedTextLines,
             int lineFromWhichSomethingHasChanged,
-            string culture,
-            CancellationToken cancellationToken)
+            string culture)
         {
             Guard.IsInRange(lineFromWhichSomethingHasChanged, 0, newTokenizedTextLines.Count);
             Guard.IsNotNull(newTokenizedTextLines);
             Guard.IsNotNullOrWhiteSpace(culture);
             culture = Culture.MapToNearestLanguage(culture);
 
-            var resultLines = new List<ParserResultLine>();
-
-            if (oldParserResult is not null)
-            {
-                for (int i = 0; i < lineFromWhichSomethingHasChanged; i++)
-                {
-                    resultLines.Add(oldParserResult.Lines[i]);
-                }
-            }
-
-            for (int i = lineFromWhichSomethingHasChanged; i < newTokenizedTextLines.Count; i++)
-            {
-                TokenizedTextLine tokenizedLine = newTokenizedTextLines[i];
-
-                ParserResultLine parserResultLine
-                    = await ParseLineAsync(
-                        culture,
-                        tokenizedLine,
-                        AggregateAllKnownVariableNames(resultLines),
-                        cancellationToken)
-                    .ConfigureAwait(true);
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    return null;
-                }
-
-                resultLines.Add(parserResultLine);
-            }
-
-            return new ParserResult(resultLines);
+            return new ParsedLineEnumerator(this, oldParserResult, newTokenizedTextLines, lineFromWhichSomethingHasChanged, culture);
         }
 
         private async Task<ParserResultLine> ParseLineAsync(string culture, TokenizedTextLine tokenizedLine, IReadOnlyList<string> orderedKnownVariableNames, CancellationToken cancellationToken)
@@ -259,6 +228,82 @@ namespace NotepadBasedCalculator.Core
             }
 
             return knownVariableNames.ToImmutableSortedSet(new DescendingComparer<string>());
+        }
+
+        private class ParsedLineEnumerator : IAsyncEnumerable<ParserResultLine?>, IAsyncEnumerator<ParserResultLine?>
+        {
+            private readonly Parser _parser;
+            private readonly IReadOnlyList<TokenizedTextLine> _tokenizedTextLines;
+            private readonly string _culture;
+            private readonly List<ParserResultLine> _resultLines = new();
+
+            private int _startIndex;
+            private CancellationToken _cancellationToken = default;
+
+            public ParserResultLine? Current { get; private set; }
+
+            public ParsedLineEnumerator(
+                Parser parser,
+                ParserResult? oldParserResult,
+                IReadOnlyList<TokenizedTextLine> tokenizedTextLines,
+                int startIndex,
+                string culture)
+            {
+                Guard.IsNotNull(parser);
+                Guard.IsNotNull(tokenizedTextLines);
+                Guard.IsNotNullOrWhiteSpace(culture);
+                _parser = parser;
+                _tokenizedTextLines = tokenizedTextLines;
+                _startIndex = startIndex;
+                _culture = culture;
+
+                if (oldParserResult is not null)
+                {
+                    for (int i = 0; i < startIndex; i++)
+                    {
+                        _resultLines.Add(oldParserResult.Lines[i]);
+                    }
+                }
+            }
+
+            public ValueTask DisposeAsync()
+            {
+                return new ValueTask(Task.CompletedTask);
+            }
+
+            public IAsyncEnumerator<ParserResultLine?> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+            {
+                _cancellationToken = cancellationToken;
+                return this;
+            }
+
+            public async ValueTask<bool> MoveNextAsync()
+            {
+                if (_cancellationToken.IsCancellationRequested || _tokenizedTextLines.Count <= _startIndex)
+                {
+                    return false;
+                }
+
+                TokenizedTextLine tokenizedLine = _tokenizedTextLines[_startIndex];
+
+                Current
+                    = await _parser.ParseLineAsync(
+                        _culture,
+                        tokenizedLine,
+                        AggregateAllKnownVariableNames(_resultLines),
+                        _cancellationToken)
+                    .ConfigureAwait(true);
+
+                _startIndex++;
+                Guard.IsNotNull(Current);
+
+                if (_cancellationToken.IsCancellationRequested)
+                {
+                    return false;
+                }
+
+                return true;
+            }
         }
     }
 }

@@ -80,21 +80,26 @@ namespace NotepadBasedCalculator.Core
             int lineFromWhichSomethingHasChanged = DetermineLineFromWhichSomethingHasChanged(oldParserResult, newTokenizedTextLines);
 
             // Parse the line that changes along with the one below it.
-            ParserResult? parserResult
-                = await _parser.ParseAndMergeWithOlderResultAsync(
+            var resultLines = new List<ParserResultLine>();
+            if (oldParserResult is not null)
+            {
+                for (int i = 0; i < lineFromWhichSomethingHasChanged; i++)
+                {
+                    resultLines.Add(oldParserResult.Lines[i]);
+                }
+            }
+
+            IAsyncEnumerable<ParserResultLine?> parsedLineEnumerator
+                = _parser.ParseAndMergeWithOlderResult(
                     oldParserResult,
                     newTokenizedTextLines,
                     lineFromWhichSomethingHasChanged,
-                    _culture,
-                    cancellationToken)
-                .ConfigureAwait(true);
+                    _culture);
 
             if (cancellationToken.IsCancellationRequested)
             {
                 return;
             }
-
-            Guard.IsNotNull(parserResult);
 
             if (lineFromWhichSomethingHasChanged - 1 >= 0 && lineFromWhichSomethingHasChanged - 1 < _variablePerLineBackup.Count)
             {
@@ -107,12 +112,17 @@ namespace NotepadBasedCalculator.Core
 
             // Interpret the whole document starting from the line that changed.
             var lineResults = new List<IData?>();
-            for (int i = lineFromWhichSomethingHasChanged; i < parserResult.Lines.Count; i++)
+            IAsyncEnumerator<ParserResultLine?> enumerator = parsedLineEnumerator.GetAsyncEnumerator(cancellationToken);
+            int currentLineNumber = lineFromWhichSomethingHasChanged;
+
+            while (await enumerator.MoveNextAsync().ConfigureAwait(true) && enumerator.Current is not null)
             {
-                IData? lineResult = await InterpretLineAsync(parserResult.Lines[i], cancellationToken).ConfigureAwait(true);
-                if (_variablePerLineBackup.Count > i)
+                resultLines.Add(enumerator.Current);
+
+                IData? lineResult = await InterpretLineAsync(enumerator.Current, cancellationToken).ConfigureAwait(true);
+                if (_variablePerLineBackup.Count > currentLineNumber)
                 {
-                    _variablePerLineBackup[i] = _variableService.CreateBackup();
+                    _variablePerLineBackup[currentLineNumber] = _variableService.CreateBackup();
                 }
                 else
                 {
@@ -125,9 +135,11 @@ namespace NotepadBasedCalculator.Core
                 {
                     return;
                 }
+
+                currentLineNumber++;
             }
 
-            Interlocked.Exchange(ref _parserResult, parserResult);
+            Interlocked.Exchange(ref _parserResult, new ParserResult(resultLines));
             Interlocked.Exchange(ref _lineResults, lineResults);
         }
 

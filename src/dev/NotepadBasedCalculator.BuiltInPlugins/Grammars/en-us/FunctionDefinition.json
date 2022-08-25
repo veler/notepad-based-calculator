@@ -1,21 +1,27 @@
 {
+  "general": {
+    "condition": [
+      "if BINARYOPERATION then STATEMENT",
+      "if BINARYOPERATION then STATEMENT else STATEMENT"
+    ]
+  },
   "percentage": {
     "percentOf": [
-      "_PERCENTAGE_ of _NUMERIC_"
+      "PERCENTAGE of NUMERIC"
     ],
     "percentOff": [
-      "_PERCENTAGE_ off _NUMERIC_"
+      "PERCENTAGE off NUMERIC"
     ],
     "isWhatPercentOn": [
-      "_NUMERIC_ is what % on _NUMERIC_",
-      "_NUMERIC_ is what percent on _NUMERIC_",
-      "_NUMERIC_ is what percentage on _NUMERIC_",
-      "_NUMERIC_ as a % on _NUMERIC_",
-      "_NUMERIC_ as % on _NUMERIC_",
-      "_NUMERIC_ as percent on _NUMERIC_",
-      "_NUMERIC_ as a percent on _NUMERIC_",
-      "_NUMERIC_ as percentage on _NUMERIC_",
-      "_NUMERIC_ as a percentage on _NUMERIC_"
+      "NUMERIC is what % on NUMERIC",
+      "NUMERIC is what percent on NUMERIC",
+      "NUMERIC is what percentage on NUMERIC",
+      "NUMERIC as a % on NUMERIC",
+      "NUMERIC as % on NUMERIC",
+      "NUMERIC as percent on NUMERIC",
+      "NUMERIC as a percent on NUMERIC",
+      "NUMERIC as percentage on NUMERIC",
+      "NUMERIC as a percentage on NUMERIC"
     ]
   }
 }

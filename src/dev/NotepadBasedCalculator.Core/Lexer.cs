@@ -103,6 +103,7 @@ namespace NotepadBasedCalculator.Core
             Guard.IsGreaterThanOrEqualTo(startPositionInDocument, 0);
 
             var tokenEnumerator = new LineTokenEnumerator(lineTextIncludingLineBreak, orderedTokenDefinitionGrammars, orderedKnownVariableNames, knownData);
+            // TODO: should we dispose this enumerator at some point?
 
             int lineBreakLength = 0;
             for (int i = 0; i < LineBreakers.Length; i++)

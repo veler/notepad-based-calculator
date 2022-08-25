@@ -55,15 +55,6 @@
       "divided by",
       "divide by"
     ],
-    "if_identifiers": [
-      "if"
-    ],
-    "then_identifiers": [
-      "then"
-    ],
-    "else_identifiers": [
-      "else"
-    ],
     "boolean_true_identifiers": [
       "true"
     ],

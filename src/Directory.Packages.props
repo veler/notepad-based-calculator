@@ -5,6 +5,7 @@
   <ItemGroup>
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.0.0" />
     <PackageVersion Include="coverlet.collector" Version="3.1.2" />
+    <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.2.0" />
     <PackageVersion Include="Microsoft.Recognizers.Text" Version="$(MicrosoftRecognizersTextVersion)" />
     <PackageVersion Include="Microsoft.Recognizers.Text.Number" Version="$(MicrosoftRecognizersTextVersion)" />

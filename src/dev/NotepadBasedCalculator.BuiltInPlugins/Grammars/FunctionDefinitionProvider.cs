@@ -5,39 +5,40 @@ using Newtonsoft.Json;
 namespace NotepadBasedCalculator.BuiltInPlugins.Grammars
 {
     [Export(typeof(IFunctionDefinitionProvider))]
+    [Culture(SupportedCultures.Any)]
     [Shared]
     public sealed class FunctionDefinitionProvider : IFunctionDefinitionProvider
     {
-        private readonly ILexer _lexer;
-        private readonly Dictionary<string, IReadOnlyList<FunctionDefinition>> _cultureToFunctionDefinition = new();
+        private readonly Dictionary<string, List<Dictionary<string, Dictionary<string, string[]>>>> _cultureToFunctionDefinition = new();
 
-        [ImportingConstructor]
-        public FunctionDefinitionProvider(ILexer lexer)
-        {
-            _lexer = lexer;
-        }
-
-        public IReadOnlyList<FunctionDefinition> LoadFunctionDefinition(string culture)
+        public IReadOnlyList<Dictionary<string, Dictionary<string, string[]>>> LoadFunctionDefinition(string culture)
         {
             culture = culture.Replace("-", "_");
 
             lock (_cultureToFunctionDefinition)
             {
-                if (!_cultureToFunctionDefinition.TryGetValue(culture, out IReadOnlyList<FunctionDefinition> functionDefinition) || functionDefinition is null)
+                if (!_cultureToFunctionDefinition.TryGetValue(culture, out List<Dictionary<string, Dictionary<string, string[]>>> functionDefinitions) || functionDefinitions is null)
                 {
-                    functionDefinition
+                    functionDefinitions = new();
+
+                    Dictionary<string, Dictionary<string, string[]>>? parsedJson
                         = LoadResource(
-                            culture,
                             $"NotepadBasedCalculator.BuiltInPlugins.Grammars.{culture}.FunctionDefinition.json");
-                    _cultureToFunctionDefinition[culture] = functionDefinition;
+
+                    if (parsedJson is not null)
+                    {
+                        functionDefinitions.Add(parsedJson);
+                    }
+
+                    _cultureToFunctionDefinition[culture] = functionDefinitions;
                 }
 
-                return functionDefinition;
+                return functionDefinitions;
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private IReadOnlyList<FunctionDefinition> LoadResource(string culture, string resourceName)
+        private Dictionary<string, Dictionary<string, string[]>>? LoadResource(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
 
@@ -53,29 +54,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Grammars
                 = JsonConvert.DeserializeObject<Dictionary<string, Dictionary<string, string[]>>>(
                     textStreamReader.ReadToEnd());
 
-            var result = new List<FunctionDefinition>();
-
-            if (parsedJson is not null)
-            {
-                foreach (string functionCategory in parsedJson.Keys)
-                {
-                    Dictionary<string, string[]> functionDefinitions = parsedJson[functionCategory];
-                    foreach (string functionName in functionDefinitions.Keys)
-                    {
-                        string[] functionGrammars = functionDefinitions[functionName];
-                        for (int i = 0; i < functionGrammars.Length; i++)
-                        {
-                            IReadOnlyList<TokenizedTextLine> tokenizedGrammarLines = _lexer.Tokenize(culture, functionGrammars[i]);
-                            Guard.HasSizeEqualTo(tokenizedGrammarLines, 1);
-                            TokenizedTextLine tokenizedGrammar = tokenizedGrammarLines[0];
-                            Guard.IsNotNull(tokenizedGrammar.Tokens);
-                            result.Add(new FunctionDefinition($"{functionCategory}.{functionName}", tokenizedGrammar.Tokens));
-                        }
-                    }
-                }
-            }
-
-            return result;
+            return parsedJson;
         }
     }
 }

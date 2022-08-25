@@ -29,8 +29,6 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
             InterpreterFactory interpreterFactory = mefComposer.ExportProvider.GetExport<InterpreterFactory>();
             Interpreter interpreter = interpreterFactory.CreateInterpreter(DefaultCulture, textDocument);
 
-            textDocument.Text = "$10 + 20%"; // Just to warm up the program.
-
             ShowIntro();
 
             while (true)
@@ -45,11 +43,11 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
                     break;
                 }
 
-                textDocument.Text = input ?? string.Empty;
+                textDocument.Text += input + Environment.NewLine;
 
                 IReadOnlyList<Api.IData?>? result = await interpreter.WaitAsync();
 
-                if (result is not null && result.Count == 1 && result[0] is not null)
+                if (result is not null && result.Count > 0 && result[0] is not null)
                 {
                     Console.WriteLine(">> " + result[0]!.DisplayText);
                 }

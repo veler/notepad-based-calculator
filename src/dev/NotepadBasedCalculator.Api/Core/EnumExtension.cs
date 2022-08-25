@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using System.Runtime.Serialization;
-using System.Xml.Linq;
 
 namespace NotepadBasedCalculator.Api
 {
