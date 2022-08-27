@@ -3,24 +3,11 @@
     /// <summary>
     /// Basic class that represents a statement.
     /// </summary>
-    public abstract class Statement
+    public abstract class Statement : AbstractSyntaxTreeBase
     {
-        internal LinkedToken FirstToken { get; }
-
-        internal LinkedToken LastToken { get; }
-
         protected Statement(LinkedToken firstToken, LinkedToken lastToken)
+            : base(firstToken, lastToken)
         {
-            Guard.IsNotNull(firstToken);
-            Guard.IsNotNull(lastToken);
-            FirstToken = firstToken;
-            LastToken = lastToken;
         }
-
-        /// <summary>
-        /// Gets a string representation of the statement.
-        /// </summary>
-        /// <returns>String that reprensents the statement</returns>
-        public abstract override string ToString();
     }
 }

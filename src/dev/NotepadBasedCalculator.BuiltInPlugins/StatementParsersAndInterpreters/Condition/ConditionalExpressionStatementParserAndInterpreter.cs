@@ -1,9 +1,9 @@
 ﻿using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.NumericalExpression;
 
-namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.ConditionalExpression
+namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Condition
 {
     [Export(typeof(IStatementParserAndInterpreter))]
-    [Culture(SupportedCultures.Any)]
+    [Culture(SupportedCultures.English)]
     [Shared]
     internal sealed class ConditionalExpressionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
@@ -43,7 +43,8 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                         = new ConditionStatement(
                             expressionResult.ParsedExpression!.FirstToken,
                             expressionResult.ParsedExpression.LastToken,
-                            expressionResult.ParsedExpression);
+                            expressionResult.ParsedExpression,
+                            expressionResult.ResultedData);
                     result.ResultedData = expressionResult.ResultedData;
                     return true;
                 }

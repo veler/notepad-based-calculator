@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using NotepadBasedCalculator.Api;
 using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Comment;
-using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.ConditionalExpression;
+using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Condition;
 using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Header;
 using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.NumericalExpression;
 using Xunit;

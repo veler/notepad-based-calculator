@@ -1,10 +1,4 @@
 {
-  "general": {
-    "condition": [
-      "if BOOLEAN then STATEMENT",
-      "if BOOLEAN then STATEMENT else STATEMENT"
-    ]
-  },
   "percentage": {
     "percentOf": [
       "PERCENTAGE of NUMERIC"

@@ -157,6 +157,131 @@ namespace NotepadBasedCalculator.Core
             return expressionFound;
         }
 
+        public async Task<bool> TryParseAndInterpretExpressionAsync(
+            string expressionParserAndInterpreterName,
+            string culture,
+            LinkedToken? currentToken,
+            string? parseUntilTokenIsOfType,
+            string? parseUntilTokenHasText,
+            IVariableService variableService,
+            ExpressionParserAndInterpreterResult result,
+            CancellationToken cancellationToken)
+        {
+            Guard.IsNotNull(result);
+            bool expressionFound = false;
+            result.NextTokenToContinueWith = null;
+
+            if (currentToken is not null)
+            {
+                Guard.IsNotNull(culture);
+                var tokenEnumerator = new TokenEnumerationWithStop(currentToken, parseUntilTokenIsOfType, parseUntilTokenHasText);
+                Guard.IsNotNull(tokenEnumerator.Current);
+                // TODO: should we dispose this enumerator at some point?
+
+                var linkedToken
+                    = new LinkedToken(
+                        previous: null,
+                        token: tokenEnumerator.Current,
+                        tokenEnumerator);
+
+                Guard.IsNotNullOrEmpty(expressionParserAndInterpreterName);
+
+                IExpressionParserAndInterpreter parserAndInterpreter
+                    = _parserRepository.GetExpressionParserAndInterpreter(
+                        culture,
+                        expressionParserAndInterpreterName);
+
+                expressionFound
+                    = await TryParseAndInterpretExpressionInternalAsync(
+                        culture,
+                        linkedToken,
+                        parserAndInterpreter,
+                        variableService,
+                        result,
+                        cancellationToken);
+
+                result.NextTokenToContinueWith = tokenEnumerator.CurrentLinkedToken;
+
+                if ((result.NextTokenToContinueWith is null
+                    && !string.IsNullOrEmpty(parseUntilTokenIsOfType)
+                    && !string.IsNullOrEmpty(parseUntilTokenHasText))
+                    || (result.NextTokenToContinueWith is not null
+                    && string.IsNullOrEmpty(parseUntilTokenIsOfType)
+                    && string.IsNullOrEmpty(parseUntilTokenHasText)))
+                {
+                    expressionFound = false;
+                }
+            }
+
+            if (!expressionFound)
+            {
+                result.ParsedExpression = null;
+                result.ResultedData = null;
+            }
+            return expressionFound;
+        }
+
+        public async Task<bool> TryParseAndInterpretStatementAsync(
+            string culture,
+            LinkedToken? currentToken,
+            string? parseUntilTokenIsOfType,
+            string? parseUntilTokenHasText,
+            IVariableService variableService,
+            StatementParserAndInterpreterResult result,
+            CancellationToken cancellationToken)
+        {
+            Guard.IsNotNull(result);
+            bool statementFound = false;
+
+            if (currentToken is not null)
+            {
+                Guard.IsNotNull(culture);
+                var tokenEnumerator = new TokenEnumerationWithStop(currentToken, parseUntilTokenIsOfType, parseUntilTokenHasText);
+                Guard.IsNotNull(tokenEnumerator.Current);
+                // TODO: should we dispose this enumerator at some point?
+
+                var linkedToken
+                    = new LinkedToken(
+                        previous: null,
+                        token: tokenEnumerator.Current,
+                        tokenEnumerator);
+
+                foreach (IStatementParserAndInterpreter parserAndInterpreter in _parserRepository.GetApplicableStatementParsersAndInterpreters(culture))
+                {
+                    statementFound
+                        = await TryParseAndInterpretStatementInternalAsync(
+                            culture,
+                            linkedToken,
+                            parserAndInterpreter,
+                            variableService,
+                            result,
+                            cancellationToken);
+
+                    if (statementFound)
+                    {
+                        break;
+                    }
+                }
+
+                if ((result.ParsedStatement?.LastToken.Next is null
+                    && !string.IsNullOrEmpty(parseUntilTokenIsOfType)
+                    && !string.IsNullOrEmpty(parseUntilTokenHasText))
+                    || (result.ParsedStatement?.LastToken.Next is not null
+                    && string.IsNullOrEmpty(parseUntilTokenIsOfType)
+                    && string.IsNullOrEmpty(parseUntilTokenHasText)))
+                {
+                    statementFound = false;
+                }
+            }
+
+            if (!statementFound)
+            {
+                result.ParsedStatement = null;
+                result.ResultedData = null;
+            }
+            return statementFound;
+        }
+
         private async Task<bool> TryParseAndInterpretExpressionInternalAsync(
             string culture,
             LinkedToken currentToken,
@@ -208,6 +333,61 @@ namespace NotepadBasedCalculator.Core
             }
 
             result.ParsedExpression = null;
+            result.ResultedData = null;
+            return false;
+        }
+
+        private async Task<bool> TryParseAndInterpretStatementInternalAsync(
+            string culture,
+            LinkedToken currentToken,
+            IStatementParserAndInterpreter parserAndInterpreter,
+            IVariableService variableService,
+            StatementParserAndInterpreterResult result,
+            CancellationToken cancellationToken)
+        {
+            Guard.IsNotNull(culture);
+            Guard.IsNotNull(parserAndInterpreter);
+            Guard.IsNotNull(variableService);
+            Guard.IsNotNull(result);
+            result.ParsedStatement = null;
+            result.ResultedData = null;
+
+            try
+            {
+                bool expressionFound
+                    = await parserAndInterpreter.TryParseAndInterpretStatementAsync(
+                        culture,
+                        currentToken,
+                        variableService,
+                        result,
+                        cancellationToken);
+
+                if (expressionFound)
+                {
+                    if (result.ParsedStatement is null)
+                    {
+                        ThrowHelper.ThrowInvalidDataException(
+                            $"The method '{nameof(parserAndInterpreter.TryParseAndInterpretStatementAsync)}' returned true " +
+                            $"but '{nameof(StatementParserAndInterpreterResult)}.{nameof(StatementParserAndInterpreterResult.ParsedStatement)}' is null. " +
+                            $"It should not be null.");
+                    }
+
+                    return true;
+                }
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore.
+            }
+            catch (Exception ex)
+            {
+                _logger.LogFault(
+                    "ParserBase.ParseStatement.Fault",
+                    ex,
+                    ("StatementParserName", parserAndInterpreter.GetType().FullName));
+            }
+
+            result.ParsedStatement = null;
             result.ResultedData = null;
             return false;
         }
@@ -267,11 +447,27 @@ namespace NotepadBasedCalculator.Core
 
                     CurrentLinkedToken = CurrentLinkedToken.Next;
 
-                    if (CurrentLinkedToken is null
-                        || CurrentLinkedToken.Token.Is(_parseUntilTokenIsOfType ?? string.Empty, _parseUntilTokenHasText ?? string.Empty))
+                    if (CurrentLinkedToken is null)
                     {
                         _currentToken = null;
                         return false;
+                    }
+
+                    if (string.IsNullOrEmpty(_parseUntilTokenHasText))
+                    {
+                        if (CurrentLinkedToken.Token.IsOfType(_parseUntilTokenIsOfType ?? string.Empty))
+                        {
+                            _currentToken = null;
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if (CurrentLinkedToken.Token.Is(_parseUntilTokenIsOfType ?? string.Empty, _parseUntilTokenHasText!))
+                        {
+                            _currentToken = null;
+                            return false;
+                        }
                     }
 
                     _currentToken = CurrentLinkedToken.Token;

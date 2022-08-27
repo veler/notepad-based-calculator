@@ -54,32 +54,57 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                     // 2. If so, try to parse that expression / statement. We will need to interpret the expression to know if it's the expected data type.
                     // 3. if the token doesn't correspond to a data type / expression...etc, then let's just compare it with the documentToken.
 
-                    if (IsSpecialToken(functionDefinitionToken.Token))
+                    if (IsSpecialToken(functionDefinitionToken.Token, out bool isStatementExpected))
                     {
                         string nextExpectedFunctionTokenType = functionDefinitionToken.Next?.Token.Type ?? string.Empty;
                         string nextExpectedFunctionTokenText = functionDefinitionToken.Next?.Token.GetText() ?? string.Empty;
 
-                        ExpressionParserAndInterpreterResult expressionResult = new();
-                        bool foundExpression
-                            = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                                culture,
-                                documentToken,
-                                nextExpectedFunctionTokenType,
-                                nextExpectedFunctionTokenText,
-                                variableService,
-                                expressionResult,
-                                cancellationToken);
+                        bool foundStatementOrExpression;
+                        IData? resultedData;
+                        AbstractSyntaxTreeBase? parsedExpressionOrStatement;
 
-                        if (!foundExpression
-                            || expressionResult.ResultedData is null
-                            || !MatchType(functionDefinitionToken.Token, expressionResult))
+                        if (isStatementExpected)
+                        {
+                            StatementParserAndInterpreterResult statementResult = new();
+                            foundStatementOrExpression
+                                = await ParserAndInterpreterService.TryParseAndInterpretStatementAsync(
+                                    culture,
+                                    documentToken,
+                                    nextExpectedFunctionTokenType,
+                                    nextExpectedFunctionTokenText,
+                                    variableService,
+                                    statementResult,
+                                    cancellationToken);
+                            resultedData = statementResult.ResultedData;
+                            parsedExpressionOrStatement = statementResult.ParsedStatement;
+                        }
+                        else
+                        {
+                            ExpressionParserAndInterpreterResult expressionResult = new();
+                            foundStatementOrExpression
+                                = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
+                                    culture,
+                                    documentToken,
+                                    nextExpectedFunctionTokenType,
+                                    nextExpectedFunctionTokenText,
+                                    variableService,
+                                    expressionResult,
+                                    cancellationToken);
+                            resultedData = expressionResult.ResultedData;
+                            parsedExpressionOrStatement = expressionResult.ParsedExpression;
+                        }
+
+                        if (!foundStatementOrExpression
+                            || resultedData is null
+                            || !MatchType(functionDefinitionToken.Token, resultedData, parsedExpressionOrStatement))
                         {
                             functionDetected = false;
                             break;
                         }
 
-                        detectedData.Add(expressionResult.ResultedData);
-                        lastToken = expressionResult.ParsedExpression!.LastToken;
+                        detectedData.Add(resultedData);
+                        documentToken = GetTokenAfter(documentToken, parsedExpressionOrStatement!.LastToken);
+                        lastToken = parsedExpressionOrStatement!.LastToken;
                     }
                     else if (!documentToken.Token.Is(functionDefinitionToken.Token.Type, functionDefinitionToken.Token.GetText()))
                     {
@@ -91,7 +116,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                         lastToken = documentToken;
                     }
 
-                    documentToken = documentToken.Next;
+                    documentToken = documentToken?.Next;
                     functionDefinitionToken = functionDefinitionToken.Next;
 
                     cancellationToken.ThrowIfCancellationRequested();
@@ -108,9 +133,12 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                             detectedData,
                             cancellationToken);
 
-                    result.ParsedStatement = new FunctionStatement(functionDefinition, currentToken, lastToken);
-                    result.ResultedData = functionResult;
-                    return functionSucceeded;
+                    if (functionSucceeded)
+                    {
+                        result.ParsedStatement = new FunctionStatement(functionDefinition, currentToken, lastToken);
+                        result.ResultedData = functionResult;
+                        return true;
+                    }
                 }
             }
 
@@ -231,8 +259,21 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
             return functionInterpreter;
         }
 
-        private static bool IsSpecialToken(IToken token)
+        private static bool IsSpecialToken(IToken token, out bool isStatement)
         {
+            isStatement = false;
+
+            if (token.IsTokenTextEqualTo("STATEMENT", StringComparison.Ordinal))
+            {
+                isStatement = true;
+                return true;
+            }
+
+            if (token.IsTokenTextEqualTo("EXPRESSION", StringComparison.Ordinal))
+            {
+                return true;
+            }
+
             for (int i = token.StartInLine; i < token.EndInLine; i++)
             {
                 if (!char.IsLetter(token.LineTextIncludingLineBreak[i]) || !char.IsUpper(token.LineTextIncludingLineBreak[i]))
@@ -240,12 +281,13 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                     return false;
                 }
             }
+
             return true;
         }
 
-        private static bool MatchType(IToken functionToken, ExpressionParserAndInterpreterResult expressionResult)
+        private static bool MatchType(IToken functionToken, IData? resultedData, AbstractSyntaxTreeBase? parsedStatementOrExpression)
         {
-            if (expressionResult.ResultedData is null)
+            if (resultedData is null)
             {
                 return false;
             }
@@ -255,16 +297,24 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
             switch (tokenText)
             {
                 case "STATEMENT":
-                    // TODO ?
-                    break;
-                case "EXPRESSION":
-                    if (expressionResult.ParsedExpression is not null)
+                    if (parsedStatementOrExpression is Statement)
                     {
                         return true;
                     }
                     break;
+
+                case "EXPRESSION":
+                    if (parsedStatementOrExpression is Expression)
+                    {
+                        return true;
+                    }
+                    break;
+
+                case "BOOLEAN":
+                    return resultedData is BooleanData;
+
                 default:
-                    if (expressionResult.ResultedData.IsOfSubtype(tokenText) || expressionResult.ResultedData.IsOfType(tokenText))
+                    if (resultedData.IsOfSubtype(tokenText) || resultedData.IsOfType(tokenText))
                     {
                         return true;
                     }
@@ -272,6 +322,16 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
             }
 
             return false;
+        }
+
+        private static LinkedToken? GetTokenAfter(LinkedToken? sourceToken, LinkedToken tokenToJump)
+        {
+            while (sourceToken is not null && sourceToken.Token.EndInLine < tokenToJump.Token.EndInLine)
+            {
+                sourceToken = sourceToken.Next;
+            }
+
+            return sourceToken;
         }
     }
 }

@@ -53,6 +53,21 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(output, lineResults[0].SummarizedResultData.DisplayText);
         }
 
+        [Theory]
+        [InlineData("if 123 < 456", "True")]
+        [InlineData("if 123 < 456 then", "")]
+        [InlineData("if 123 < 456 then tax = 12", "12")]
+        [InlineData("if 123 > 456 then tax = 12", "")]
+        [InlineData("if 123 > 456 then tax = 12 else tax = 13", "13")]
+        [InlineData("if 123 < 456 then tax = 12 else tax = 13", "12")]
+        public async Task Intepreter_Condition(string input, string output)
+        {
+            _textDocument.Text = input;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults);
+            Assert.Equal(output, lineResults[0].SummarizedResultData?.DisplayText ?? string.Empty);
+        }
+
         [Fact]
         public async Task Intepreter_DocumentChange()
         {

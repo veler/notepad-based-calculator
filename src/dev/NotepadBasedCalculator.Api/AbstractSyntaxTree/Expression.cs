@@ -3,24 +3,11 @@
     /// <summary>
     /// Basic class that represents an expression in a statement.
     /// </summary>
-    public abstract class Expression
+    public abstract class Expression : AbstractSyntaxTreeBase
     {
-        public LinkedToken FirstToken { get; }
-
-        public LinkedToken LastToken { get; }
-
         protected Expression(LinkedToken firstToken, LinkedToken lastToken)
+            : base(firstToken, lastToken)
         {
-            Guard.IsNotNull(firstToken);
-            Guard.IsNotNull(lastToken);
-            FirstToken = firstToken;
-            LastToken = lastToken;
         }
-
-        /// <summary>
-        /// Gets a string representation of the expression.
-        /// </summary>
-        /// <returns>String that reprensents the expression</returns>
-        public abstract override string ToString();
     }
 }

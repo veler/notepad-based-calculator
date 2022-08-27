@@ -25,5 +25,24 @@
             IVariableService variableService,
             ExpressionParserAndInterpreterResult result,
             CancellationToken cancellationToken);
+
+        Task<bool> TryParseAndInterpretExpressionAsync(
+            string expressionParserName,
+            string culture,
+            LinkedToken? currentToken,
+            string? parseUntilTokenIsOfType,
+            string? parseUntilTokenHasText,
+            IVariableService variableService,
+            ExpressionParserAndInterpreterResult result,
+            CancellationToken cancellationToken);
+
+        Task<bool> TryParseAndInterpretStatementAsync(
+            string culture,
+            LinkedToken? currentToken,
+            string? parseUntilTokenIsOfType,
+            string? parseUntilTokenHasText,
+            IVariableService variableService,
+            StatementParserAndInterpreterResult result,
+            CancellationToken cancellationToken);
     }
 }

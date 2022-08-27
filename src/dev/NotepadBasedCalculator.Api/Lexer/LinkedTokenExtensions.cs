@@ -2,6 +2,16 @@
 {
     public static class LinkedTokenExtensions
     {
+        public static LinkedToken? SkipToLastToken(this LinkedToken? currentToken)
+        {
+            while (currentToken?.Next is not null)
+            {
+                currentToken = currentToken.Next;
+            }
+
+            return currentToken;
+        }
+
         public static LinkedToken? SkipNextWordTokens(this LinkedToken? currentToken)
         {
             while (currentToken is not null && currentToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.Word))
