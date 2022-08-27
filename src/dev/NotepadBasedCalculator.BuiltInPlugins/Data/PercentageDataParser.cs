@@ -1,4 +1,5 @@
-﻿using Microsoft.Recognizers.Text;
+﻿using System.Text.RegularExpressions;
+using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.Number;
 using Constants = Microsoft.Recognizers.Text.Number.Constants;
 
@@ -25,16 +26,19 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                 switch (modelResult.TypeName)
                 {
                     case Constants.MODEL_PERCENTAGE:
-                        string valueString = (string)modelResult.Resolution[Value];
-                        if (!string.Equals(NullValue, valueString, StringComparison.OrdinalIgnoreCase))
+                        if (!ShouldBeIgnored(culture, modelResult))
                         {
-                            valueString = valueString.TrimEnd('%');
-                            data.Add(
-                                new PercentageData(
-                                    tokenizedTextLine.LineTextIncludingLineBreak,
-                                    modelResult.Start,
-                                    modelResult.End + 1,
-                                    double.Parse(valueString) / 100));
+                            string valueString = (string)modelResult.Resolution[Value];
+                            if (!string.Equals(NullValue, valueString, StringComparison.OrdinalIgnoreCase))
+                            {
+                                valueString = valueString.TrimEnd('%');
+                                data.Add(
+                                    new PercentageData(
+                                        tokenizedTextLine.LineTextIncludingLineBreak,
+                                        modelResult.Start,
+                                        modelResult.End + 1,
+                                        double.Parse(valueString) / 100));
+                            }
                         }
                         break;
 
@@ -47,6 +51,21 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
             }
 
             return data;
+        }
+
+        private static bool ShouldBeIgnored(string culture, ModelResult modelResult)
+        {
+            if (culture == SupportedCultures.English)
+            {
+                // starts with "percent of ".
+                var regex = new Regex(@"^(percent\s+of\s+)");
+                if (regex.Match(modelResult.Text).Success)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

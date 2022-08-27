@@ -24,6 +24,7 @@
     <PackageReference Include="Microsoft.Recognizers.Text.NumberWithUnit" />
     <PackageReference Include="Microsoft.Recognizers.Text.DateTime" />
     <PackageReference Include="System.Composition" />
+    <PackageReference Include="System.Text.RegularExpressions" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj" />

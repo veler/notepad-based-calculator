@@ -1,12 +1,11 @@
-﻿using System.Collections.Immutable;
-using Microsoft.Recognizers.Text;
+﻿using Microsoft.Recognizers.Text;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Function
 {
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
     [Shared]
-    internal sealed class FunctionStatementParserAndInterpreter : IStatementParserAndInterpreter, IComparer<FunctionDefinition>
+    internal sealed class FunctionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         private readonly Dictionary<string, IEnumerable<IFunctionDefinitionProvider>> _applicableFunctionDefinitionProviders = new();
         private readonly Dictionary<string, IReadOnlyList<FunctionDefinition>> _applicableFunctionDefinitions = new();
@@ -118,16 +117,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
             return false;
         }
 
-        public int Compare(FunctionDefinition x, FunctionDefinition y)
-        {
-            if (x.TokenCount < y.TokenCount)
-            {
-                return 1;
-            }
-
-            return -1;
-        }
-
         private IReadOnlyList<FunctionDefinition> GetOrderedFunctionDefinitions(string culture)
         {
             lock (_applicableFunctionDefinitions)
@@ -165,7 +154,11 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                     }
                 }
 
-                definitions = result.ToImmutableSortedSet(this);
+                definitions
+                    = result
+                    .OrderByDescending(f => f.TokenCount)
+                    .ThenByDescending(f => f.TokenizedFunctionDefinition.Token.LineTextIncludingLineBreak.Length)
+                    .ToList();
                 Guard.HasSizeEqualTo(definitions, result.Count);
 
                 _applicableFunctionDefinitions[culture] = definitions;
@@ -242,9 +235,8 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
         {
             for (int i = token.StartInLine; i < token.EndInLine; i++)
             {
-                if (char.IsLetter(token.LineTextIncludingLineBreak[i]) && !char.IsUpper(token.LineTextIncludingLineBreak[i]))
+                if (!char.IsLetter(token.LineTextIncludingLineBreak[i]) || !char.IsUpper(token.LineTextIncludingLineBreak[i]))
                 {
-
                     return false;
                 }
             }
