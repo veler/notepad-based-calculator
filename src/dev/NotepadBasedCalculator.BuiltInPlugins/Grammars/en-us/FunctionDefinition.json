@@ -1,8 +1,8 @@
 {
   "general": {
     "condition": [
-      "if BINARYOPERATION then STATEMENT",
-      "if BINARYOPERATION then STATEMENT else STATEMENT"
+      "if BOOLEAN then STATEMENT",
+      "if BOOLEAN then STATEMENT else STATEMENT"
     ]
   },
   "percentage": {

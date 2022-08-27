@@ -6,7 +6,7 @@
 
         public double NumericValue => Value;
 
-        public override string DisplayText => $"{Math.Round(Value * 100, 2)}%"; // TODO => Localize
+        public override string DisplayText => $"{Math.Round(Value, 2)}"; // TODO => Localize
 
         public PercentageData(string lineTextIncludingLineBreak, int startInLine, int endInLine, double value)
             : base(
