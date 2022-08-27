@@ -22,9 +22,11 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
             _unitMapProvider = unitMapProvider;
         }
 
-        public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine)
+        public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine, CancellationToken cancellationToken)
         {
             List<ModelResult> modelResults = NumberWithUnitRecognizer.RecognizeTemperature(tokenizedTextLine.LineTextIncludingLineBreak, culture);
+            cancellationToken.ThrowIfCancellationRequested();
+
             var data = new List<IData>();
 
             if (modelResults.Count > 0)

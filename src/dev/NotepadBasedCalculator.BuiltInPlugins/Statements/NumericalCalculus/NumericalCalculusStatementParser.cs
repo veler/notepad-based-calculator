@@ -1,4 +1,6 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus
+﻿using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.NumericalExpression;
+
+namespace NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus
 {
     [Export(typeof(IStatementParser))]
     [Culture(SupportedCultures.Any)]
@@ -7,7 +9,7 @@
     {
         public bool TryParseStatement(string culture, LinkedToken currentToken, out Statement? statement)
         {
-            Expression? expression = ParseExpression(PredefinedExpressionParserNames.NumericalCalculusExpression, culture, currentToken, out _);
+            Expression? expression = ParseExpression(PredefinedExpressionParserNames.NumericalExpression, culture, currentToken, out _);
             if (expression is not null)
             {
                 statement = new NumericalCalculusStatement(expression.FirstToken, expression.LastToken, expression);

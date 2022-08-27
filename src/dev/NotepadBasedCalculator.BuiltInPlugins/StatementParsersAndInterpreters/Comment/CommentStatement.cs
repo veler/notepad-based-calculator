@@ -1,4 +1,4 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Comment
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Comment
 {
     internal sealed class CommentStatement : Statement
     {

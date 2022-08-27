@@ -1,13 +1,18 @@
-﻿using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Header;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Header
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Header
 {
-    [Export(typeof(IStatementParser))]
+    [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
     [Order(int.MinValue)]
-    internal sealed class HeaderStatementParser : ParserBase, IStatementParser
+    internal sealed class HeaderStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
-        public bool TryParseStatement(string culture, LinkedToken currentToken, out Statement? statement)
+        public IParserAndInterpreterService ParserAndInterpreterService => throw new NotImplementedException();
+
+        public Task<bool> TryParseAndInterpretStatementAsync(
+            string culture,
+            LinkedToken currentToken,
+            IVariableService variableService,
+            StatementParserAndInterpreterResult result,
+            CancellationToken cancellationToken)
         {
             if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.HeaderOperator))
             {
@@ -18,8 +23,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Header
                     firstTokenInLine = previousToken;
                     if (previousToken.Token.IsNot(PredefinedTokenAndDataTypeNames.Whitespace))
                     {
-                        statement = null;
-                        return false;
+                        return Task.FromResult(false);
                     }
 
                     previousToken = previousToken.Previous;
@@ -33,12 +37,11 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Header
                     nextToken = nextToken.Next;
                 }
 
-                statement = new HeaderStatement(firstTokenInLine, lastTokenInLine);
-                return true;
+                result.ParsedStatement = new HeaderStatement(firstTokenInLine, lastTokenInLine);
+                return Task.FromResult(true);
             }
 
-            statement = null;
-            return false;
+            return Task.FromResult(false);
         }
     }
 }

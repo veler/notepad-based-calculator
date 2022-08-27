@@ -1,33 +1,50 @@
-﻿using System.Threading.Tasks;
-using NotepadBasedCalculator.BuiltInPlugins.Statements.Comment;
-using NotepadBasedCalculator.BuiltInPlugins.Statements.Header;
-using NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using NotepadBasedCalculator.Api;
+using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Comment;
+using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Header;
+using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.NumericalExpression;
 using Xunit;
 
 namespace NotepadBasedCalculator.Core.Tests
 {
     public class ParserTests : MefBaseTest
     {
+        private readonly ParserAndInterpreter _parserAndInterpreter;
+        private readonly TextDocument _textDocument;
+
+        public ParserTests()
+        {
+            ParserAndInterpreterFactory parserAndInterpreterFactory = ExportProvider.Import<ParserAndInterpreterFactory>();
+            _textDocument = new TextDocument();
+            _parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(SupportedCultures.English, _textDocument);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            _parserAndInterpreter.Dispose();
+        }
+
         [Fact]
         public async Task SimpleAsync()
         {
-            string input =
+            _textDocument.Text =
 @" # This is a header. 123. By the way I have 456% chance to get it to work.
 
 
 I got -123 dollars in my pocket. // this is a comment.";
 
-            Parser parser = ExportProvider.Import<Parser>();
-            ParserResult parserResult = await parser.ParseAsync(input);
-            Assert.Equal(4, parserResult.Lines.Count);
-            Assert.Equal(1, parserResult.Lines[0].Statements.Count);
-            Assert.Equal(0, parserResult.Lines[1].Statements.Count);
-            Assert.Equal(0, parserResult.Lines[2].Statements.Count);
-            Assert.Equal(2, parserResult.Lines[3].Statements.Count);
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Equal(4, lineResults.Count);
+            Assert.Equal(1, lineResults[0].StatementsAndData.Count);
+            Assert.Equal(0, lineResults[1].StatementsAndData.Count);
+            Assert.Equal(0, lineResults[2].StatementsAndData.Count);
+            Assert.Equal(2, lineResults[3].StatementsAndData.Count);
 
-            Assert.IsType<HeaderStatement>(parserResult.Lines[0].Statements[0]);
-            Assert.IsType<NumericalCalculusStatement>(parserResult.Lines[3].Statements[0]);
-            Assert.IsType<CommentStatement>(parserResult.Lines[3].Statements[1]);
+            Assert.IsType<HeaderStatement>(lineResults[0].StatementsAndData[0].ParsedStatement);
+            Assert.IsType<NumericalCalculusStatement>(lineResults[3].StatementsAndData[0].ParsedStatement);
+            Assert.IsType<CommentStatement>(lineResults[3].StatementsAndData[1].ParsedStatement);
         }
     }
 }

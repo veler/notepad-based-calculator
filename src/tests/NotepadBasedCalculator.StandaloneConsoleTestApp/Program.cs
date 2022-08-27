@@ -26,8 +26,8 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
             var mefComposer
                 = new MefComposer(
                     typeof(MefComposer).Assembly);
-            InterpreterFactory interpreterFactory = mefComposer.ExportProvider.GetExport<InterpreterFactory>();
-            Interpreter interpreter = interpreterFactory.CreateInterpreter(DefaultCulture, textDocument);
+            ParserAndInterpreterFactory parserAndInterpreterFactory = mefComposer.ExportProvider.GetExport<ParserAndInterpreterFactory>();
+            ParserAndInterpreter parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(DefaultCulture, textDocument);
 
             ShowIntro();
 
@@ -45,11 +45,11 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
 
                 textDocument.Text += input + Environment.NewLine;
 
-                IReadOnlyList<Api.IData?>? result = await interpreter.WaitAsync();
+                IReadOnlyList<ParserAndInterpreterResultLine>? result = await parserAndInterpreter.WaitAsync();
 
-                if (result is not null && result.Count > 0 && result[0] is not null)
+                if (result is not null && result.Count > 0 && result[0].SummarizedResultData is not null)
                 {
-                    Console.WriteLine(">> " + result[0]!.DisplayText);
+                    Console.WriteLine(">> " + result[0].SummarizedResultData!.DisplayText);
                 }
                 else
                 {

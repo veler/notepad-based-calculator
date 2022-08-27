@@ -7,16 +7,32 @@ namespace NotepadBasedCalculator.Core.Tests
 {
     public sealed class InterpreterTests : MefBaseTest
     {
+        private readonly ParserAndInterpreter _parserAndInterpreter;
+        private readonly TextDocument _textDocument;
+
+        public InterpreterTests()
+        {
+            ParserAndInterpreterFactory parserAndInterpreterFactory = ExportProvider.Import<ParserAndInterpreterFactory>();
+            _textDocument = new TextDocument();
+            _parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(SupportedCultures.English, _textDocument);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            _parserAndInterpreter.Dispose();
+        }
+
         [Fact]
         public async Task Intepreter_VariableDeclaration()
         {
-            InterpreterFactory interpreterFactory = ExportProvider.Import<InterpreterFactory>();
-            var textDocument = new TextDocument();
-            using Interpreter interpreter = interpreterFactory.CreateInterpreter(SupportedCultures.English, textDocument);
+            _textDocument.Text = "test = 2";
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
 
-            textDocument.Text = "test = 2";
-
-            await interpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            var statement = (VariableDeclarationStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
+            IData data = ((DataExpression)statement.AssignedValue).Data;
+            Assert.Equal("[Numeric] (7, 8): '2'", data.ToString());
         }
 
         [Theory]
@@ -31,34 +47,34 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("(12)3+(1 +2)(3(2))(1 +2)-3", "87")]
         public async Task Intepreter_SimpleCalculus(string input, string output)
         {
-            InterpreterFactory interpreterFactory = ExportProvider.Import<InterpreterFactory>();
-            var textDocument = new TextDocument();
-            using Interpreter interpreter = interpreterFactory.CreateInterpreter(SupportedCultures.English, textDocument);
-
-            textDocument.Text = input;
-
-            IReadOnlyList<IData> lineResults = await interpreter.WaitAsync();
+            _textDocument.Text = input;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
-            Assert.Equal(output, lineResults[0].DisplayText);
+            Assert.Equal(output, lineResults[0].SummarizedResultData.DisplayText);
         }
 
         [Fact]
         public async Task Intepreter_DocumentChange()
         {
-            InterpreterFactory interpreterFactory = ExportProvider.Import<InterpreterFactory>();
-            var textDocument = new TextDocument();
-            using Interpreter interpreter = interpreterFactory.CreateInterpreter(SupportedCultures.English, textDocument);
+            _textDocument.Text = string.Empty;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Empty(lineResults[0].StatementsAndData);
 
-            TypeInDocument(textDocument, "test = 2");
+            TypeInDocument("test = 2");
 
-            await interpreter.WaitAsync();
+            lineResults = await _parserAndInterpreter.WaitAsync();
+
+            Assert.Single(lineResults[0].StatementsAndData);
+            var statement = (VariableDeclarationStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
+            IData data = ((DataExpression)statement.AssignedValue).Data;
+            Assert.Equal("[Numeric] (7, 8): '2'", data.ToString());
         }
 
-        private static void TypeInDocument(TextDocument textDocument, string text)
+        private void TypeInDocument(string text)
         {
             for (int i = 0; i < text.Length; i++)
             {
-                textDocument.Text += text[i];
+                _textDocument.Text += text[i];
             }
         }
     }

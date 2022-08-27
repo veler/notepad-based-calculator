@@ -17,9 +17,11 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
         private const string End = "end";
         private const string Type = "type";
 
-        public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine)
+        public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine, CancellationToken cancellationToken)
         {
             List<ModelResult> modelResults = DateTimeRecognizer.RecognizeDateTime(tokenizedTextLine.LineTextIncludingLineBreak, culture);
+            cancellationToken.ThrowIfCancellationRequested();
+
             var data = new List<IData>();
 
             if (modelResults.Count > 0)

@@ -1,4 +1,6 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Condition
+﻿using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.ConditionalExpression;
+
+namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Condition
 {
     [Export(typeof(IStatementInterpreter))]
     [SupportedStatementType(typeof(ConditionStatement))]

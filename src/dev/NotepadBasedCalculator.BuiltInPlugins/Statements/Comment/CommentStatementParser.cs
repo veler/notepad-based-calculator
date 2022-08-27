@@ -1,4 +1,6 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Comment
+﻿using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Comment;
+
+namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Comment
 {
     [Export(typeof(IStatementParser))]
     [Culture(SupportedCultures.Any)]

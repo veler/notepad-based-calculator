@@ -1,4 +1,4 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.NumericalExpression
 {
     internal sealed class NumericalCalculusStatement : Statement
     {

@@ -8,6 +8,12 @@
 
         IEnumerable<IStatementParser> GetApplicableStatementParsers(string culture);
 
+        IEnumerable<IStatementParserAndInterpreter> GetApplicableStatementParsersAndInterpreters(string culture);
+
+        IEnumerable<IExpressionParserAndInterpreter> GetApplicableExpressionParsersAndInterpreters(string culture);
+
+        IExpressionParserAndInterpreter GetExpressionParserAndInterpreter(string culture, string expressionParserName);
+
         IExpressionParser? GetExpressionParser(string culture, string expressionParserName);
 
         IStatementParser? GetStatementParser(string culture, string expressionParserName);

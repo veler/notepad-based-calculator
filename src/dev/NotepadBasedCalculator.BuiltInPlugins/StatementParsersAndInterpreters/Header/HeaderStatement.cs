@@ -1,4 +1,4 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Header
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Header
 {
     internal sealed class HeaderStatement : Statement
     {

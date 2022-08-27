@@ -7,20 +7,20 @@ namespace NotepadBasedCalculator.Core.Tests
 {
     public sealed class BinaryOperationTests : MefBaseTest
     {
-        private readonly Interpreter _interpreter;
+        private readonly ParserAndInterpreter _parserAndInterpreter;
         private readonly TextDocument _textDocument;
 
         public BinaryOperationTests()
         {
-            InterpreterFactory interpreterFactory = ExportProvider.Import<InterpreterFactory>();
+            ParserAndInterpreterFactory parserAndInterpreterFactory = ExportProvider.Import<ParserAndInterpreterFactory>();
             _textDocument = new TextDocument();
-            _interpreter = interpreterFactory.CreateInterpreter(SupportedCultures.English, _textDocument);
+            _parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(SupportedCultures.English, _textDocument);
         }
 
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            _interpreter.Dispose();
+            _parserAndInterpreter.Dispose();
         }
 
         [Theory]
@@ -77,10 +77,10 @@ namespace NotepadBasedCalculator.Core.Tests
         public async Task BinaryOperationAsync(string input, string output)
         {
             _textDocument.Text = input;
-
-            IReadOnlyList<IData> lineResults = await _interpreter.WaitAsync();
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
-            Assert.Equal(output, lineResults[0].DisplayText);
+            Assert.Single(lineResults[0].StatementsAndData);
+            Assert.Equal(output, lineResults[0].StatementsAndData[0].ResultedData.DisplayText);
         }
     }
 }

@@ -5,6 +5,6 @@
     /// </summary>
     public interface IDataParser
     {
-        IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine);
+        IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine, CancellationToken cancellationToken);
     }
 }

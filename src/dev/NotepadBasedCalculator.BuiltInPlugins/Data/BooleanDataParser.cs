@@ -7,7 +7,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
     [Culture(SupportedCultures.Any)]
     public sealed class BooleanDataParser : IDataParser
     {
-        public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine)
+        public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine, CancellationToken cancellationToken)
         {
             var results = new List<IData>();
             LinkedToken? currentToken = tokenizedTextLine.Tokens;

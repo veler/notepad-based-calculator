@@ -19,7 +19,7 @@
         /// </summary>
         private Expression? ParseEqualityAndRelationalExpression(string culture, LinkedToken? currentToken)
         {
-            Expression? expression = ParseExpression(PredefinedExpressionParserNames.NumericalCalculusExpression, culture, currentToken, out LinkedToken? nextToken);
+            Expression? expression = ParseExpression(PredefinedExpressionParserNames.NumericalExpression, culture, currentToken, out LinkedToken? nextToken);
 
             if (expression is not null)
             {
@@ -57,7 +57,7 @@
                         return expression;
                     }
 
-                    Expression? rightExpression = ParseExpression(PredefinedExpressionParserNames.NumericalCalculusExpression, culture, operatorToken.Next, out _);
+                    Expression? rightExpression = ParseExpression(PredefinedExpressionParserNames.NumericalExpression, culture, operatorToken.Next, out _);
                     if (rightExpression is not null)
                     {
                         expression = new BinaryOperatorExpression(expression, binaryOperator, rightExpression);

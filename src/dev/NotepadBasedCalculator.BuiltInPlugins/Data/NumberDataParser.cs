@@ -12,9 +12,11 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
         private const string Subtype = "subtype";
         private const string Value = "value";
 
-        public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine)
+        public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine, CancellationToken cancellationToken)
         {
             List<ModelResult> modelResults = NumberRecognizer.RecognizeNumber(tokenizedTextLine.LineTextIncludingLineBreak, culture);
+            cancellationToken.ThrowIfCancellationRequested();
+
             var data = new List<IData>();
 
             for (int i = 0; i < modelResults.Count; i++)

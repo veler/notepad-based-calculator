@@ -1,4 +1,6 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus
+﻿using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.NumericalExpression;
+
+namespace NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus
 {
     [Export(typeof(IStatementInterpreter))]
     [SupportedStatementType(typeof(NumericalCalculusStatement))]
