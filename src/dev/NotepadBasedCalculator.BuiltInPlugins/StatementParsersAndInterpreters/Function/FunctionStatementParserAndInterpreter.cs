@@ -80,14 +80,18 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                         }
 
                         detectedData.Add(expressionResult.ResultedData);
+                        lastToken = expressionResult.ParsedExpression!.LastToken;
                     }
                     else if (!documentToken.Token.Is(functionDefinitionToken.Token.Type, functionDefinitionToken.Token.GetText()))
                     {
                         functionDetected = false;
                         break;
                     }
+                    else
+                    {
+                        lastToken = documentToken;
+                    }
 
-                    lastToken = documentToken;
                     documentToken = documentToken.Next;
                     functionDefinitionToken = functionDefinitionToken.Next;
 
