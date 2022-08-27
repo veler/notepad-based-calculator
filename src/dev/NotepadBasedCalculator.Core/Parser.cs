@@ -72,7 +72,14 @@ namespace NotepadBasedCalculator.Core
         {
             IReadOnlyList<IData> parsedData = await ParseDataAsync(culture, tokenizedLine, cancellationToken).ConfigureAwait(true);
 
-            tokenizedLine = _lexer.TokenizeLine(culture, tokenizedLine.Start, tokenizedLine.LineTextIncludingLineBreak, orderedKnownVariableNames, parsedData);
+            tokenizedLine
+                = _lexer.TokenizeLine(
+                    culture,
+                    tokenizedLine.LineNumber,
+                    tokenizedLine.Start,
+                    tokenizedLine.LineTextIncludingLineBreak,
+                    orderedKnownVariableNames,
+                    parsedData);
 
             IReadOnlyList<Statement> statements = ParseStatements(culture, tokenizedLine, cancellationToken);
 
@@ -147,7 +154,7 @@ namespace NotepadBasedCalculator.Core
                         {
                             try
                             {
-                                IReadOnlyList<IData>? results = dataParser.Parse(culture, tokenizedLine);
+                                IReadOnlyList<IData>? results = dataParser.Parse(culture, tokenizedLine, cancellationToken);
                                 if (results is not null)
                                 {
                                     lock (rawDataBag)
@@ -155,6 +162,10 @@ namespace NotepadBasedCalculator.Core
                                         rawDataBag.AddRange(results);
                                     }
                                 }
+                            }
+                            catch (OperationCanceledException)
+                            {
+                                // Ignore.
                             }
                             catch (Exception ex)
                             {
@@ -166,12 +177,7 @@ namespace NotepadBasedCalculator.Core
                         }));
             }
 
-            if (cancellationToken.IsCancellationRequested)
-            {
-                return nonOverlappingData;
-            }
-
-            await Task.WhenAll(tasks).ConfigureAwait(true);
+            await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask()).ConfigureAwait(true);
 
             if (cancellationToken.IsCancellationRequested)
             {

@@ -1,0 +1,34 @@
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Comment
+{
+    [Export(typeof(IStatementParserAndInterpreter))]
+    [Culture(SupportedCultures.Any)]
+    [Order(int.MinValue)]
+    internal sealed class CommentStatementParserAndInterpreter : IStatementParserAndInterpreter
+    {
+        public IParserAndInterpreterService ParserAndInterpreterService => throw new NotImplementedException();
+
+        public Task<bool> TryParseAndInterpretStatementAsync(
+            string culture,
+            LinkedToken currentToken,
+            IVariableService variableService,
+            StatementParserAndInterpreterResult result,
+            CancellationToken cancellationToken)
+        {
+            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.CommentOperator))
+            {
+                LinkedToken lastTokenInLine = currentToken;
+                LinkedToken? nextToken = currentToken.Next;
+                while (nextToken is not null)
+                {
+                    lastTokenInLine = nextToken;
+                    nextToken = nextToken.Next;
+                }
+
+                result.ParsedStatement = new CommentStatement(currentToken.SkipNextWordTokens()!, lastTokenInLine);
+                return Task.FromResult(true);
+            }
+
+            return Task.FromResult(false);
+        }
+    }
+}

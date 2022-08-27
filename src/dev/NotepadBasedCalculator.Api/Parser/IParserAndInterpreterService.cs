@@ -2,28 +2,28 @@
 {
     public interface IParserAndInterpreterService
     {
-        Task<bool> TryParseAndInterpretExpression(
+        Task<bool> TryParseAndInterpretExpressionAsync(
             string culture,
-            LinkedToken currentToken,
+            LinkedToken? currentToken,
             IVariableService variableService,
-            Ref<IData?> interpreterResult,
+            ExpressionParserAndInterpreterResult result,
             CancellationToken cancellationToken);
 
-        Task<bool> TryParseAndInterpretExpression(
+        Task<bool> TryParseAndInterpretExpressionAsync(
             string expressionParserName,
             string culture,
-            LinkedToken currentToken,
+            LinkedToken? currentToken,
             IVariableService variableService,
-            Ref<IData?> interpreterResult,
+            ExpressionParserAndInterpreterResult result,
             CancellationToken cancellationToken);
 
-        Task<bool> TryParseAndInterpretExpression(
+        Task<bool> TryParseAndInterpretExpressionAsync(
             string culture,
-            LinkedToken currentToken,
+            LinkedToken? currentToken,
             string? parseUntilTokenIsOfType,
             string? parseUntilTokenHasText,
             IVariableService variableService,
-            Ref<IData?> interpreterResult,
+            ExpressionParserAndInterpreterResult result,
             CancellationToken cancellationToken);
     }
 }

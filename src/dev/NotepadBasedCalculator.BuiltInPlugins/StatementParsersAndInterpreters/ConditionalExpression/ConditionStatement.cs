@@ -1,4 +1,4 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Condition
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.ConditionalExpression
 {
     internal sealed class ConditionStatement : Statement
     {

@@ -1,19 +1,36 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using NotepadBasedCalculator.Api;
-using NotepadBasedCalculator.BuiltInPlugins.Statements.NumericalCalculus;
+using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.NumericalExpression;
 using Xunit;
 
 namespace NotepadBasedCalculator.Core.Tests
 {
     public sealed class ExpressionParsersTests : MefBaseTest
     {
+        private readonly ParserAndInterpreter _parserAndInterpreter;
+        private readonly TextDocument _textDocument;
+
+        public ExpressionParsersTests()
+        {
+            ParserAndInterpreterFactory parserAndInterpreterFactory = ExportProvider.Import<ParserAndInterpreterFactory>();
+            _textDocument = new TextDocument();
+            _parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(SupportedCultures.English, _textDocument);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            _parserAndInterpreter.Dispose();
+        }
+
         [Fact]
         public async Task NumberDataExpression_Integer()
         {
-            Parser parser = ExportProvider.Import<Parser>();
-            ParserResult parserResult = await parser.ParseAsync(" 132 ");
-            Assert.Single(parserResult.Lines[0].Statements);
-            var statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = " 132 ";
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            var statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             IData data = ((DataExpression)statement.NumericalCalculusExpression).Data;
             Assert.Equal("[Numeric] (1, 4): '132'", data.ToString());
         }
@@ -21,45 +38,50 @@ namespace NotepadBasedCalculator.Core.Tests
         [Fact]
         public async Task NumberDataExpression_Group()
         {
-            Parser parser = ExportProvider.Import<Parser>();
-            ParserResult parserResult = await parser.ParseAsync(" (132) ");
-            Assert.Single(parserResult.Lines[0].Statements);
-            var statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = " (132) ";
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            var statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             IData data = ((DataExpression)((GroupExpression)statement.NumericalCalculusExpression).InnerExpression).Data;
             Assert.Equal("[Numeric] (2, 5): '132'", data.ToString());
 
-            parserResult = await parser.ParseAsync(" (  132  ) ");
-            Assert.Single(parserResult.Lines[0].Statements);
-            statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = " (  132  ) ";
+            lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             data = ((DataExpression)((GroupExpression)statement.NumericalCalculusExpression).InnerExpression).Data;
             Assert.Equal("[Numeric] (4, 7): '132'", data.ToString());
 
-            parserResult = await parser.ParseAsync(" (  132 horse ) ");
-            Assert.Single(parserResult.Lines[0].Statements);
-            statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = " (  132 horse ) ";
+            lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             data = ((DataExpression)((GroupExpression)statement.NumericalCalculusExpression).InnerExpression).Data;
             Assert.Equal("[Numeric] (4, 7): '132'", data.ToString());
 
-            parserResult = await parser.ParseAsync(" ( pigeon 132 horse ) ");
-            Assert.Single(parserResult.Lines[0].Statements);
-            statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = " ( pigeon 132 horse ) ";
+            lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             data = ((DataExpression)((GroupExpression)statement.NumericalCalculusExpression).InnerExpression).Data;
             Assert.Equal("[Numeric] (10, 13): '132'", data.ToString());
 
-            parserResult = await parser.ParseAsync(" ( ) ");
-            Assert.Empty(parserResult.Lines[0].Statements);
+            _textDocument.Text = " ( ) ";
+            lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Empty(lineResults[0].StatementsAndData);
 
-            parserResult = await parser.ParseAsync("1()2");
-            Assert.Equal(2, parserResult.Lines[0].Statements.Count);
+            _textDocument.Text = "1()2";
+            lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Equal(2, lineResults[0].StatementsAndData.Count);
         }
 
         [Fact]
         public async Task NumberDataExpression_GroupNested()
         {
-            Parser parser = ExportProvider.Import<Parser>();
-            ParserResult parserResult = await parser.ParseAsync(" ((132)) ");
-            Assert.Single(parserResult.Lines[0].Statements);
-            var statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = " ((132)) ";
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            var statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             if (statement.NumericalCalculusExpression is not GroupExpression groupExpression)
             {
                 Assert.Fail("group expected");
@@ -84,10 +106,10 @@ namespace NotepadBasedCalculator.Core.Tests
         [Fact]
         public async Task NumberDataExpression_MultiplicationAndDivision()
         {
-            Parser parser = ExportProvider.Import<Parser>();
-            ParserResult parserResult = await parser.ParseAsync(" 123 horses * 2 trucks x 5 people divided by a farm with 8 fields ");
-            Assert.Single(parserResult.Lines[0].Statements);
-            var statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = " 123 horses * 2 trucks x 5 people divided by a farm with 8 fields ";
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            var statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             var expression = (BinaryOperatorExpression)statement.NumericalCalculusExpression;
             Assert.Equal("((([Numeric] (1, 4): '123' * [Numeric] (14, 15): '2') * [Numeric] (25, 26): '5') / [Numeric] (57, 58): '8')", expression.ToString());
         }
@@ -95,12 +117,12 @@ namespace NotepadBasedCalculator.Core.Tests
         [Fact]
         public async Task NumberDataExpression_AdditionAndSubstraction()
         {
-            Parser parser = ExportProvider.Import<Parser>();
-            ParserResult parserResult = await parser.ParseAsync(" I got 123 dogs plus 1 cat and two goldfish, minus 1 death ");
-            Assert.Equal(2, parserResult.Lines[0].Statements.Count);
-            var statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = " I got 123 dogs plus 1 cat and two goldfish, minus 1 death ";
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Equal(2, lineResults[0].StatementsAndData.Count);
+            var statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             var expression1 = (BinaryOperatorExpression)statement.NumericalCalculusExpression;
-            statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[1];
+            statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[1].ParsedStatement;
             var expression2 = (DataExpression)statement.NumericalCalculusExpression;
             Assert.Equal("(([Numeric] (7, 10): '123' + [Numeric] (21, 22): '1') + [Numeric] (31, 34): 'two')", expression1.ToString());
             Assert.Equal("[Numeric] (45, 52): 'minus 1'", expression2.ToString());
@@ -109,10 +131,10 @@ namespace NotepadBasedCalculator.Core.Tests
         [Fact]
         public async Task NumberDataExpression_ComplexScenario()
         {
-            Parser parser = ExportProvider.Import<Parser>();
-            ParserResult parserResult = await parser.ParseAsync("(123+(1 +2)) * -3");
-            Assert.Single(parserResult.Lines[0].Statements);
-            var statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = "(123+(1 +2)) * -3";
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            var statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             var expression = (BinaryOperatorExpression)statement.NumericalCalculusExpression;
             Assert.Equal("((([Numeric] (1, 4): '123' + (([Numeric] (6, 7): '1' + [Numeric] (9, 10): '2')))) * [Numeric] (15, 17): '-3')", expression.ToString());
         }
@@ -120,10 +142,10 @@ namespace NotepadBasedCalculator.Core.Tests
         [Fact]
         public async Task NumberDataExpression_ImplicitOperator()
         {
-            Parser parser = ExportProvider.Import<Parser>();
-            ParserResult parserResult = await parser.ParseAsync("1+(2)(3)");
-            Assert.Single(parserResult.Lines[0].Statements);
-            var statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = "1+(2)(3)";
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            var statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             var expression = (BinaryOperatorExpression)statement.NumericalCalculusExpression;
             Assert.Equal("([Numeric] (0, 1): '1' + (([Numeric] (3, 4): '2') * ([Numeric] (6, 7): '3')))", expression.ToString());
 
@@ -138,9 +160,10 @@ namespace NotepadBasedCalculator.Core.Tests
                 Add: the result of step No. 1 + the result of step No. 6 = 36 + 54 = 90
                 Subtract: the result of step No. 7 - 3 = 90 - 3 = 87
              */
-            parserResult = await parser.ParseAsync("(12)3+(1 +2)(3(2))(1 +2)-3");
-            Assert.Single(parserResult.Lines[0].Statements);
-            statement = (NumericalCalculusStatement)parserResult.Lines[0].Statements[0];
+            _textDocument.Text = "(12)3+(1 +2)(3(2))(1 +2)-3";
+            lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults[0].StatementsAndData);
+            statement = (NumericalCalculusStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             expression = (BinaryOperatorExpression)statement.NumericalCalculusExpression;
             Assert.Equal("((([Numeric] (1, 3): '12') * [Numeric] (4, 5): '3') + ((((([Numeric] (7, 8): '1' + [Numeric] (10, 11): '2')) * (([Numeric] (13, 14): '3' * ([Numeric] (15, 16): '2')))) * (([Numeric] (19, 20): '1' + [Numeric] (22, 23): '2'))) + [Numeric] (24, 26): '-3'))", expression.ToString());
         }

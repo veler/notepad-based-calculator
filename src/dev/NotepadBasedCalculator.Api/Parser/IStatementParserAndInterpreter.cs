@@ -4,11 +4,11 @@
     {
         IParserAndInterpreterService ParserAndInterpreterService { get; }
 
-        Task<bool> TryParseAndInterpretStatement(
+        Task<bool> TryParseAndInterpretStatementAsync(
             string culture,
             LinkedToken currentToken,
             IVariableService variableService,
-            Ref<IData?> interpreterResult,
+            StatementParserAndInterpreterResult result,
             CancellationToken cancellationToken);
     }
 }

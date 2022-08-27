@@ -47,6 +47,7 @@ namespace NotepadBasedCalculator.Core
                     new TokenizedTextLine(
                         0,
                         0,
+                        0,
                         string.Empty,
                         null));
             }
@@ -63,6 +64,7 @@ namespace NotepadBasedCalculator.Core
         /// <returns></returns>
         internal TokenizedTextLine TokenizeLine(
             string culture,
+            int lineNumber,
             int startPositionInDocument,
             string lineTextIncludingLineBreak,
             IReadOnlyList<string> knownVariableNames,
@@ -74,11 +76,11 @@ namespace NotepadBasedCalculator.Core
 
             if (!string.IsNullOrEmpty(lineTextIncludingLineBreak))
             {
-                return TokenizeLineInternal(startPositionInDocument, lineTextIncludingLineBreak, tokenDefinitionGrammars, knownVariableNames, knownData);
+                return TokenizeLineInternal(lineNumber, startPositionInDocument, lineTextIncludingLineBreak, tokenDefinitionGrammars, knownVariableNames, knownData);
             }
             else
             {
-                return new TokenizedTextLine(startPositionInDocument, 0, lineTextIncludingLineBreak, null);
+                return new TokenizedTextLine(startPositionInDocument, lineNumber, 0, lineTextIncludingLineBreak, null);
             }
         }
 
@@ -90,10 +92,12 @@ namespace NotepadBasedCalculator.Core
             IReadOnlyList<IData>? knownData = null)
         {
             int lineStart = previousTokenizedLine?.EndIncludingLineBreak ?? 0;
-            return TokenizeLineInternal(lineStart, lineTextIncludingLineBreak, orderedTokenDefinitionGrammars, orderedKnownVariableNames, knownData);
+            int lineNumber = previousTokenizedLine?.LineNumber ?? -1;
+            return TokenizeLineInternal(lineNumber + 1, lineStart, lineTextIncludingLineBreak, orderedTokenDefinitionGrammars, orderedKnownVariableNames, knownData);
         }
 
         private TokenizedTextLine TokenizeLineInternal(
+            int lineNumber,
             int startPositionInDocument,
             string lineTextIncludingLineBreak,
             IReadOnlyList<TokenDefinition> orderedTokenDefinitionGrammars,
@@ -128,6 +132,7 @@ namespace NotepadBasedCalculator.Core
 
             return new TokenizedTextLine(
                 startPositionInDocument,
+                lineNumber,
                 lineBreakLength,
                 lineTextIncludingLineBreak,
                 linkedToken);

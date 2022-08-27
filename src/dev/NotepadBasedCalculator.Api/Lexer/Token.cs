@@ -5,6 +5,8 @@
     /// </summary>
     public record Token : IToken
     {
+        private readonly Lazy<string> _getText;
+
         public string Type { get; }
 
         public int StartInLine { get; }
@@ -26,6 +28,8 @@
             Type = tokenType;
             StartInLine = startInLine;
             EndInLine = endInLine;
+
+            _getText = new Lazy<string>(() => LineTextIncludingLineBreak.Substring(StartInLine, Length));
         }
 
         public bool IsNot(string type)
@@ -70,7 +74,7 @@
 
         public string GetText()
         {
-            return LineTextIncludingLineBreak.Substring(StartInLine, Length);
+            return _getText.Value;
         }
 
         public string GetText(int startInLine, int endInLine)

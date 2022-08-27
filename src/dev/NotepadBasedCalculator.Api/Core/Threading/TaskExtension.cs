@@ -45,5 +45,12 @@
             Guard.IsNotNull(scheduler);
             return new TaskSchedulerAwaiter(scheduler);
         }
+
+        public static Task AsTask(this CancellationToken cancellationToken)
+        {
+            var tcs = new TaskCompletionSource<object>();
+            cancellationToken.Register(() => tcs.TrySetCanceled(cancellationToken), useSynchronizationContext: false);
+            return tcs.Task;
+        }
     }
 }

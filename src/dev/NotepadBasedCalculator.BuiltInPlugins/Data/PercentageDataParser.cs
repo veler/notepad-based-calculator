@@ -12,9 +12,11 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
         private const string Value = "value";
         private const string NullValue = "null";
 
-        public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine)
+        public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine, CancellationToken cancellationToken)
         {
             List<ModelResult> modelResults = NumberRecognizer.RecognizePercentage(tokenizedTextLine.LineTextIncludingLineBreak, culture);
+            cancellationToken.ThrowIfCancellationRequested();
+
             var data = new List<IData>();
 
             for (int i = 0; i < modelResults.Count; i++)

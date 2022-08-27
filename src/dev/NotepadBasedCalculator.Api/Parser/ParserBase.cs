@@ -242,7 +242,7 @@ namespace NotepadBasedCalculator.Api
                     try
                     {
                         if (expressionParser.TryParseExpression(culture, linkedToken, out expression)
-                        && expression is not null)
+                            && expression is not null)
                         {
                             break;
                         }

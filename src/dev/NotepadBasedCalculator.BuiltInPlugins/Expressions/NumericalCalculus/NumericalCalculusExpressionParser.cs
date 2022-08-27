@@ -1,7 +1,7 @@
 ﻿namespace NotepadBasedCalculator.BuiltInPlugins.Expressions.NumericalCalculus
 {
     [Export(typeof(IExpressionParser))]
-    [Name(PredefinedExpressionParserNames.NumericalCalculusExpression)]
+    [Name(PredefinedExpressionParserNames.NumericalExpression)]
     [Culture(SupportedCultures.Any)]
     [Order(int.MaxValue - 1)]
     internal sealed class NumericalCalculusExpressionParser : ParserBase, IExpressionParser
