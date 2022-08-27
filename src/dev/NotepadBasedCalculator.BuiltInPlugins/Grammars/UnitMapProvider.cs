@@ -5,6 +5,8 @@ using NotepadBasedCalculator.BuiltInPlugins.Data;
 namespace NotepadBasedCalculator.BuiltInPlugins.Grammars
 {
     [Export(typeof(UnitMapProvider))]
+    [Culture(SupportedCultures.English)]
+    [Culture(SupportedCultures.French)]
     [Shared]
     public sealed class UnitMapProvider
     {

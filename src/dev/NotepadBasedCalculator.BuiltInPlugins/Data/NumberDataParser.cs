@@ -1,6 +1,5 @@
 ﻿using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.Number;
-using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 using Constants = Microsoft.Recognizers.Text.Number.Constants;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Data

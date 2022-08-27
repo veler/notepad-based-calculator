@@ -286,7 +286,7 @@ namespace NotepadBasedCalculator.Core
 
                     IToken? token = DetectToken(_currentPositionInLine);
 
-                    if (token is null || token.Is(PredefinedTokenAndDataTypeNames.NewLine))
+                    if (token is null || token.IsOfType(PredefinedTokenAndDataTypeNames.NewLine))
                     {
                         _currentToken = null;
                         return false;

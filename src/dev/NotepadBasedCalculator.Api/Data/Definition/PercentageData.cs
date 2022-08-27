@@ -1,4 +1,4 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
+﻿namespace NotepadBasedCalculator.Api
 {
     public sealed record PercentageData : Data<double>, INumericData
     {
@@ -6,7 +6,7 @@
 
         public double NumericValue => Value;
 
-        public override string DisplayText => $"{Value}"; // TODO => Localize
+        public override string DisplayText => $"{Math.Round(Value * 100, 2)}%"; // TODO => Localize
 
         public PercentageData(string lineTextIncludingLineBreak, int startInLine, int endInLine, double value)
             : base(

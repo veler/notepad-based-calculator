@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters.Conditional
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters.Conditional
 {
     [Export(typeof(IExpressionParserAndInterpreter))]
     [Name(PredefinedExpressionParserNames.ConditionalExpression)]
@@ -57,27 +54,27 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                 if (operatorToken is not null)
                 {
                     BinaryOperatorType binaryOperator;
-                    if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.IsEqualToOperator))
+                    if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.IsEqualToOperator))
                     {
                         binaryOperator = BinaryOperatorType.Equality;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.IsNotEqualToOperator))
+                    else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.IsNotEqualToOperator))
                     {
                         binaryOperator = BinaryOperatorType.NoEquality;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.LessThanOrEqualToOperator))
+                    else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.LessThanOrEqualToOperator))
                     {
                         binaryOperator = BinaryOperatorType.LessThanOrEqualTo;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.LessThanOperator))
+                    else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.LessThanOperator))
                     {
                         binaryOperator = BinaryOperatorType.LessThan;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.GreaterThanOrEqualToOperator))
+                    else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.GreaterThanOrEqualToOperator))
                     {
                         binaryOperator = BinaryOperatorType.GreaterThanOrEqualTo;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.GreaterThanOperator))
+                    else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.GreaterThanOperator))
                     {
                         binaryOperator = BinaryOperatorType.GreaterThan;
                     }
@@ -109,7 +106,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                                 rightExpressionResult.ParsedExpression!);
 
                         result.ResultedData
-                            = PerformBinaryOperation(
+                            = OperationHelper.PerformBinaryOperation(
                                 leftExpressionResult.ResultedData,
                                 binaryOperator,
                                 rightExpressionResult.ResultedData);
@@ -122,72 +119,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
             }
 
             return foundLeftExpression;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static IData? PerformBinaryOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
-        {
-            if (leftData is null || rightData is null)
-            {
-                return leftData;
-            }
-
-            if (leftData is not INumericData leftNumericData
-                || rightData is not INumericData rightNumericData)
-            {
-                return null;
-            }
-
-            bool result;
-
-            switch (binaryOperatorType)
-            {
-                case BinaryOperatorType.Equality:
-                    result
-                        = leftNumericData.ToStandardUnit().NumericValue
-                        == rightNumericData.ToStandardUnit().NumericValue;
-                    break;
-
-                case BinaryOperatorType.NoEquality:
-                    result
-                        = leftNumericData.ToStandardUnit().NumericValue
-                        != rightNumericData.ToStandardUnit().NumericValue;
-                    break;
-
-                case BinaryOperatorType.LessThan:
-                    result
-                        = leftNumericData.ToStandardUnit().NumericValue
-                        < rightNumericData.ToStandardUnit().NumericValue;
-                    break;
-
-                case BinaryOperatorType.LessThanOrEqualTo:
-                    result
-                        = leftNumericData.ToStandardUnit().NumericValue
-                        <= rightNumericData.ToStandardUnit().NumericValue;
-                    break;
-
-                case BinaryOperatorType.GreaterThan:
-                    result
-                        = leftNumericData.ToStandardUnit().NumericValue
-                        > rightNumericData.ToStandardUnit().NumericValue;
-                    break;
-
-                case BinaryOperatorType.GreaterThanOrEqualTo:
-                    result
-                        = leftNumericData.ToStandardUnit().NumericValue
-                        >= rightNumericData.ToStandardUnit().NumericValue;
-                    break;
-
-                default:
-                    ThrowHelper.ThrowNotSupportedException();
-                    return null;
-            }
-
-            return new BooleanData(
-                leftData.LineTextIncludingLineBreak,
-                leftData.StartInLine,
-                rightData.EndInLine,
-                result);
         }
     }
 }

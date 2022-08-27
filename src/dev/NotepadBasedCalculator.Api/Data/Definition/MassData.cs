@@ -1,9 +1,9 @@
 ﻿using UnitsNet;
 using UnitsNet.Units;
 
-namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
+namespace NotepadBasedCalculator.Api
 {
-    public sealed record AngleData : Data<Angle>, IConvertibleNumericData
+    public sealed record MassData : Data<Mass>, IConvertibleNumericData
     {
         public bool IsNegative => Value.Value < 0;
 
@@ -11,20 +11,20 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public override string DisplayText => $"{Value}"; // TODO => Localize
 
-        public AngleData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Angle value)
+        public MassData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Mass value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Angle)
+                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Mass)
         {
         }
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new AngleData(
+            return new MassData(
                 LineTextIncludingLineBreak,
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
@@ -38,34 +38,34 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public INumericData ToStandardUnit()
         {
-            return new AngleData(
+            return new MassData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                Value.ToUnit(AngleUnit.Degree));
+                Value.ToUnit(MassUnit.Gram));
         }
 
         public INumericData FromStandardUnit(double newStandardUnitValue)
         {
-            return new AngleData(
+            return new MassData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                Angle.FromDegrees(newStandardUnitValue).ToUnit(Value.Unit));
+                Mass.FromGrams(newStandardUnitValue).ToUnit(Value.Unit));
         }
 
         public INumericData? ConvertFrom(INumericData from)
         {
-            return new AngleData(
+            return new MassData(
                 from.LineTextIncludingLineBreak,
                 from.StartInLine,
                 from.EndInLine,
-                new Angle(from.NumericValue, Value.Unit));
+                new Mass(from.NumericValue, Value.Unit));
         }
 
         public bool CanConvertFrom(INumericData from)
         {
-            return from is DecimalData or AngleData;
+            return from is DecimalData or MassData;
         }
 
         public override string ToString()

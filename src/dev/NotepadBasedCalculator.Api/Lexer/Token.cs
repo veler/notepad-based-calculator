@@ -32,25 +32,25 @@
             _getText = new Lazy<string>(() => LineTextIncludingLineBreak.Substring(StartInLine, Length));
         }
 
-        public bool IsNot(string type)
+        public bool IsNotOfType(string type)
         {
-            return !Is(type);
+            return !IsOfType(type);
         }
 
-        public bool Is(string expectedType)
+        public bool IsOfType(string expectedType)
         {
-            return string.Equals(Type, expectedType, StringComparison.Ordinal);
+            return string.Equals(Type, expectedType, StringComparison.OrdinalIgnoreCase);
         }
 
         public bool Is(string expectedType, string expectedTokenText, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
-            return Is(expectedType) && IsTokenTextEqualTo(expectedTokenText, comparisonType);
+            return IsOfType(expectedType) && IsTokenTextEqualTo(expectedTokenText, comparisonType);
         }
 
         public bool Is(string expectedType, string[] expectedTokenTexts, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)
         {
             Guard.IsNotNull(expectedTokenTexts);
-            if (Is(expectedType))
+            if (IsOfType(expectedType))
             {
                 for (int i = 0; i < expectedTokenTexts.Length; i++)
                 {

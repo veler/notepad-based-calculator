@@ -55,11 +55,11 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                 while (operatorToken is not null)
                 {
                     BinaryOperatorType binaryOperator;
-                    if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.AdditionOperator))
+                    if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.AdditionOperator))
                     {
                         binaryOperator = BinaryOperatorType.Addition;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.SubstractionOperator))
+                    else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.SubstractionOperator))
                     {
                         binaryOperator = BinaryOperatorType.Subtraction;
                     }
@@ -90,7 +90,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                                 rightExpressionResult.ParsedExpression!);
 
                         result.ResultedData
-                            = PerformAlgebraOperation(
+                            = OperationHelper.PerformAlgebraOperation(
                                 leftExpressionResult.ResultedData,
                                 binaryOperator,
                                 rightExpressionResult.ResultedData);
@@ -135,20 +135,20 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                 {
                     BinaryOperatorType binaryOperator;
                     LinkedToken? expressionStartToken = operatorToken.Next;
-                    if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.MultiplicationOperator))
+                    if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.MultiplicationOperator))
                     {
                         binaryOperator = BinaryOperatorType.Multiply;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.DivisionOperator))
+                    else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.DivisionOperator))
                     {
                         binaryOperator = BinaryOperatorType.Division;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.LeftParenth))
+                    else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.LeftParenth))
                     {
                         binaryOperator = BinaryOperatorType.Multiply;
                         expressionStartToken = operatorToken;
                     }
-                    else if (operatorToken.Token.Is(PredefinedTokenAndDataTypeNames.Numeric))
+                    else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.Numeric))
                     {
                         if (operatorToken.Token is INumericData numericData && numericData.IsNegative)
                         {
@@ -188,7 +188,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                                 rightExpressionResult.ParsedExpression!);
 
                         result.ResultedData
-                            = PerformAlgebraOperation(
+                            = OperationHelper.PerformAlgebraOperation(
                                 leftExpressionResult.ResultedData,
                                 binaryOperator,
                                 rightExpressionResult.ResultedData);
@@ -234,7 +234,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                 }
 
                 // Detect variable reference
-                if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.VariableReference))
+                if (currentToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.VariableReference))
                 {
                     var expression = new VariableReferenceExpression(currentToken);
                     result.NextTokenToContinueWith = currentToken.Next;
@@ -288,94 +288,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                 PredefinedTokenAndDataTypeNames.RightParenth,
                 skipWordsToken: true,
                 out nextToken);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static IData? PerformAlgebraOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
-        {
-            if (leftData is null || rightData is null)
-            {
-                return leftData;
-            }
-
-            if (leftData is not INumericData leftNumericData
-                || rightData is not INumericData rightNumericData)
-            {
-                return null;
-            }
-
-            bool tryToConvertLeftData = true;
-            if (leftData is IConvertibleNumericData leftConvertibleNumericData)
-            {
-                if (leftConvertibleNumericData.CanConvertFrom(rightNumericData))
-                {
-                    INumericData? newRightNumericData = leftConvertibleNumericData.ConvertFrom(rightNumericData);
-                    if (newRightNumericData is not null)
-                    {
-                        rightNumericData = newRightNumericData;
-                        tryToConvertLeftData = false;
-                    }
-                }
-            }
-
-            if (tryToConvertLeftData && rightData is IConvertibleNumericData rightConvertibleNumericData)
-            {
-                if (rightConvertibleNumericData.CanConvertFrom(leftNumericData))
-                {
-                    INumericData? newLeftNumericData = rightConvertibleNumericData.ConvertFrom(leftNumericData);
-                    if (newLeftNumericData is null)
-                    {
-                        return null;
-                    }
-                    leftNumericData = newLeftNumericData;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            double result;
-            switch (binaryOperatorType)
-            {
-                case BinaryOperatorType.Addition:
-                    result
-                        = leftNumericData.ToStandardUnit().NumericValue
-                        + rightNumericData.ToStandardUnit().GetNumericValueToRelativeTo(leftNumericData);
-                    break;
-
-                case BinaryOperatorType.Subtraction:
-                    result
-                        = leftNumericData.ToStandardUnit().NumericValue
-                        - rightNumericData.ToStandardUnit().GetNumericValueToRelativeTo(leftNumericData);
-                    break;
-
-                case BinaryOperatorType.Multiply:
-                    result
-                        = leftNumericData.ToStandardUnit().NumericValue
-                        * rightNumericData.ToStandardUnit().NumericValue;
-                    break;
-
-                case BinaryOperatorType.Division:
-                    double divisor = rightNumericData.ToStandardUnit().NumericValue;
-                    if (divisor == 0)
-                    {
-                        result = double.PositiveInfinity;
-                    }
-                    else
-                    {
-                        result
-                            = leftNumericData.ToStandardUnit().NumericValue
-                            / divisor;
-                    }
-                    break;
-
-                default:
-                    ThrowHelper.ThrowNotSupportedException();
-                    return null;
-            }
-
-            return leftNumericData.FromStandardUnit(result).MergeDataLocations(rightNumericData);
         }
     }
 }

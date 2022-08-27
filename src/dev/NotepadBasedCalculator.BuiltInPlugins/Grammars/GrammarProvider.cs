@@ -5,7 +5,7 @@ using Microsoft.Recognizers.Text;
 namespace NotepadBasedCalculator.BuiltInPlugins
 {
     [Export(typeof(IGrammarProvider))]
-    [Culture(SupportedCultures.Any)]
+    [Culture(SupportedCultures.English)]
     [Shared]
     internal class GrammarProvider : IGrammarProvider
     {

@@ -1,7 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.NumberWithUnit;
-using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 using NotepadBasedCalculator.BuiltInPlugins.Grammars;
 using UnitsNet;
 using UnitsNet.Units;

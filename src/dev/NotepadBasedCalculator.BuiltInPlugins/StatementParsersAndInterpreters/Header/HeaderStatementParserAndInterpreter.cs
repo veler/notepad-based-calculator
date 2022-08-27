@@ -15,14 +15,14 @@
             StatementParserAndInterpreterResult result,
             CancellationToken cancellationToken)
         {
-            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.HeaderOperator))
+            if (currentToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.HeaderOperator))
             {
                 LinkedToken? previousToken = currentToken.Previous;
                 LinkedToken firstTokenInLine = currentToken;
                 while (previousToken is not null)
                 {
                     firstTokenInLine = previousToken;
-                    if (previousToken.Token.IsNot(PredefinedTokenAndDataTypeNames.Whitespace))
+                    if (previousToken.Token.IsNotOfType(PredefinedTokenAndDataTypeNames.Whitespace))
                     {
                         return Task.FromResult(false);
                     }

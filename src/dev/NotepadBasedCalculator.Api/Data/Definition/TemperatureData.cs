@@ -1,9 +1,9 @@
 ﻿using UnitsNet;
 using UnitsNet.Units;
 
-namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
+namespace NotepadBasedCalculator.Api
 {
-    public sealed record SpeedData : Data<Speed>, IConvertibleNumericData
+    public sealed record TemperatureData : Data<Temperature>, IConvertibleNumericData
     {
         public bool IsNegative => Value.Value < 0;
 
@@ -11,20 +11,20 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public override string DisplayText => $"{Value}"; // TODO => Localize
 
-        public SpeedData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Speed value)
+        public TemperatureData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Temperature value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Speed)
+                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Temperature)
         {
         }
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new SpeedData(
+            return new TemperatureData(
                 LineTextIncludingLineBreak,
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
@@ -38,34 +38,34 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public INumericData ToStandardUnit()
         {
-            return new SpeedData(
+            return new TemperatureData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                Value.ToUnit(SpeedUnit.MeterPerSecond));
+                Value.ToUnit(TemperatureUnit.Kelvin));
         }
 
         public INumericData FromStandardUnit(double newStandardUnitValue)
         {
-            return new SpeedData(
+            return new TemperatureData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                Speed.FromMetersPerSecond(newStandardUnitValue).ToUnit(Value.Unit));
+                Temperature.FromKelvins(newStandardUnitValue).ToUnit(Value.Unit));
         }
 
         public INumericData? ConvertFrom(INumericData from)
         {
-            return new SpeedData(
+            return new TemperatureData(
                 from.LineTextIncludingLineBreak,
                 from.StartInLine,
                 from.EndInLine,
-                new Speed(from.NumericValue, Value.Unit));
+                new Temperature(from.NumericValue, Value.Unit));
         }
 
         public bool CanConvertFrom(INumericData from)
         {
-            return from is DecimalData or SpeedData;
+            return from is DecimalData or TemperatureData;
         }
 
         public override string ToString()

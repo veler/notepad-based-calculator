@@ -1,27 +1,30 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
-{
-    public sealed record DateTimeData : Data<DateTime>, IConvertibleNumericData
-    {
-        public bool IsNegative => Value.Ticks < 0;
+﻿using UnitsNet;
+using UnitsNet.Units;
 
-        public double NumericValue => Value.Ticks;
+namespace NotepadBasedCalculator.Api
+{
+    public sealed record LengthData : Data<Length>, IConvertibleNumericData
+    {
+        public bool IsNegative => Value.Value < 0;
+
+        public double NumericValue => (double)Value.Value;
 
         public override string DisplayText => $"{Value}"; // TODO => Localize
 
-        public DateTimeData(string lineTextIncludingLineBreak, int startInLine, int endInLine, DateTime value)
+        public LengthData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Length value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.DateTime)
+                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Length)
         {
         }
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new DateTimeData(
+            return new LengthData(
                 LineTextIncludingLineBreak,
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
@@ -35,44 +38,34 @@
 
         public INumericData ToStandardUnit()
         {
-            return new DurationData(
+            return new LengthData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                TimeSpan.FromTicks(Value.Ticks));
+                Value.ToUnit(LengthUnit.Meter));
         }
 
         public INumericData FromStandardUnit(double newStandardUnitValue)
         {
-            return new DateTimeData(
+            return new LengthData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                new DateTime(ticks: (long)newStandardUnitValue));
+                UnitsNet.Length.FromMeters(newStandardUnitValue).ToUnit(Value.Unit));
         }
 
         public INumericData? ConvertFrom(INumericData from)
         {
-            if (from is DecimalData)
-            {
-                return FromStandardUnit(from.NumericValue);
-            }
-            else if (from is DateTimeData dateTimeData)
-            {
-                return dateTimeData;
-            }
-            else if (from is DurationData durationData)
-            {
-                return FromStandardUnit(durationData.Value.Ticks);
-            }
-
-            ThrowHelper.ThrowNotSupportedException();
-            return null;
+            return new LengthData(
+                from.LineTextIncludingLineBreak,
+                from.StartInLine,
+                from.EndInLine,
+                new Length(from.NumericValue, Value.Unit));
         }
 
         public bool CanConvertFrom(INumericData from)
         {
-            return from is DecimalData or DateTimeData or DurationData;
+            return from is DecimalData or LengthData;
         }
 
         public override string ToString()

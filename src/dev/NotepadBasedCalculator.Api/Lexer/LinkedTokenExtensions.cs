@@ -4,7 +4,7 @@
     {
         public static LinkedToken? SkipNextWordTokens(this LinkedToken? currentToken)
         {
-            while (currentToken is not null && currentToken.Token.Is(PredefinedTokenAndDataTypeNames.Word))
+            while (currentToken is not null && currentToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.Word))
             {
                 currentToken = currentToken.Next;
             }
@@ -24,7 +24,7 @@
                 currentToken = currentToken.SkipNextWordTokens();
             }
 
-            if (currentToken is null || currentToken.Token.IsNot(expectedTokenType))
+            if (currentToken is null || currentToken.Token.IsNotOfType(expectedTokenType))
             {
                 nextToken = backupToken;
                 return false;
@@ -52,7 +52,7 @@
             {
                 if (string.IsNullOrEmpty(tokenText))
                 {
-                    if (currentToken.Token.Is(tokenType))
+                    if (currentToken.Token.IsOfType(tokenType))
                     {
                         nextToken = currentToken;
                         return true;

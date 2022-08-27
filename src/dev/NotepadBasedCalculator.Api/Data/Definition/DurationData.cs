@@ -1,30 +1,27 @@
-﻿using UnitsNet;
-using UnitsNet.Units;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
+﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed record MassData : Data<Mass>, IConvertibleNumericData
+    public sealed record DurationData : Data<TimeSpan>, IConvertibleNumericData
     {
-        public bool IsNegative => Value.Value < 0;
+        public bool IsNegative => Value.Ticks < 0;
 
-        public double NumericValue => (double)Value.Value;
+        public double NumericValue => Value.Ticks;
 
         public override string DisplayText => $"{Value}"; // TODO => Localize
 
-        public MassData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Mass value)
+        public DurationData(string lineTextIncludingLineBreak, int startInLine, int endInLine, TimeSpan value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Mass)
+                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Duration)
         {
         }
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new MassData(
+            return new DurationData(
                 LineTextIncludingLineBreak,
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
@@ -38,34 +35,36 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public INumericData ToStandardUnit()
         {
-            return new MassData(
-                LineTextIncludingLineBreak,
-                StartInLine,
-                EndInLine,
-                Value.ToUnit(MassUnit.Gram));
+            return this;
         }
 
         public INumericData FromStandardUnit(double newStandardUnitValue)
         {
-            return new MassData(
+            return new DurationData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                Mass.FromGrams(newStandardUnitValue).ToUnit(Value.Unit));
+                TimeSpan.FromTicks((long)newStandardUnitValue));
         }
 
         public INumericData? ConvertFrom(INumericData from)
         {
-            return new MassData(
-                from.LineTextIncludingLineBreak,
-                from.StartInLine,
-                from.EndInLine,
-                new Mass(from.NumericValue, Value.Unit));
+            if (from is DecimalData)
+            {
+                return FromStandardUnit(from.NumericValue);
+            }
+            else if (from is DurationData durationData)
+            {
+                return durationData;
+            }
+
+            ThrowHelper.ThrowNotSupportedException();
+            return null;
         }
 
         public bool CanConvertFrom(INumericData from)
         {
-            return from is DecimalData or MassData;
+            return from is DecimalData or DurationData;
         }
 
         public override string ToString()

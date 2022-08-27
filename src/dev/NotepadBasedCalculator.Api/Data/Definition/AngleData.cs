@@ -1,9 +1,9 @@
 ﻿using UnitsNet;
 using UnitsNet.Units;
 
-namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
+namespace NotepadBasedCalculator.Api
 {
-    public sealed record LengthData : Data<Length>, IConvertibleNumericData
+    public sealed record AngleData : Data<Angle>, IConvertibleNumericData
     {
         public bool IsNegative => Value.Value < 0;
 
@@ -11,20 +11,20 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public override string DisplayText => $"{Value}"; // TODO => Localize
 
-        public LengthData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Length value)
+        public AngleData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Angle value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Length)
+                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Angle)
         {
         }
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new LengthData(
+            return new AngleData(
                 LineTextIncludingLineBreak,
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
@@ -38,34 +38,34 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public INumericData ToStandardUnit()
         {
-            return new LengthData(
+            return new AngleData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                Value.ToUnit(LengthUnit.Meter));
+                Value.ToUnit(AngleUnit.Degree));
         }
 
         public INumericData FromStandardUnit(double newStandardUnitValue)
         {
-            return new LengthData(
+            return new AngleData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                UnitsNet.Length.FromMeters(newStandardUnitValue).ToUnit(Value.Unit));
+                Angle.FromDegrees(newStandardUnitValue).ToUnit(Value.Unit));
         }
 
         public INumericData? ConvertFrom(INumericData from)
         {
-            return new LengthData(
+            return new AngleData(
                 from.LineTextIncludingLineBreak,
                 from.StartInLine,
                 from.EndInLine,
-                new Length(from.NumericValue, Value.Unit));
+                new Angle(from.NumericValue, Value.Unit));
         }
 
         public bool CanConvertFrom(INumericData from)
         {
-            return from is DecimalData or LengthData;
+            return from is DecimalData or AngleData;
         }
 
         public override string ToString()

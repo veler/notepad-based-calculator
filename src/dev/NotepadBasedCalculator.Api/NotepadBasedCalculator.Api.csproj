@@ -7,5 +7,6 @@
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Newtonsoft.Json" />
     <PackageReference Include="System.Composition" />
+    <PackageReference Include="UnitsNet" />
   </ItemGroup>
 </Project>

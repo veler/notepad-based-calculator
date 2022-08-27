@@ -12,6 +12,8 @@
         /// </summary>
         string DisplayText { get; }
 
+        bool IsOfSubtype(string expectedSubtype);
+
         IData MergeDataLocations(IData otherData);
     }
 

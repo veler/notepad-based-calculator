@@ -1,4 +1,5 @@
 ﻿using System.Collections.Immutable;
+using Microsoft.Recognizers.Text;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Function
 {
@@ -11,6 +12,9 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
         private readonly Dictionary<string, IReadOnlyList<FunctionDefinition>> _applicableFunctionDefinitions = new();
 
         [Import]
+        public ILogger Logger { get; set; } = null!;
+
+        [Import]
         public ILexer Lexer { get; set; } = null!;
 
         [Import]
@@ -18,6 +22,9 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
 
         [ImportMany]
         public IEnumerable<Lazy<IFunctionDefinitionProvider, CultureCodeMetadata>> FunctionDefinitionProviders { get; set; } = null!;
+
+        [ImportMany]
+        public IEnumerable<Lazy<IFunctionInterpreter, FunctionInterpreterMetadata>> FunctionInterpreters { get; set; } = null!;
 
         public async Task<bool> TryParseAndInterpretStatementAsync(
             string culture,
@@ -36,6 +43,9 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                 //       each token, which isn't efficient either.
                 FunctionDefinition functionDefinition = functionDefinitions[i];
 
+                var detectedData = new List<IData>();
+                bool functionDetected = true;
+                LinkedToken lastToken = currentToken;
                 LinkedToken? documentToken = currentToken;
                 LinkedToken? functionDefinitionToken = functionDefinition.TokenizedFunctionDefinition;
                 while (documentToken is not null
@@ -60,14 +70,44 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                                 variableService,
                                 expressionResult,
                                 cancellationToken);
+
+                        if (!foundExpression
+                            || expressionResult.ResultedData is null
+                            || !MatchType(functionDefinitionToken.Token, expressionResult))
+                        {
+                            functionDetected = false;
+                            break;
+                        }
+
+                        detectedData.Add(expressionResult.ResultedData);
                     }
                     else if (!documentToken.Token.Is(functionDefinitionToken.Token.Type, functionDefinitionToken.Token.GetText()))
                     {
+                        functionDetected = false;
                         break;
                     }
 
+                    lastToken = documentToken;
                     documentToken = documentToken.Next;
                     functionDefinitionToken = functionDefinitionToken.Next;
+
+                    cancellationToken.ThrowIfCancellationRequested();
+                }
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                if (functionDetected)
+                {
+                    (bool functionSucceeded, IData? functionResult)
+                        = await InterpretFunctionAsync(
+                            culture,
+                            functionDefinition,
+                            detectedData,
+                            cancellationToken);
+
+                    result.ParsedStatement = new FunctionStatement(functionDefinition, currentToken, lastToken);
+                    result.ResultedData = functionResult;
+                    return functionSucceeded;
                 }
             }
 
@@ -149,6 +189,51 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
             }
         }
 
+        private async Task<(bool, IData?)> InterpretFunctionAsync(
+            string culture,
+            FunctionDefinition functionDefinition,
+            IReadOnlyList<IData> detectedData,
+            CancellationToken cancellationToken)
+        {
+            IFunctionInterpreter functionInterpreter = GetFunctionInterpreter(culture, functionDefinition);
+
+            try
+            {
+                IData? data
+                    = await functionInterpreter.InterpretFunctionAsync(
+                        culture,
+                        functionDefinition,
+                        detectedData,
+                        cancellationToken);
+
+                return (true, data);
+            }
+            catch (OperationCanceledException)
+            {
+                // Ignore.
+            }
+            catch (Exception ex)
+            {
+                Logger.LogFault(
+                    "FunctionInterpreter.Fault",
+                    ex,
+                    ("FunctionName", functionDefinition.FunctionFullName));
+            }
+
+            return (false, null);
+        }
+
+        private IFunctionInterpreter GetFunctionInterpreter(string culture, FunctionDefinition functionDefinition)
+        {
+            IFunctionInterpreter functionInterpreter
+                = FunctionInterpreters.First(
+                    p => p.Metadata.CultureCodes.Any(c => CultureHelper.IsCultureApplicable(c, culture))
+                         && string.Equals(p.Metadata.Name, functionDefinition.FunctionFullName, StringComparison.Ordinal))
+                .Value;
+
+            return functionInterpreter;
+        }
+
         private static bool IsSpecialToken(IToken token)
         {
             for (int i = token.StartInLine; i < token.EndInLine; i++)
@@ -160,6 +245,37 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                 }
             }
             return true;
+        }
+
+        private static bool MatchType(IToken functionToken, ExpressionParserAndInterpreterResult expressionResult)
+        {
+            if (expressionResult.ResultedData is null)
+            {
+                return false;
+            }
+
+            string tokenText = functionToken.GetText();
+
+            switch (tokenText)
+            {
+                case "STATEMENT":
+                    // TODO ?
+                    break;
+                case "EXPRESSION":
+                    if (expressionResult.ParsedExpression is not null)
+                    {
+                        return true;
+                    }
+                    break;
+                default:
+                    if (expressionResult.ResultedData.IsOfSubtype(tokenText) || expressionResult.ResultedData.IsOfType(tokenText))
+                    {
+                        return true;
+                    }
+                    break;
+            }
+
+            return false;
         }
     }
 }

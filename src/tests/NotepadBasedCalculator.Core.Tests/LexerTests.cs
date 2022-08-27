@@ -20,14 +20,14 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<LineInfo> lines = Analyze(" a b c ");
             Assert.Single(lines);
             Assert.Equal(3, lines[0].TokenCount);
-            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Word));
-            Assert.True(lines[0].Tokens[1].Is(PredefinedTokenAndDataTypeNames.Word));
-            Assert.True(lines[0].Tokens[2].Is(PredefinedTokenAndDataTypeNames.Word));
+            Assert.True(lines[0].Tokens[0].IsOfType(PredefinedTokenAndDataTypeNames.Word));
+            Assert.True(lines[0].Tokens[1].IsOfType(PredefinedTokenAndDataTypeNames.Word));
+            Assert.True(lines[0].Tokens[2].IsOfType(PredefinedTokenAndDataTypeNames.Word));
 
             lines = Analyze("  abæçØ ");
             Assert.Single(lines);
             Assert.Single(lines[0].Tokens);
-            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Word));
+            Assert.True(lines[0].Tokens[0].IsOfType(PredefinedTokenAndDataTypeNames.Word));
             Assert.Equal(2, lines[0].Tokens[0].StartInLine);
             Assert.Equal(5, lines[0].Tokens[0].Length);
 
@@ -43,14 +43,14 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<LineInfo> lines = Analyze(" 1 2 3 ");
             Assert.Single(lines);
             Assert.Equal(3, lines[0].Tokens.Count);
-            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Digit));
-            Assert.True(lines[0].Tokens[1].Is(PredefinedTokenAndDataTypeNames.Digit));
-            Assert.True(lines[0].Tokens[2].Is(PredefinedTokenAndDataTypeNames.Digit));
+            Assert.True(lines[0].Tokens[0].IsOfType(PredefinedTokenAndDataTypeNames.Digit));
+            Assert.True(lines[0].Tokens[1].IsOfType(PredefinedTokenAndDataTypeNames.Digit));
+            Assert.True(lines[0].Tokens[2].IsOfType(PredefinedTokenAndDataTypeNames.Digit));
 
             lines = Analyze(" 12 ");
             Assert.Single(lines);
             Assert.Single(lines[0].Tokens);
-            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Digit));
+            Assert.True(lines[0].Tokens[0].IsOfType(PredefinedTokenAndDataTypeNames.Digit));
             Assert.Equal(1, lines[0].Tokens[0].StartInLine);
             Assert.Equal(2, lines[0].Tokens[0].Length);
             Assert.Equal(2, lines[0].Tokens[0].Length);
@@ -106,7 +106,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(0, lines[0].TokenCount);
             Assert.Equal(0, lines[1].TokenCount);
             Assert.Equal(0, lines[2].TokenCount);
-            Assert.True(lines[3].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Word));
+            Assert.True(lines[3].Tokens[0].IsOfType(PredefinedTokenAndDataTypeNames.Word));
             Assert.Equal(0, lines[4].TokenCount);
         }
 
@@ -116,14 +116,14 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<LineInfo> lines = Analyze("True+False");
             Assert.Single(lines);
             Assert.Equal(3, lines[0].TokenCount);
-            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.TrueIdentifier));
-            Assert.True(lines[0].Tokens[1].Is(PredefinedTokenAndDataTypeNames.AdditionOperator));
-            Assert.True(lines[0].Tokens[2].Is(PredefinedTokenAndDataTypeNames.FalseIdentifier));
+            Assert.True(lines[0].Tokens[0].IsOfType(PredefinedTokenAndDataTypeNames.TrueIdentifier));
+            Assert.True(lines[0].Tokens[1].IsOfType(PredefinedTokenAndDataTypeNames.AdditionOperator));
+            Assert.True(lines[0].Tokens[2].IsOfType(PredefinedTokenAndDataTypeNames.FalseIdentifier));
 
             lines = Analyze("Truefalse");
             Assert.Single(lines);
             Assert.Equal(1, lines[0].TokenCount);
-            Assert.True(lines[0].Tokens[0].Is(PredefinedTokenAndDataTypeNames.Word));
+            Assert.True(lines[0].Tokens[0].IsOfType(PredefinedTokenAndDataTypeNames.Word));
         }
 
         private IReadOnlyList<LineInfo> Analyze(string input)

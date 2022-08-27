@@ -1,7 +1,7 @@
 ﻿using UnitsNet;
 using UnitsNet.Units;
 
-namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
+namespace NotepadBasedCalculator.Api
 {
     public sealed record InformationData : Data<Information>, IConvertibleNumericData
     {

@@ -22,6 +22,11 @@
             Value = value;
         }
 
+        public bool IsOfSubtype(string expectedSubtype)
+        {
+            return string.Equals(Subtype, expectedSubtype, StringComparison.OrdinalIgnoreCase);
+        }
+
         public abstract IData MergeDataLocations(IData otherData);
 
         public bool Equals(IData? other)

@@ -15,7 +15,7 @@
             StatementParserAndInterpreterResult result,
             CancellationToken cancellationToken)
         {
-            if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.CommentOperator))
+            if (currentToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.CommentOperator))
             {
                 LinkedToken lastTokenInLine = currentToken;
                 LinkedToken? nextToken = currentToken.Next;

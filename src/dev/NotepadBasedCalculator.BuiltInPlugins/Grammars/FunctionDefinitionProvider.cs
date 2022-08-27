@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 namespace NotepadBasedCalculator.BuiltInPlugins.Grammars
 {
     [Export(typeof(IFunctionDefinitionProvider))]
-    [Culture(SupportedCultures.Any)]
+    [Culture(SupportedCultures.English)]
     [Shared]
     public sealed class FunctionDefinitionProvider : IFunctionDefinitionProvider
     {

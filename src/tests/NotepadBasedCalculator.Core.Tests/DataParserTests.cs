@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestPlatform.Utilities;
 using NotepadBasedCalculator.Api;
-using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
-using UnitsNet;
 using UnitsNet.Units;
 using Xunit;
 
@@ -40,7 +36,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Decimal, data.Subtype);
             Assert.Equal(output, ((DecimalData)data).Value);
         }
@@ -56,7 +52,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Decimal, data.Subtype);
             Assert.Equal(output, ((DecimalData)data).Value);
         }
@@ -71,7 +67,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Fraction, data.Subtype);
             Assert.Equal(output, ((FractionData)data).Value);
         }
@@ -86,7 +82,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Percentage, data.Subtype);
             Assert.Equal(output, ((PercentageData)data).Value);
         }
@@ -101,7 +97,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var currency = (CurrencyData)data;
             Assert.Equal(isNegative, currency.IsNegative);
             Assert.Equal(output, currency.Value.Value);
@@ -118,7 +114,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var length = (LengthData)data;
             Assert.Equal(subType, data.Subtype);
             Assert.Equal(isNegative, length.IsNegative);
@@ -135,7 +131,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var informationData = (InformationData)data;
             Assert.Equal(subType, data.Subtype);
             Assert.Equal(isNegative, informationData.IsNegative);
@@ -152,7 +148,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var areaData = (AreaData)data;
             Assert.Equal(subType, data.Subtype);
             Assert.Equal(isNegative, areaData.IsNegative);
@@ -169,7 +165,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var speedData = (SpeedData)data;
             Assert.Equal(subType, data.Subtype);
             Assert.Equal(isNegative, speedData.IsNegative);
@@ -186,7 +182,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var volumeData = (VolumeData)data;
             Assert.Equal(subType, data.Subtype);
             Assert.Equal(isNegative, volumeData.IsNegative);
@@ -203,7 +199,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var massData = (MassData)data;
             Assert.Equal(subType, data.Subtype);
             Assert.Equal(isNegative, massData.IsNegative);
@@ -220,7 +216,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var angleData = (AngleData)data;
             Assert.Equal(subType, data.Subtype);
             Assert.Equal(isNegative, angleData.IsNegative);
@@ -237,7 +233,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var temperatureData = (TemperatureData)data;
             Assert.Equal(subType, data.Subtype);
             Assert.Equal(isNegative, temperatureData.IsNegative);
@@ -256,7 +252,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var durationData = (DurationData)data;
             Assert.Equal(subType, data.Subtype);
             Assert.Equal(isNegative, durationData.IsNegative);
@@ -272,7 +268,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.True(data.Is(PredefinedTokenAndDataTypeNames.Numeric));
+            Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var dateTimeData = (DateTimeData)data;
             Assert.Equal(subType, data.Subtype);
             Assert.Equal(isNegative, dateTimeData.IsNegative);

@@ -1,9 +1,9 @@
 ﻿using UnitsNet;
 using UnitsNet.Units;
 
-namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
+namespace NotepadBasedCalculator.Api
 {
-    public sealed record TemperatureData : Data<Temperature>, IConvertibleNumericData
+    public sealed record AreaData : Data<Area>, IConvertibleNumericData
     {
         public bool IsNegative => Value.Value < 0;
 
@@ -11,20 +11,20 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public override string DisplayText => $"{Value}"; // TODO => Localize
 
-        public TemperatureData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Temperature value)
+        public AreaData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Area value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Temperature)
+                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Area)
         {
         }
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new TemperatureData(
+            return new AreaData(
                 LineTextIncludingLineBreak,
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
@@ -38,34 +38,34 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public INumericData ToStandardUnit()
         {
-            return new TemperatureData(
+            return new AreaData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                Value.ToUnit(TemperatureUnit.Kelvin));
+                Value.ToUnit(AreaUnit.SquareMeter));
         }
 
         public INumericData FromStandardUnit(double newStandardUnitValue)
         {
-            return new TemperatureData(
+            return new AreaData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                Temperature.FromKelvins(newStandardUnitValue).ToUnit(Value.Unit));
+                Area.FromSquareMeters(newStandardUnitValue).ToUnit(Value.Unit));
         }
 
         public INumericData? ConvertFrom(INumericData from)
         {
-            return new TemperatureData(
+            return new AreaData(
                 from.LineTextIncludingLineBreak,
                 from.StartInLine,
                 from.EndInLine,
-                new Temperature(from.NumericValue, Value.Unit));
+                new Area(from.NumericValue, Value.Unit));
         }
 
         public bool CanConvertFrom(INumericData from)
         {
-            return from is DecimalData or TemperatureData;
+            return from is DecimalData or AreaData;
         }
 
         public override string ToString()

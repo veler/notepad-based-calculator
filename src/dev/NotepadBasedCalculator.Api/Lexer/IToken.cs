@@ -24,9 +24,9 @@
 
         public string LineTextIncludingLineBreak { get; }
 
-        bool IsNot(string type);
+        bool IsNotOfType(string type);
 
-        bool Is(string expectedType);
+        bool IsOfType(string expectedType);
 
         bool Is(string expectedType, string expectedTokenText, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase);
 

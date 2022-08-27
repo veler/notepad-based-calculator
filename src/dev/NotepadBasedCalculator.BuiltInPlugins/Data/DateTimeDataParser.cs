@@ -2,7 +2,6 @@
 using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
 using Microsoft.Recognizers.Text.DateTime;
-using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 using Constants = Microsoft.Recognizers.Text.DateTime.Constants;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Data

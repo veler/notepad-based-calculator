@@ -1,4 +1,4 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
+﻿namespace NotepadBasedCalculator.Api
 {
     public struct CurrencyValue
     {

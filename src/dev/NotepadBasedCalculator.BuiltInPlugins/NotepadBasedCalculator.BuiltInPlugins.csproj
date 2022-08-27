@@ -23,7 +23,6 @@
     <PackageReference Include="Microsoft.Recognizers.Text.Number" />
     <PackageReference Include="Microsoft.Recognizers.Text.NumberWithUnit" />
     <PackageReference Include="Microsoft.Recognizers.Text.DateTime" />
-    <PackageReference Include="UnitsNet" />
     <PackageReference Include="System.Composition" />
   </ItemGroup>
   <ItemGroup>

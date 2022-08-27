@@ -1,27 +1,30 @@
-﻿namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
-{
-    public sealed record DurationData : Data<TimeSpan>, IConvertibleNumericData
-    {
-        public bool IsNegative => Value.Ticks < 0;
+﻿using UnitsNet;
+using UnitsNet.Units;
 
-        public double NumericValue => Value.Ticks;
+namespace NotepadBasedCalculator.Api
+{
+    public sealed record VolumeData : Data<Volume>, IConvertibleNumericData
+    {
+        public bool IsNegative => Value.Value < 0;
+
+        public double NumericValue => (double)Value.Value;
 
         public override string DisplayText => $"{Value}"; // TODO => Localize
 
-        public DurationData(string lineTextIncludingLineBreak, int startInLine, int endInLine, TimeSpan value)
+        public VolumeData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Volume value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Duration)
+                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Volume)
         {
         }
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new DurationData(
+            return new VolumeData(
                 LineTextIncludingLineBreak,
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
@@ -35,36 +38,34 @@
 
         public INumericData ToStandardUnit()
         {
-            return this;
+            return new VolumeData(
+                LineTextIncludingLineBreak,
+                StartInLine,
+                EndInLine,
+                Value.ToUnit(VolumeUnit.Liter));
         }
 
         public INumericData FromStandardUnit(double newStandardUnitValue)
         {
-            return new DurationData(
+            return new VolumeData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                TimeSpan.FromTicks((long)newStandardUnitValue));
+                Volume.FromLiters(newStandardUnitValue).ToUnit(Value.Unit));
         }
 
         public INumericData? ConvertFrom(INumericData from)
         {
-            if (from is DecimalData)
-            {
-                return FromStandardUnit(from.NumericValue);
-            }
-            else if (from is DurationData durationData)
-            {
-                return durationData;
-            }
-
-            ThrowHelper.ThrowNotSupportedException();
-            return null;
+            return new VolumeData(
+                from.LineTextIncludingLineBreak,
+                from.StartInLine,
+                from.EndInLine,
+                new Volume(from.NumericValue, Value.Unit));
         }
 
         public bool CanConvertFrom(INumericData from)
         {
-            return from is DecimalData or DurationData;
+            return from is DecimalData or VolumeData;
         }
 
         public override string ToString()

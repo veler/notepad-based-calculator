@@ -1,6 +1,5 @@
 ﻿using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.NumberWithUnit;
-using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {

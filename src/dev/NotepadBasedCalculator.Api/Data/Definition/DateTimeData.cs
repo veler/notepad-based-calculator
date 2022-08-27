@@ -1,30 +1,27 @@
-﻿using UnitsNet;
-using UnitsNet.Units;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
+﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed record AreaData : Data<Area>, IConvertibleNumericData
+    public sealed record DateTimeData : Data<DateTime>, IConvertibleNumericData
     {
-        public bool IsNegative => Value.Value < 0;
+        public bool IsNegative => Value.Ticks < 0;
 
-        public double NumericValue => (double)Value.Value;
+        public double NumericValue => Value.Ticks;
 
         public override string DisplayText => $"{Value}"; // TODO => Localize
 
-        public AreaData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Area value)
+        public DateTimeData(string lineTextIncludingLineBreak, int startInLine, int endInLine, DateTime value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
                   endInLine,
                   value,
                   PredefinedTokenAndDataTypeNames.Numeric,
-                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.Area)
+                  PredefinedTokenAndDataTypeNames.SubDataTypeNames.DateTime)
         {
         }
 
         public override IData MergeDataLocations(IData otherData)
         {
-            return new AreaData(
+            return new DateTimeData(
                 LineTextIncludingLineBreak,
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
@@ -38,34 +35,44 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public INumericData ToStandardUnit()
         {
-            return new AreaData(
+            return new DurationData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                Value.ToUnit(AreaUnit.SquareMeter));
+                TimeSpan.FromTicks(Value.Ticks));
         }
 
         public INumericData FromStandardUnit(double newStandardUnitValue)
         {
-            return new AreaData(
+            return new DateTimeData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                Area.FromSquareMeters(newStandardUnitValue).ToUnit(Value.Unit));
+                new DateTime(ticks: (long)newStandardUnitValue));
         }
 
         public INumericData? ConvertFrom(INumericData from)
         {
-            return new AreaData(
-                from.LineTextIncludingLineBreak,
-                from.StartInLine,
-                from.EndInLine,
-                new Area(from.NumericValue, Value.Unit));
+            if (from is DecimalData)
+            {
+                return FromStandardUnit(from.NumericValue);
+            }
+            else if (from is DateTimeData dateTimeData)
+            {
+                return dateTimeData;
+            }
+            else if (from is DurationData durationData)
+            {
+                return FromStandardUnit(durationData.Value.Ticks);
+            }
+
+            ThrowHelper.ThrowNotSupportedException();
+            return null;
         }
 
         public bool CanConvertFrom(INumericData from)
         {
-            return from is DecimalData or AreaData;
+            return from is DecimalData or DateTimeData or DurationData;
         }
 
         public override string ToString()

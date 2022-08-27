@@ -1,5 +1,4 @@
 ﻿using Microsoft.Recognizers.Text;
-using NotepadBasedCalculator.BuiltInPlugins.Data.Definition;
 
 namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {
@@ -14,7 +13,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
             LinkedToken? currentToken = tokenizedTextLine.Tokens;
             while (currentToken is not null)
             {
-                if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.TrueIdentifier))
+                if (currentToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.TrueIdentifier))
                 {
                     results.Add(
                         new BooleanData(
@@ -23,7 +22,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                             currentToken.Token.EndInLine,
                             true));
                 }
-                else if (currentToken.Token.Is(PredefinedTokenAndDataTypeNames.FalseIdentifier))
+                else if (currentToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.FalseIdentifier))
                 {
                     results.Add(
                         new BooleanData(

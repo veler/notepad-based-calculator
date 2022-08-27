@@ -43,8 +43,8 @@
                 while (previousToken is not null)
                 {
                     variableNameStart = previousToken;
-                    if (previousToken.Token.IsNot(PredefinedTokenAndDataTypeNames.Word)
-                        && previousToken.Token.IsNot(PredefinedTokenAndDataTypeNames.VariableReference))
+                    if (previousToken.Token.IsNotOfType(PredefinedTokenAndDataTypeNames.Word)
+                        && previousToken.Token.IsNotOfType(PredefinedTokenAndDataTypeNames.VariableReference))
                     {
                         return false;
                     }
@@ -90,7 +90,7 @@
         private static bool IsAssigneeAnExistingVariable(LinkedToken currentToken)
         {
             return currentToken.Previous is not null
-                && currentToken.Previous.Token.Is(PredefinedTokenAndDataTypeNames.VariableReference)
+                && currentToken.Previous.Token.IsOfType(PredefinedTokenAndDataTypeNames.VariableReference)
                 && currentToken.Previous.Previous is null;
         }
     }
