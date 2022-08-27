@@ -6,7 +6,7 @@
 
         public double NumericValue => Value.Ticks;
 
-        public override string DisplayText => $"{Value.ToString()}"; // TODO => Localize
+        public override string DisplayText => $"{Value}"; // TODO => Localize
 
         public DateTimeData(string lineTextIncludingLineBreak, int startInLine, int endInLine, DateTime value)
             : base(

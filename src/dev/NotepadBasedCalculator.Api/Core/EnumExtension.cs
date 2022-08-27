@@ -54,7 +54,7 @@ namespace NotepadBasedCalculator.Api
                 }
             }
 
-            return default(T);
+            return default;
         }
     }
 }

@@ -31,10 +31,10 @@ namespace NotepadBasedCalculator.Api
                 foreach (DictionaryEntry pair in intermediateDictionary)
                 {
                     string? key = pair.Key.ToString();
-                    string? value = pair.Value.ToString();
+                    string? value = pair.Value?.ToString();
                     if (!string.IsNullOrEmpty(key) && !string.IsNullOrEmpty(value))
                     {
-                        finalDictionary.Add(key, value.ToEnum<T>());
+                        finalDictionary.Add(key, value!.ToEnum<T>());
                     }
                 }
             }

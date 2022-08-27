@@ -58,7 +58,7 @@ namespace NotepadBasedCalculator.Core
             return _lineResults;
         }
 
-        private void TextDocument_TextChanged(object sender, EventArgs e)
+        private void TextDocument_TextChanged(object? sender, EventArgs e)
         {
             CancelCurrentInterpretationWork();
             CancellationToken cancellationToken = _cancellationTokenSource.Token;
@@ -139,7 +139,7 @@ namespace NotepadBasedCalculator.Core
                 // If there were multiple statements on the line, let's do the addition of each data produced.
                 if (statementResults.Count > 1)
                 {
-                    IData mergedResult = null;
+                    IData? mergedResult = null;
                     for (int i = 0; i < statementResults.Count; i++)
                     {
                         // TODO
@@ -250,7 +250,8 @@ namespace NotepadBasedCalculator.Core
                                     ex,
                                     ("DataParserName", dataParser.GetType().FullName));
                             }
-                        }));
+                        },
+                        cancellationToken));
             }
 
             await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask()).ConfigureAwait(true);

@@ -13,7 +13,7 @@
 
         public override string ToString()
         {
-            return Data.ToString();
+            return Data.ToString() ?? string.Empty;
         }
     }
 }

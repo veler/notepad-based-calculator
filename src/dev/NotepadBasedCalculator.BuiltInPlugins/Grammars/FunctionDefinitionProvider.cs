@@ -17,7 +17,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Grammars
 
             lock (_cultureToFunctionDefinition)
             {
-                if (!_cultureToFunctionDefinition.TryGetValue(culture, out List<Dictionary<string, Dictionary<string, string[]>>> functionDefinitions) || functionDefinitions is null)
+                if (!_cultureToFunctionDefinition.TryGetValue(culture, out List<Dictionary<string, Dictionary<string, string[]>>>? functionDefinitions) || functionDefinitions is null)
                 {
                     functionDefinitions = new();
 
@@ -38,7 +38,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Grammars
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private Dictionary<string, Dictionary<string, string[]>>? LoadResource(string resourceName)
+        private static Dictionary<string, Dictionary<string, string[]>>? LoadResource(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
 

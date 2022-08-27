@@ -3,6 +3,7 @@
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
     [Order(int.MaxValue - 1)]
+    [Shared]
     internal sealed class NumericalExpressionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]

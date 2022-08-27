@@ -45,7 +45,7 @@
                 return new DecimalData(LineTextIncludingLineBreak, StartInLine, EndInLine, newStandardUnitValue);
             }
 
-            return new BooleanData(LineTextIncludingLineBreak, StartInLine, EndInLine, newStandardUnitValue == 0 ? false : true);
+            return new BooleanData(LineTextIncludingLineBreak, StartInLine, EndInLine, newStandardUnitValue != 0);
         }
 
         public override string ToString()

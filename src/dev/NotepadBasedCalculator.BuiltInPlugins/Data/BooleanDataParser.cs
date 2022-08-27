@@ -5,6 +5,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {
     [Export(typeof(IDataParser))]
     [Culture(SupportedCultures.Any)]
+    [Shared]
     public sealed class BooleanDataParser : IDataParser
     {
         public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine, CancellationToken cancellationToken)

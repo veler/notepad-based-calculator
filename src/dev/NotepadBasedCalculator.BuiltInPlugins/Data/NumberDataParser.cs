@@ -7,6 +7,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {
     [Export(typeof(IDataParser))]
     [Culture(SupportedCultures.Any)]
+    [Shared]
     public sealed class NumberDataParser : IDataParser
     {
         private const string Subtype = "subtype";

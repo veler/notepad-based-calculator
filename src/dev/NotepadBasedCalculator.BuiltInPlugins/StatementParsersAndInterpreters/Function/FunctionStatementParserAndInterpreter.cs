@@ -1,27 +1,30 @@
 ﻿using System.Collections.Immutable;
 
-namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Function
+namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Function
 {
-    [Export(typeof(IStatementParser))]
+    [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
     [Shared]
-    internal sealed class FunctionStatementParser : ParserBase, IStatementParser, IComparer<FunctionDefinition>
+    internal sealed class FunctionStatementParserAndInterpreter : IStatementParserAndInterpreter, IComparer<FunctionDefinition>
     {
-        private readonly IEnumerable<Lazy<IFunctionDefinitionProvider, CultureCodeMetadata>> _functionDefinitionProviders;
-        private readonly ILexer _lexer;
         private readonly Dictionary<string, IEnumerable<IFunctionDefinitionProvider>> _applicableFunctionDefinitionProviders = new();
         private readonly Dictionary<string, IReadOnlyList<FunctionDefinition>> _applicableFunctionDefinitions = new();
 
-        [ImportingConstructor]
-        public FunctionStatementParser(
-            [ImportMany] IEnumerable<Lazy<IFunctionDefinitionProvider, CultureCodeMetadata>> functionDefinitionProviders,
-            ILexer lexer)
-        {
-            _functionDefinitionProviders = functionDefinitionProviders;
-            _lexer = lexer;
-        }
+        [Import]
+        public ILexer Lexer { get; set; } = null!;
 
-        public bool TryParseStatement(string culture, LinkedToken currentToken, out Statement? statement)
+        [Import]
+        public IParserAndInterpreterService ParserAndInterpreterService { get; set; } = null!;
+
+        [ImportMany]
+        public IEnumerable<Lazy<IFunctionDefinitionProvider, CultureCodeMetadata>> FunctionDefinitionProviders { get; set; } = null!;
+
+        public async Task<bool> TryParseAndInterpretStatementAsync(
+            string culture,
+            LinkedToken currentToken,
+            IVariableService variableService,
+            StatementParserAndInterpreterResult result,
+            CancellationToken cancellationToken)
         {
             IReadOnlyList<FunctionDefinition> functionDefinitions = GetOrderedFunctionDefinitions(culture);
 
@@ -46,20 +49,17 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Function
                     {
                         string nextExpectedFunctionTokenType = functionDefinitionToken.Next?.Token.Type ?? string.Empty;
                         string nextExpectedFunctionTokenText = functionDefinitionToken.Next?.Token.GetText() ?? string.Empty;
-                        Expression? expression
-                            = ParseExpression(
+
+                        ExpressionParserAndInterpreterResult expressionResult = new();
+                        bool foundExpression
+                            = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
                                 culture,
                                 documentToken,
                                 nextExpectedFunctionTokenType,
                                 nextExpectedFunctionTokenText,
-                                out LinkedToken? nextToken);
-
-                        if (expression is  null)
-                        {
-                            break;
-                        }
-
-                        // TODO: interpret the expression.
+                                variableService,
+                                expressionResult,
+                                cancellationToken);
                     }
                     else if (!documentToken.Token.Is(functionDefinitionToken.Token.Type, functionDefinitionToken.Token.GetText()))
                     {
@@ -71,7 +71,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Function
                 }
             }
 
-            statement = null;
             return false;
         }
 
@@ -110,7 +109,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Function
                                     string[] functionGrammars = functionDefinitions[functionName];
                                     for (int j = 0; j < functionGrammars.Length; j++)
                                     {
-                                        IReadOnlyList<TokenizedTextLine> tokenizedGrammarLines = _lexer.Tokenize(culture, functionGrammars[j]);
+                                        IReadOnlyList<TokenizedTextLine> tokenizedGrammarLines = Lexer.Tokenize(culture, functionGrammars[j]);
                                         Guard.HasSizeEqualTo(tokenizedGrammarLines, 1);
                                         TokenizedTextLine tokenizedGrammar = tokenizedGrammarLines[0];
                                         Guard.IsNotNull(tokenizedGrammar.Tokens);
@@ -140,7 +139,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Statements.Function
                 }
 
                 providers
-                    = _functionDefinitionProviders.Where(
+                    = FunctionDefinitionProviders.Where(
                         p => p.Metadata.CultureCodes.Any(
                             c => CultureHelper.IsCultureApplicable(c, culture)))
                     .Select(p => p.Value);

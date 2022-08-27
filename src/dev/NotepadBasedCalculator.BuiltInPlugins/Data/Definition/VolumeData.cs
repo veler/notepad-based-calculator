@@ -9,7 +9,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data.Definition
 
         public double NumericValue => (double)Value.Value;
 
-        public override string DisplayText => $"{Value.ToString()}"; // TODO => Localize
+        public override string DisplayText => $"{Value}"; // TODO => Localize
 
         public VolumeData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Volume value)
             : base(

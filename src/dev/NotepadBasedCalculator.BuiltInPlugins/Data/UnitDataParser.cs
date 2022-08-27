@@ -11,6 +11,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {
     [Export(typeof(IDataParser))]
     [Culture(SupportedCultures.Any)]
+    [Shared]
     public sealed class UnitDataParser : IDataParser
     {
         private const string Value = "value";

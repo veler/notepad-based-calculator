@@ -287,3 +287,6 @@ dotnet_diagnostic.IDE2003.severity = warning
 
 # csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimental
 dotnet_diagnostic.IDE2004.severity = warning
+
+# IDE0057: Use range operator
+dotnet_diagnostic.IDE0057.severity = none

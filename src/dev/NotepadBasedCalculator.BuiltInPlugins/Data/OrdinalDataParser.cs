@@ -7,6 +7,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {
     [Export(typeof(IDataParser))]
     [Culture(SupportedCultures.Any)]
+    [Shared]
     public sealed class OrdinalDataParser : IDataParser
     {
         private const string Value = "value";
