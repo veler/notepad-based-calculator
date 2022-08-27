@@ -1,6 +1,7 @@
 ﻿namespace NotepadBasedCalculator.BuiltInPlugins.Functions.Percentage
 {
     [Export(typeof(IFunctionInterpreter))]
+    [Export]
     [Name("percentage.isWhatPercentOf")]
     [Culture(SupportedCultures.English)]
     [Shared]
@@ -28,11 +29,23 @@
                         firstNumericData.EndInLine,
                         100));
 
-            return Task.FromResult(
-                OperationHelper.PerformAlgebraOperation(
+            var percentageData
+                = OperationHelper.PerformAlgebraOperation(
                     firstNumericDataMultipliedPerOneHundred,
                     BinaryOperatorType.Division,
-                    secondNumericData));
+                    secondNumericData) as INumericData;
+
+            if (percentageData is not null)
+            {
+                return Task.FromResult(
+                    (IData?)new PercentageData(
+                        percentageData.LineTextIncludingLineBreak,
+                        percentageData.StartInLine,
+                        percentageData.EndInLine,
+                        percentageData.ToStandardUnit().NumericValue / 100));
+            }
+
+            return Task.FromResult<IData?>(null);
         }
     }
 }

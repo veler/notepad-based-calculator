@@ -56,6 +56,15 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData? ConvertFrom(INumericData from)
         {
+            if (from is MassData fromSameData)
+            {
+                return new MassData(
+                    from.LineTextIncludingLineBreak,
+                    from.StartInLine,
+                    from.EndInLine,
+                    fromSameData.Value.ToUnit(Value.Unit));
+            }
+
             return new MassData(
                 from.LineTextIncludingLineBreak,
                 from.StartInLine,

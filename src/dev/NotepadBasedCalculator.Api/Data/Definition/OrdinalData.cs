@@ -30,16 +30,19 @@
 
         public double GetNumericValueToRelativeTo(INumericData? relativeData)
         {
+            // TODO
             throw new NotImplementedException();
         }
 
         public INumericData ToStandardUnit()
         {
+            // TODO
             throw new NotImplementedException();
         }
 
         public INumericData FromStandardUnit(double newStandardUnitValue)
         {
+            // TODO
             throw new NotImplementedException();
         }
 

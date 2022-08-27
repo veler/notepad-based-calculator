@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using Microsoft.Recognizers.Text;
 using Microsoft.Recognizers.Text.DataTypes.TimexExpression;
 using Microsoft.Recognizers.Text.DateTime;
@@ -82,15 +83,18 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void ParseDateTime(List<IData> data, TokenizedTextLine tokenizedTextLine, ModelResult modelResult, Dictionary<string, string> values)
         {
-            string valueString = values[Value];
-            var dateTime = DateTime.Parse(valueString);
+            if (!ShouldBeIgnored(modelResult))
+            {
+                string valueString = values[Value];
+                var dateTime = DateTime.Parse(valueString);
 
-            data.Add(
-                new DateTimeData(
-                    tokenizedTextLine.LineTextIncludingLineBreak,
-                    modelResult.Start,
-                    modelResult.End + 1,
-                    dateTime));
+                data.Add(
+                    new DateTimeData(
+                        tokenizedTextLine.LineTextIncludingLineBreak,
+                        modelResult.Start,
+                        modelResult.End + 1,
+                        dateTime));
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -131,6 +135,12 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                     modelResult.Start,
                     modelResult.End + 1,
                     duration));
+        }
+
+        private static bool ShouldBeIgnored(ModelResult modelResult)
+        {
+            // Should ignore if the extracted text is just an integer without other indication it may be a date.
+            return int.TryParse(modelResult.Text, out _);
         }
     }
 }

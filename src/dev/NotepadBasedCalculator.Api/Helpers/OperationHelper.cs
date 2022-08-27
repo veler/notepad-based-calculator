@@ -115,7 +115,8 @@ namespace NotepadBasedCalculator.Api
             }
 
             bool tryToConvertLeftData = true;
-            if (leftData is IConvertibleNumericData leftConvertibleNumericData)
+            if (binaryOperatorType is not BinaryOperatorType.Multiply and not BinaryOperatorType.Division
+                && leftData is IConvertibleNumericData leftConvertibleNumericData)
             {
                 if (leftConvertibleNumericData.CanConvertFrom(rightNumericData))
                 {
@@ -128,7 +129,9 @@ namespace NotepadBasedCalculator.Api
                 }
             }
 
-            if (tryToConvertLeftData && rightData is IConvertibleNumericData rightConvertibleNumericData)
+            if (tryToConvertLeftData
+                && binaryOperatorType is not BinaryOperatorType.Multiply and not BinaryOperatorType.Division
+                && rightData is IConvertibleNumericData rightConvertibleNumericData)
             {
                 if (rightConvertibleNumericData.CanConvertFrom(leftNumericData))
                 {
@@ -151,13 +154,13 @@ namespace NotepadBasedCalculator.Api
                 case BinaryOperatorType.Addition:
                     result
                         = leftNumericData.ToStandardUnit().NumericValue
-                        + rightNumericData.ToStandardUnit().GetNumericValueToRelativeTo(leftNumericData);
+                        + rightNumericData.ToStandardUnit().GetNumericValueToRelativeTo(leftNumericData.ToStandardUnit());
                     break;
 
                 case BinaryOperatorType.Subtraction:
                     result
                         = leftNumericData.ToStandardUnit().NumericValue
-                        - rightNumericData.ToStandardUnit().GetNumericValueToRelativeTo(leftNumericData);
+                        - rightNumericData.ToStandardUnit().GetNumericValueToRelativeTo(leftNumericData.ToStandardUnit());
                     break;
 
                 case BinaryOperatorType.Multiply:

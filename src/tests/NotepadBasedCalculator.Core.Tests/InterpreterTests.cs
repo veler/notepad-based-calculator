@@ -40,7 +40,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("30+20%", "36")]
         [InlineData("30 USD + 20%", "36 USD")]
         [InlineData("20%", "0.2")]
-        [InlineData("20% + 20%", "0.4")]
+        [InlineData("20% + 20%", "0.24")]
         [InlineData("20% + 1", "1.2")]
         [InlineData("1 + 2 USD", "3 USD")]
         [InlineData("June 23 2022 at 4pm + 1h", "6/23/2022 5:00:00 PM")]

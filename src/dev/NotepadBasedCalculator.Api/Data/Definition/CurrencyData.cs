@@ -66,6 +66,8 @@
 
         public INumericData? ConvertFrom(INumericData from)
         {
+            // TODO
+
             return new CurrencyData(
                 from.LineTextIncludingLineBreak,
                 from.StartInLine,

@@ -32,7 +32,7 @@
         {
             double percentage = NumericValue;
 
-            if (relativeData is null || relativeData is PercentageData)
+            if (relativeData is null)
             {
                 return percentage;
             }

@@ -12,6 +12,9 @@
     "percentOff": [
       "PERCENTAGE off NUMERIC"
     ],
+    "percentOn": [
+      "PERCENTAGE on NUMERIC"
+    ],
     "isWhatPercentOn": [
       "NUMERIC is what % on NUMERIC",
       "NUMERIC is what percent on NUMERIC",
@@ -38,6 +41,12 @@
       "NUMERIC is what % of NUMERIC",
       "NUMERIC is what percent of NUMERIC",
       "NUMERIC is what percentage of NUMERIC",
+      "NUMERIC represents what % of NUMERIC",
+      "NUMERIC represents what percent of NUMERIC",
+      "NUMERIC represents what percentage of NUMERIC",
+      "NUMERIC off NUMERIC is what %",
+      "NUMERIC off NUMERIC is what percent",
+      "NUMERIC off NUMERIC is what percentage",
       "NUMERIC as a % of NUMERIC",
       "NUMERIC as % of NUMERIC",
       "NUMERIC as a percent of NUMERIC",

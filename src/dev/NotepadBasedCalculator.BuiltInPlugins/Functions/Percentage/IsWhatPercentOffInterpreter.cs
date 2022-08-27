@@ -1,10 +1,10 @@
 ﻿namespace NotepadBasedCalculator.BuiltInPlugins.Functions.Percentage
 {
     [Export(typeof(IFunctionInterpreter))]
-    [Name("percentage.isWhatPercentOn")]
+    [Name("percentage.isWhatPercentOff")]
     [Culture(SupportedCultures.English)]
     [Shared]
-    internal sealed class IsWhatPercentOnInterpreter : IFunctionInterpreter
+    internal sealed class IsWhatPercentOffInterpreter : IFunctionInterpreter
     {
         [Import]
         public IsWhatPercentOfInterpreter IsWhatPercentOfInterpreter { get; set; } = null!;
@@ -27,7 +27,7 @@
                    new[]
                    {
                        firstNumericData,
-                       OperationHelper.PerformAlgebraOperation(secondNumericData, BinaryOperatorType.Addition, firstNumericData)!
+                       OperationHelper.PerformAlgebraOperation(secondNumericData, BinaryOperatorType.Subtraction, firstNumericData)!
                    },
                    cancellationToken);
         }

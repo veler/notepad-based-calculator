@@ -56,6 +56,15 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData? ConvertFrom(INumericData from)
         {
+            if (from is AngleData fromAngleData)
+            {
+                return new AngleData(
+                    from.LineTextIncludingLineBreak,
+                    from.StartInLine,
+                    from.EndInLine,
+                    fromAngleData.Value.ToUnit(Value.Unit));
+            }
+
             return new AngleData(
                 from.LineTextIncludingLineBreak,
                 from.StartInLine,

@@ -56,6 +56,15 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData? ConvertFrom(INumericData from)
         {
+            if (from is LengthData fromLenghtData)
+            {
+                return new LengthData(
+                    from.LineTextIncludingLineBreak,
+                    from.StartInLine,
+                    from.EndInLine,
+                    fromLenghtData.Value.ToUnit(Value.Unit));
+            }
+
             return new LengthData(
                 from.LineTextIncludingLineBreak,
                 from.StartInLine,
