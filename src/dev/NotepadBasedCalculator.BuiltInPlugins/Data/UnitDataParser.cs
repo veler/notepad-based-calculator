@@ -40,42 +40,45 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                 {
                     ModelResult modelResult = modelResults[i];
 
-                    string valueString = (string)modelResult.Resolution[Value];
-                    string unit = (string)modelResult.Resolution[Unit];
-
-                    switch (modelResult.Resolution[Subtype])
+                    if (modelResult.Resolution is not null)
                     {
-                        case Constants.LENGTH:
-                            ParseLength(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
-                            break;
+                        string valueString = (string)modelResult.Resolution[Value];
+                        string unit = (string)modelResult.Resolution[Unit];
 
-                        case Constants.INFORMATION:
-                            ParseInformation(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
-                            break;
+                        switch (modelResult.Resolution[Subtype])
+                        {
+                            case Constants.LENGTH:
+                                ParseLength(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
+                                break;
 
-                        case Constants.AREA:
-                            ParseArea(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
-                            break;
+                            case Constants.INFORMATION:
+                                ParseInformation(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
+                                break;
 
-                        case Constants.SPEED:
-                            ParseSpeed(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
-                            break;
+                            case Constants.AREA:
+                                ParseArea(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
+                                break;
 
-                        case Constants.VOLUME:
-                            ParseVolume(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
-                            break;
+                            case Constants.SPEED:
+                                ParseSpeed(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
+                                break;
 
-                        case Constants.WEIGHT:
-                            ParseMass(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
-                            break;
+                            case Constants.VOLUME:
+                                ParseVolume(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
+                                break;
 
-                        case Constants.ANGLE:
-                            ParseAngle(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
-                            break;
+                            case Constants.WEIGHT:
+                                ParseMass(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
+                                break;
 
-                        default:
-                            ThrowHelper.ThrowNotSupportedException();
-                            return null;
+                            case Constants.ANGLE:
+                                ParseAngle(unitMap, data, tokenizedTextLine, modelResult, unit, valueString);
+                                break;
+
+                            default:
+                                ThrowHelper.ThrowNotSupportedException();
+                                return null;
+                        }
                     }
                 }
             }

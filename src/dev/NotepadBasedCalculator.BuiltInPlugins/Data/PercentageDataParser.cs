@@ -23,30 +23,34 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
             for (int i = 0; i < modelResults.Count; i++)
             {
                 ModelResult modelResult = modelResults[i];
-                switch (modelResult.TypeName)
-                {
-                    case Constants.MODEL_PERCENTAGE:
-                        if (!ShouldBeIgnored(culture, modelResult))
-                        {
-                            string valueString = (string)modelResult.Resolution[Value];
-                            if (!string.Equals(NullValue, valueString, StringComparison.OrdinalIgnoreCase))
-                            {
-                                valueString = valueString.TrimEnd('%');
-                                data.Add(
-                                    new PercentageData(
-                                        tokenizedTextLine.LineTextIncludingLineBreak,
-                                        modelResult.Start,
-                                        modelResult.End + 1,
-                                        double.Parse(valueString) / 100));
-                            }
-                        }
-                        break;
 
-                    default:
+                if (modelResult.Resolution is not null)
+                {
+                    switch (modelResult.TypeName)
+                    {
+                        case Constants.MODEL_PERCENTAGE:
+                            if (!ShouldBeIgnored(culture, modelResult))
+                            {
+                                string valueString = (string)modelResult.Resolution[Value];
+                                if (!string.Equals(NullValue, valueString, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    valueString = valueString.TrimEnd('%');
+                                    data.Add(
+                                        new PercentageData(
+                                            tokenizedTextLine.LineTextIncludingLineBreak,
+                                            modelResult.Start,
+                                            modelResult.End + 1,
+                                            double.Parse(valueString) / 100));
+                                }
+                            }
+                            break;
+
+                        default:
 #if DEBUG
-                        ThrowHelper.ThrowNotSupportedException();
+                            ThrowHelper.ThrowNotSupportedException();
 #endif
-                        break;
+                            break;
+                    }
                 }
             }
 

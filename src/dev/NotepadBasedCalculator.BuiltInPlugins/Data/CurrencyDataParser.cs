@@ -23,34 +23,37 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
             for (int i = 0; i < modelResults.Count; i++)
             {
                 ModelResult modelResult = modelResults[i];
-                switch (modelResult.TypeName)
+                if (modelResult.Resolution is not null)
                 {
-                    case TypeName:
-                        string valueString = (string)modelResult.Resolution[Value];
-                        string unit = (string)modelResult.Resolution[Unit];
-                        string isoCurrency = string.Empty;
-                        if (modelResult.Resolution.TryGetValue(IsoCurrency, out object? isoCurrencyObject))
-                        {
-                            isoCurrency = isoCurrencyObject as string ?? string.Empty;
-                        }
+                    switch (modelResult.TypeName)
+                    {
+                        case TypeName:
+                            string valueString = (string)modelResult.Resolution[Value];
+                            string unit = (string)modelResult.Resolution[Unit];
+                            string isoCurrency = string.Empty;
+                            if (modelResult.Resolution.TryGetValue(IsoCurrency, out object? isoCurrencyObject))
+                            {
+                                isoCurrency = isoCurrencyObject as string ?? string.Empty;
+                            }
 
-                        data.Add(
-                            new CurrencyData(
-                                tokenizedTextLine.LineTextIncludingLineBreak,
-                                modelResult.Start,
-                                modelResult.End + 1,
-                                new CurrencyValue(
-                                    double.Parse(valueString),
-                                    unit,
-                                    isoCurrency)));
+                            data.Add(
+                                new CurrencyData(
+                                    tokenizedTextLine.LineTextIncludingLineBreak,
+                                    modelResult.Start,
+                                    modelResult.End + 1,
+                                    new CurrencyValue(
+                                        double.Parse(valueString),
+                                        unit,
+                                        isoCurrency)));
 
-                        break;
+                            break;
 
-                    default:
+                        default:
 #if DEBUG
-                        ThrowHelper.ThrowNotSupportedException();
+                            ThrowHelper.ThrowNotSupportedException();
 #endif
-                        break;
+                            break;
+                    }
                 }
             }
 

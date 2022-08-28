@@ -172,5 +172,25 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal("percentage.isPercentOnWhat", statement.FunctionDefinition.FunctionFullName);
             Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
         }
+
+        [Fact]
+        public async Task General_Random()
+        {
+            _textDocument.Text = "random number between 0 and 1";
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults.Last().StatementsAndData);
+            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("general.random", statement.FunctionDefinition.FunctionFullName);
+            var number = (INumericData)lineResults.Last().StatementsAndData[0].ResultedData;
+            Assert.InRange(number.NumericValue, 0d, 1d);
+
+            _textDocument.Text = "random between 10km and 100000m";
+            lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults.Last().StatementsAndData);
+            statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("general.random", statement.FunctionDefinition.FunctionFullName);
+            number = (INumericData)lineResults.Last().StatementsAndData[0].ResultedData;
+            Assert.InRange(number.NumericValue, 10, 100);
+        }
     }
 }

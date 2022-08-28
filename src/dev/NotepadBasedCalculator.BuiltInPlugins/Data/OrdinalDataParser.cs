@@ -22,31 +22,35 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
             for (int i = 0; i < modelResults.Count; i++)
             {
                 ModelResult modelResult = modelResults[i];
-                string valueString = (string)modelResult.Resolution[Value];
-                switch (modelResult.TypeName)
+
+                if (modelResult.Resolution is not null)
                 {
-                    case Constants.MODEL_ORDINAL:
-                        if (!string.Equals(NullValue, valueString, StringComparison.OrdinalIgnoreCase))
-                        {
-                            data.Add(
-                            new OrdinalData(
-                                tokenizedTextLine.LineTextIncludingLineBreak,
-                                modelResult.Start,
-                                modelResult.End + 1,
-                                long.Parse(valueString)));
-                        }
-                        break;
+                    string valueString = (string)modelResult.Resolution[Value];
+                    switch (modelResult.TypeName)
+                    {
+                        case Constants.MODEL_ORDINAL:
+                            if (!string.Equals(NullValue, valueString, StringComparison.OrdinalIgnoreCase))
+                            {
+                                data.Add(
+                                new OrdinalData(
+                                    tokenizedTextLine.LineTextIncludingLineBreak,
+                                    modelResult.Start,
+                                    modelResult.End + 1,
+                                    long.Parse(valueString)));
+                            }
+                            break;
 
-                    case Constants.MODEL_ORDINAL_RELATIVE:
-                        // TODO
-                        ThrowHelper.ThrowNotSupportedException();
-                        break;
+                        case Constants.MODEL_ORDINAL_RELATIVE:
+                            // TODO
+                            ThrowHelper.ThrowNotSupportedException();
+                            break;
 
-                    default:
+                        default:
 #if DEBUG
-                        ThrowHelper.ThrowNotSupportedException();
+                            ThrowHelper.ThrowNotSupportedException();
 #endif
-                        break;
+                            break;
+                    }
                 }
             }
 

@@ -1,4 +1,10 @@
 {
+  "general": {
+    "random": [
+      "random number between NUMERIC and NUMERIC",
+      "random between NUMERIC and NUMERIC"
+    ]
+  },
   "percentage": {
     "percentOf": [
       "PERCENTAGE of NUMERIC"

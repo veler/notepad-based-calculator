@@ -31,33 +31,36 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                 {
                     ModelResult modelResult = modelResults[i];
 
-                    var values = modelResult.Resolution[Values] as List<Dictionary<string, string>>;
-                    if (values is not null)
+                    if (modelResult.Resolution is not null)
                     {
-                        switch (values[0][Type])
+                        var values = modelResult.Resolution[Values] as List<Dictionary<string, string>>;
+                        if (values is not null)
                         {
-                            case Constants.SYS_DATETIME_DURATION:
-                                ParseDuration(data, tokenizedTextLine, modelResult, values[0]);
-                                break;
+                            switch (values[0][Type])
+                            {
+                                case Constants.SYS_DATETIME_DURATION:
+                                    ParseDuration(data, tokenizedTextLine, modelResult, values[0]);
+                                    break;
 
-                            case Constants.SYS_DATETIME_DATE:
-                            case Constants.SYS_DATETIME_TIME:
-                            case Constants.SYS_DATETIME_DATETIME:
-                                ParseDateTime(data, tokenizedTextLine, modelResult, values[0]);
-                                break;
+                                case Constants.SYS_DATETIME_DATE:
+                                case Constants.SYS_DATETIME_TIME:
+                                case Constants.SYS_DATETIME_DATETIME:
+                                    ParseDateTime(data, tokenizedTextLine, modelResult, values[0]);
+                                    break;
 
-                            case Constants.SYS_DATETIME_DATEPERIOD:
-                            case Constants.SYS_DATETIME_DATETIMEPERIOD:
-                                ParseDateTimeRange(data, tokenizedTextLine, modelResult, values[0]);
-                                break;
+                                case Constants.SYS_DATETIME_DATEPERIOD:
+                                case Constants.SYS_DATETIME_DATETIMEPERIOD:
+                                    ParseDateTimeRange(data, tokenizedTextLine, modelResult, values[0]);
+                                    break;
 
-                            case Constants.SYS_DATETIME_TIMEPERIOD:
-                                ParseTimeRange(data, tokenizedTextLine, modelResult, values[0]);
-                                break;
+                                case Constants.SYS_DATETIME_TIMEPERIOD:
+                                    ParseTimeRange(data, tokenizedTextLine, modelResult, values[0]);
+                                    break;
 
-                            default:
-                                ThrowHelper.ThrowNotSupportedException();
-                                return null;
+                                default:
+                                    ThrowHelper.ThrowNotSupportedException();
+                                    return null;
+                            }
                         }
                     }
                 }

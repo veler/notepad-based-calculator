@@ -22,34 +22,38 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
             for (int i = 0; i < modelResults.Count; i++)
             {
                 ModelResult modelResult = modelResults[i];
-                string valueString = (string)modelResult.Resolution[Value];
-                switch (modelResult.Resolution[Subtype])
+
+                if (modelResult.Resolution is not null)
                 {
-                    case Constants.INTEGER:
-                    case Constants.DECIMAL:
-                    case Constants.POWER:
-                        data.Add(
-                            new DecimalData(
-                                tokenizedTextLine.LineTextIncludingLineBreak,
-                                modelResult.Start,
-                                modelResult.End + 1,
-                                double.Parse(valueString)));
-                        break;
+                    string valueString = (string)modelResult.Resolution[Value];
+                    switch (modelResult.Resolution[Subtype])
+                    {
+                        case Constants.INTEGER:
+                        case Constants.DECIMAL:
+                        case Constants.POWER:
+                            data.Add(
+                                new DecimalData(
+                                    tokenizedTextLine.LineTextIncludingLineBreak,
+                                    modelResult.Start,
+                                    modelResult.End + 1,
+                                    double.Parse(valueString)));
+                            break;
 
-                    case Constants.FRACTION:
-                        data.Add(
-                            new FractionData(
-                                tokenizedTextLine.LineTextIncludingLineBreak,
-                                modelResult.Start,
-                                modelResult.End + 1,
-                                double.Parse(valueString)));
-                        break;
+                        case Constants.FRACTION:
+                            data.Add(
+                                new FractionData(
+                                    tokenizedTextLine.LineTextIncludingLineBreak,
+                                    modelResult.Start,
+                                    modelResult.End + 1,
+                                    double.Parse(valueString)));
+                            break;
 
-                    default:
+                        default:
 #if DEBUG
-                        ThrowHelper.ThrowNotSupportedException();
+                            ThrowHelper.ThrowNotSupportedException();
 #endif
-                        break;
+                            break;
+                    }
                 }
             }
 

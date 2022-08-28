@@ -37,17 +37,20 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
                 {
                     ModelResult modelResult = modelResults[i];
 
-                    string valueString = (string)modelResult.Resolution[Value];
-                    string unit = (string)modelResult.Resolution[Unit];
-
-                    if (unitMap.Temperature.TryGetValue(unit, out TemperatureUnit temperatureUnit))
+                    if (modelResult.Resolution is not null)
                     {
-                        data.Add(
-                            new TemperatureData(
-                                tokenizedTextLine.LineTextIncludingLineBreak,
-                                modelResult.Start,
-                                modelResult.End + 1,
-                                new Temperature(double.Parse(valueString), temperatureUnit)));
+                        string valueString = (string)modelResult.Resolution[Value];
+                        string unit = (string)modelResult.Resolution[Unit];
+
+                        if (unitMap.Temperature.TryGetValue(unit, out TemperatureUnit temperatureUnit))
+                        {
+                            data.Add(
+                                new TemperatureData(
+                                    tokenizedTextLine.LineTextIncludingLineBreak,
+                                    modelResult.Start,
+                                    modelResult.End + 1,
+                                    new Temperature(double.Parse(valueString), temperatureUnit)));
+                        }
                     }
                 }
             }
