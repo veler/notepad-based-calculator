@@ -19,6 +19,9 @@
             var firstNumericData = (INumericData)detectedData[0];
             var secondNumericData = (INumericData)detectedData[1];
 
+            // ((62.5 * 100) / 250) / 100 = 0.25
+            // So 62.5 represents 25% of 250.
+
             IData? firstNumericDataMultipliedPerOneHundred
                 = OperationHelper.PerformAlgebraOperation(
                     firstNumericData,

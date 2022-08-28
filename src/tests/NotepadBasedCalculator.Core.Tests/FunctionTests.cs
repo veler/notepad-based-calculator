@@ -99,15 +99,15 @@ namespace NotepadBasedCalculator.Core.Tests
         }
 
         [Theory]
-        [InlineData("1km is what % on 10,000m", "9%")]
-        [InlineData("1km is what percent on 10,000m", "9%")]
-        [InlineData("1km is what percentage on 10,000m", "9%")]
-        [InlineData("1km as a % on 10,000m", "9%")]
-        [InlineData("1km as % on 10,000m", "9%")]
-        [InlineData("1km as a percent on 10,000m", "9%")]
-        [InlineData("1km as percent on 10,000m", "9%")]
-        [InlineData("1km as a percentage on 10,000m", "9%")]
-        [InlineData("1km as percentage on 10,000m", "9%")]
+        [InlineData("250km is what % on 62,500m", "300%")]
+        [InlineData("1,250m is what percent on 1km", "25%")]
+        [InlineData("10,000m is what percentage on 1km", "900%")]
+        [InlineData("10,000m as a % on 1km", "900%")]
+        [InlineData("10,000m as % on 1km", "900%")]
+        [InlineData("10,000m as a percent on 1km", "900%")]
+        [InlineData("10,000m as percent on 1km", "900%")]
+        [InlineData("10,000m as a percentage on 1km", "900%")]
+        [InlineData("10,000m as percentage on 1km", "900%")]
         public async Task Percentage_IsWhatPercentOn(string input, string output)
         {
             _textDocument.Text = input;
@@ -119,15 +119,15 @@ namespace NotepadBasedCalculator.Core.Tests
         }
 
         [Theory]
-        [InlineData("1km is what % off 10,000m", "11%")]
-        [InlineData("1km is what percent off 10,000m", "11%")]
-        [InlineData("1km is what percentage off 10,000m", "11%")]
-        [InlineData("1km as a % off 10,000m", "11%")]
-        [InlineData("1km as % off 10,000m", "11%")]
-        [InlineData("1km as a percent off 10,000m", "11%")]
-        [InlineData("1km as percent off 10,000m", "11%")]
-        [InlineData("1km as a percentage off 10,000m", "11%")]
-        [InlineData("1km as percentage off 10,000m", "11%")]
+        [InlineData("62.5km is what % off 250,000m", "75%")]
+        [InlineData("1km is what percent off 10,000m", "90%")]
+        [InlineData("1km is what percentage off 10,000m", "90%")]
+        [InlineData("1km as a % off 10,000m", "90%")]
+        [InlineData("1km as % off 10,000m", "90%")]
+        [InlineData("1km as a percent off 10,000m", "90%")]
+        [InlineData("1km as percent off 10,000m", "90%")]
+        [InlineData("1km as a percentage off 10,000m", "90%")]
+        [InlineData("1km as percentage off 10,000m", "90%")]
         public async Task Percentage_IsWhatPercentOff(string input, string output)
         {
             _textDocument.Text = input;
@@ -136,6 +136,41 @@ namespace NotepadBasedCalculator.Core.Tests
             var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isWhatPercentOff", statement.FunctionDefinition.FunctionFullName);
             Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.DisplayText) * 100).ToString() + "%");
+        }
+
+        [Theory]
+        [InlineData("20 percent of what is 70", "350")]
+        [InlineData("20 percent of what number is 70", "350")]
+        [InlineData("70 is 20% of what", "350")]
+        [InlineData("70 is 20% of what number", "350")]
+        [InlineData("20 percent off what is 70", "350")]
+        [InlineData("20 percent off what number is 70", "350")]
+        [InlineData("70 is 20% off what", "350")]
+        [InlineData("70 is 20% off what number", "350")]
+        public async Task Percentage_IsPercentOfWhat(string input, string output)
+        {
+            _textDocument.Text = input;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults.Last().StatementsAndData);
+            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.isPercentOfWhat", statement.FunctionDefinition.FunctionFullName);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+        }
+
+        [Theory]
+        [InlineData("62.5 is 25% on what", "50")]
+        [InlineData("62.5 is 25% on what number", "50")]
+        [InlineData("62.5 is what plus 25%", "50")]
+        [InlineData("25% on what is 62.5", "50")]
+        [InlineData("25% on what number is 62.5", "50")]
+        public async Task Percentage_IsPercentOnWhat(string input, string output)
+        {
+            _textDocument.Text = input;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults.Last().StatementsAndData);
+            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.isPercentOnWhat", statement.FunctionDefinition.FunctionFullName);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
         }
     }
 }

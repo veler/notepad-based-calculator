@@ -18,6 +18,7 @@
             var percentageData = (INumericData)detectedData[0];
             var numericData = (INumericData)detectedData[1];
 
+            // x * (% of x)
             return Task.FromResult(
                 OperationHelper.PerformAlgebraOperation(
                     numericData, BinaryOperatorType.Multiply, percentageData));

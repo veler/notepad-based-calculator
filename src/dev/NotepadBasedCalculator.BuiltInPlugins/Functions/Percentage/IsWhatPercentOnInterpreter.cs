@@ -21,15 +21,44 @@
             var firstNumericData = (INumericData)detectedData[0];
             var secondNumericData = (INumericData)detectedData[1];
 
-            return IsWhatPercentOfInterpreter.InterpretFunctionAsync(
-                   culture,
-                   functionDefinition,
-                   new[]
-                   {
-                       firstNumericData,
-                       OperationHelper.PerformAlgebraOperation(secondNumericData, BinaryOperatorType.Addition, firstNumericData)!
-                   },
-                   cancellationToken);
+            var one
+                = new DecimalData(
+                    secondNumericData.LineTextIncludingLineBreak,
+                    secondNumericData.StartInLine,
+                    secondNumericData.EndInLine,
+                    1);
+
+            // ((250 / 62.5) - 1) = 3
+            // so 250 represents an increase of 300% on 62.5.
+
+            IData? dividedNumbers
+                = OperationHelper.PerformAlgebraOperation(
+                        firstNumericData,
+                        BinaryOperatorType.Division,
+                        secondNumericData);
+
+            if (dividedNumbers is INumericData numericData)
+            {
+                dividedNumbers = numericData.ToStandardUnit();
+            }
+
+            var percentageData
+                = OperationHelper.PerformAlgebraOperation(
+                    dividedNumbers,
+                    BinaryOperatorType.Subtraction,
+                    one) as INumericData;
+
+            if (percentageData is not null)
+            {
+                return Task.FromResult(
+                    (IData?)new PercentageData(
+                        percentageData.LineTextIncludingLineBreak,
+                        percentageData.StartInLine,
+                        percentageData.EndInLine,
+                        percentageData.ToStandardUnit().NumericValue));
+            }
+
+            return Task.FromResult<IData?>(null);
         }
     }
 }

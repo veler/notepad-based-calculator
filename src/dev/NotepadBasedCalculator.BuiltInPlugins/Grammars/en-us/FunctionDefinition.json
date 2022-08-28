@@ -9,6 +9,23 @@
     "percentOn": [
       "PERCENTAGE on NUMERIC"
     ],
+    "isPercentOfWhat": [
+      "NUMERIC is PERCENTAGE of what",
+      "NUMERIC is PERCENTAGE of what number",
+      "NUMERIC is PERCENTAGE off what",
+      "NUMERIC is PERCENTAGE off what number",
+      "PERCENTAGE of what is NUMERIC",
+      "PERCENTAGE of what number is NUMERIC",
+      "PERCENTAGE off what is NUMERIC",
+      "PERCENTAGE off what number is NUMERIC"
+    ],
+    "isPercentOnWhat": [
+      "NUMERIC is PERCENTAGE on what",
+      "NUMERIC is PERCENTAGE on what number",
+      "NUMERIC is what plus PERCENTAGE",
+      "PERCENTAGE on what is NUMERIC",
+      "PERCENTAGE on what number is NUMERIC"
+    ],
     "isWhatPercentOn": [
       "NUMERIC is what % on NUMERIC",
       "NUMERIC is what percent on NUMERIC",
