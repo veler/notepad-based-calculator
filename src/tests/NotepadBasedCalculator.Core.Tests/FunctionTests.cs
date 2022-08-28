@@ -190,7 +190,22 @@ namespace NotepadBasedCalculator.Core.Tests
             statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("general.random", statement.FunctionDefinition.FunctionFullName);
             number = (INumericData)lineResults.Last().StatementsAndData[0].ResultedData;
-            Assert.InRange(number.NumericValue, 10, 100);
+            Assert.InRange(number.NumericValue, 10_000, 100_000);
+        }
+
+        [Theory]
+        [InlineData("midpoint between 70 and 46", "58")]
+        [InlineData("midpoint between 0 and 10", "5")]
+        [InlineData("average between 70kg and 46kg", "58 kg")]
+        [InlineData("average between 0 and 10", "5")]
+        public async Task General_Midpoint(string input, string output)
+        {
+            _textDocument.Text = input;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults.Last().StatementsAndData);
+            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("general.midpoint", statement.FunctionDefinition.FunctionFullName);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
         }
     }
 }

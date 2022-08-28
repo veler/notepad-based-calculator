@@ -3,6 +3,10 @@
     "random": [
       "random number between NUMERIC and NUMERIC",
       "random between NUMERIC and NUMERIC"
+    ],
+    "midpoint": [
+      "midpoint between NUMERIC and NUMERIC",
+      "average between NUMERIC and NUMERIC"
     ]
   },
   "percentage": {

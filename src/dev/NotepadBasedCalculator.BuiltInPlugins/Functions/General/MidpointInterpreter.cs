@@ -1,13 +1,11 @@
 ﻿namespace NotepadBasedCalculator.BuiltInPlugins.Functions.General
 {
     [Export(typeof(IFunctionInterpreter))]
-    [Name("general.random")]
+    [Name("general.midpoint")]
     [Culture(SupportedCultures.English)]
     [Shared]
-    internal sealed class RandomNumberInterpreter : IFunctionInterpreter
+    internal sealed class MidpointInterpreter : IFunctionInterpreter
     {
-        private readonly Random _random = new();
-
         public Task<IData?> InterpretFunctionAsync(
             string culture,
             FunctionDefinition functionDefinition,
@@ -26,22 +24,9 @@
                 return Task.FromResult<IData?>(null);
             }
 
-            double result = 0;
             double first = firstNumber.ToStandardUnit().NumericValue;
             double second = secondNumber.ToStandardUnit().NumericValue;
-
-            if ((first == 0 && second == 1) || (first == 1 && second == 0))
-            {
-                result = _random.NextDouble();
-            }
-            else if (first >= second)
-            {
-                result = _random.Next((int)second, (int)first);
-            }
-            else if (first < second)
-            {
-                result = _random.Next((int)first, (int)second);
-            }
+            double result = (first + second) / 2;
 
             return Task.FromResult((IData?)secondNumber.FromStandardUnit(result).MergeDataLocations(firstNumber));
         }
