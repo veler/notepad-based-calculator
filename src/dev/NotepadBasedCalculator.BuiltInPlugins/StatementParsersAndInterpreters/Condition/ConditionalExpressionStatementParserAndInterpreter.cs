@@ -3,7 +3,7 @@
 namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Condition
 {
     [Export(typeof(IStatementParserAndInterpreter))]
-    [Culture(SupportedCultures.English)]
+    [Culture(SupportedCultures.Any)]
     [Shared]
     internal sealed class ConditionalExpressionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {

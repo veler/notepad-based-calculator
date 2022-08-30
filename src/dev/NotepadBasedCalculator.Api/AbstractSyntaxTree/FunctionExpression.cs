@@ -1,10 +1,10 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed class FunctionStatement : Statement
+    public sealed class FunctionExpression : Expression
     {
         public FunctionDefinition FunctionDefinition { get; }
 
-        public FunctionStatement(FunctionDefinition functionDefinition, LinkedToken firstToken, LinkedToken lastToken)
+        public FunctionExpression(FunctionDefinition functionDefinition, LinkedToken firstToken, LinkedToken lastToken)
             : base(firstToken, lastToken)
         {
             FunctionDefinition = functionDefinition;

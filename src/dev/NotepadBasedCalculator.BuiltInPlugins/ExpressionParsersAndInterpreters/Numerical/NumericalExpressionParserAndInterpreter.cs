@@ -1,11 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters.Numerical
+﻿namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters.Numerical
 {
     [Export(typeof(IExpressionParserAndInterpreter))]
     [Name(PredefinedExpressionParserNames.NumericalExpression)]
     [Culture(SupportedCultures.Any)]
-    [Order(int.MaxValue - 1)]
+    [Order(int.MaxValue - 2)]
     [Shared]
     internal sealed class NumericalExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
@@ -121,7 +119,8 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
             CancellationToken cancellationToken)
         {
             bool foundLeftExpression
-                = await ParserPrimaryExpressionAsync(
+                = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
+                    PredefinedExpressionParserNames.PrimitiveExpression,
                     culture,
                     currentToken,
                     variableService,
@@ -170,12 +169,13 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                     ExpressionParserAndInterpreterResult rightExpressionResult = new();
 
                     bool foundRightExpression
-                         = await ParserPrimaryExpressionAsync(
-                             culture,
-                             expressionStartToken,
-                             variableService,
-                             rightExpressionResult,
-                             cancellationToken);
+                        = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
+                            PredefinedExpressionParserNames.PrimitiveExpression,
+                            culture,
+                            expressionStartToken,
+                            variableService,
+                            rightExpressionResult,
+                            cancellationToken);
 
                     if (foundRightExpression)
                     {
@@ -203,91 +203,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
             }
 
             return foundLeftExpression;
-        }
-
-        /// <summary>
-        /// Parse an expression that can be either a primitive data, a variable reference or an expression between parenthesis.
-        /// 
-        /// Corresponding grammar :
-        ///     Primitive_Value
-        ///     | Identifier
-        ///     | '(' Expression ')'
-        /// </summary>
-        private async Task<bool> ParserPrimaryExpressionAsync(
-            string culture,
-            LinkedToken? currentToken,
-            IVariableService variableService,
-            ExpressionParserAndInterpreterResult result,
-            CancellationToken cancellationToken)
-        {
-            currentToken = currentToken.SkipNextWordTokens();
-            if (currentToken is not null)
-            {
-                // Detect Numbers, Percentage, Dates...etc.
-                if (currentToken.Token is IData data)
-                {
-                    var expression = new DataExpression(currentToken, currentToken, data);
-                    result.NextTokenToContinueWith = currentToken.Next;
-                    result.ParsedExpression = expression;
-                    result.ResultedData = expression.Data;
-                    return true;
-                }
-
-                // Detect variable reference
-                if (currentToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.VariableReference))
-                {
-                    var expression = new VariableReferenceExpression(currentToken);
-                    result.NextTokenToContinueWith = currentToken.Next;
-                    result.ParsedExpression = expression;
-                    result.ResultedData = variableService.GetVariableValue(expression.VariableName);
-                    return true;
-                }
-
-                // Detect expression between parenthesis.
-                LinkedToken leftParenthToken = currentToken;
-                if (DiscardLeftParenth(leftParenthToken, out LinkedToken? nextToken))
-                {
-                    bool foundExpression
-                         = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                             culture,
-                            nextToken,
-                            variableService,
-                            result,
-                            cancellationToken);
-
-                    LinkedToken? rightParenthToken = result.NextTokenToContinueWith?.SkipNextWordTokens();
-                    if (foundExpression
-                        && DiscardRightParenth(rightParenthToken, out nextToken)
-                        && rightParenthToken is not null)
-                    {
-                        result.NextTokenToContinueWith = nextToken;
-                        result.ParsedExpression = new GroupExpression(leftParenthToken, rightParenthToken, result.ParsedExpression!);
-                        // no need to update the data in the `result`. It should already be set by `ParserAndInterpreterService`.
-                        return true;
-                    }
-                }
-            }
-
-            result.NextTokenToContinueWith = null;
-            return false;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool DiscardLeftParenth(LinkedToken? currentToken, out LinkedToken? nextToken)
-        {
-            return currentToken.SkipToken(
-                PredefinedTokenAndDataTypeNames.LeftParenth,
-                skipWordsToken: true,
-                out nextToken);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        private static bool DiscardRightParenth(LinkedToken? currentToken, out LinkedToken? nextToken)
-        {
-            return currentToken.SkipToken(
-                PredefinedTokenAndDataTypeNames.RightParenth,
-                skipWordsToken: true,
-                out nextToken);
         }
     }
 }

@@ -93,11 +93,32 @@ namespace NotepadBasedCalculator.Core
             return expressionFound;
         }
 
+        public Task<bool> TryParseAndInterpretExpressionAsync(
+            string culture,
+            LinkedToken? currentToken,
+            string? parseUntilTokenIsOfType,
+            string? parseUntilTokenHasText,
+            IVariableService variableService,
+            ExpressionParserAndInterpreterResult result,
+            CancellationToken cancellationToken)
+        {
+            return TryParseAndInterpretExpressionAsync(
+                culture,
+                currentToken,
+                parseUntilTokenIsOfType,
+                parseUntilTokenHasText,
+                string.Empty,
+                variableService,
+                result,
+                cancellationToken);
+        }
+
         public async Task<bool> TryParseAndInterpretExpressionAsync(
             string culture,
             LinkedToken? currentToken,
             string? parseUntilTokenIsOfType,
             string? parseUntilTokenHasText,
+            string? nestedTokenType,
             IVariableService variableService,
             ExpressionParserAndInterpreterResult result,
             CancellationToken cancellationToken)
@@ -109,7 +130,13 @@ namespace NotepadBasedCalculator.Core
             if (currentToken is not null)
             {
                 Guard.IsNotNull(culture);
-                var tokenEnumerator = new TokenEnumerationWithStop(currentToken, parseUntilTokenIsOfType, parseUntilTokenHasText);
+                var tokenEnumerator
+                    = new TokenEnumerationWithStop(
+                        currentToken,
+                        parseUntilTokenIsOfType,
+                        parseUntilTokenHasText,
+                        nestedTokenType);
+
                 Guard.IsNotNull(tokenEnumerator.Current);
                 // TODO: should we dispose this enumerator at some point?
 
@@ -157,12 +184,35 @@ namespace NotepadBasedCalculator.Core
             return expressionFound;
         }
 
+        public Task<bool> TryParseAndInterpretExpressionAsync(
+            string expressionParserAndInterpreterName,
+            string culture,
+            LinkedToken? currentToken,
+            string? parseUntilTokenIsOfType,
+            string? parseUntilTokenHasText,
+            IVariableService variableService,
+            ExpressionParserAndInterpreterResult result,
+            CancellationToken cancellationToken)
+        {
+            return TryParseAndInterpretExpressionAsync(
+                expressionParserAndInterpreterName,
+                culture,
+                currentToken,
+                parseUntilTokenIsOfType,
+                parseUntilTokenHasText,
+                string.Empty,
+                variableService,
+                result,
+                cancellationToken);
+        }
+
         public async Task<bool> TryParseAndInterpretExpressionAsync(
             string expressionParserAndInterpreterName,
             string culture,
             LinkedToken? currentToken,
             string? parseUntilTokenIsOfType,
             string? parseUntilTokenHasText,
+            string? nestedTokenType,
             IVariableService variableService,
             ExpressionParserAndInterpreterResult result,
             CancellationToken cancellationToken)
@@ -174,7 +224,13 @@ namespace NotepadBasedCalculator.Core
             if (currentToken is not null)
             {
                 Guard.IsNotNull(culture);
-                var tokenEnumerator = new TokenEnumerationWithStop(currentToken, parseUntilTokenIsOfType, parseUntilTokenHasText);
+                var tokenEnumerator
+                    = new TokenEnumerationWithStop(
+                        currentToken,
+                        parseUntilTokenIsOfType,
+                        parseUntilTokenHasText,
+                        nestedTokenType);
+
                 Guard.IsNotNull(tokenEnumerator.Current);
                 // TODO: should we dispose this enumerator at some point?
 
@@ -236,7 +292,12 @@ namespace NotepadBasedCalculator.Core
             if (currentToken is not null)
             {
                 Guard.IsNotNull(culture);
-                var tokenEnumerator = new TokenEnumerationWithStop(currentToken, parseUntilTokenIsOfType, parseUntilTokenHasText);
+                var tokenEnumerator
+                    = new TokenEnumerationWithStop(
+                        currentToken,
+                        parseUntilTokenIsOfType,
+                        parseUntilTokenHasText,
+                        string.Empty);
                 Guard.IsNotNull(tokenEnumerator.Current);
                 // TODO: should we dispose this enumerator at some point?
 
@@ -399,10 +460,12 @@ namespace NotepadBasedCalculator.Core
         {
             private readonly object _syncLock = new();
             private readonly LinkedToken _originalStartToken;
-            private readonly string? _parseUntilTokenIsOfType;
-            private readonly string? _parseUntilTokenHasText;
+            private readonly string _parseUntilTokenIsOfType;
+            private readonly string _parseUntilTokenHasText;
+            private readonly string _nestedMarkTokenType;
 
             private bool _disposed;
+            private int _nestedPartCount = 0;
             private IToken? _currentToken;
 
             public IToken? Current
@@ -421,12 +484,17 @@ namespace NotepadBasedCalculator.Core
 
             object? IEnumerator.Current => Current;
 
-            public TokenEnumerationWithStop(LinkedToken originalStartToken, string? parseUntilTokenIsOfType, string? parseUntilTokenHasText)
+            public TokenEnumerationWithStop(
+                LinkedToken originalStartToken,
+                string? parseUntilTokenIsOfType,
+                string? parseUntilTokenHasText,
+                string? nestedMarkTokenType)
             {
                 Guard.IsNotNull(originalStartToken);
                 _originalStartToken = originalStartToken;
-                _parseUntilTokenIsOfType = parseUntilTokenIsOfType;
-                _parseUntilTokenHasText = parseUntilTokenHasText;
+                _parseUntilTokenIsOfType = parseUntilTokenIsOfType ?? string.Empty;
+                _parseUntilTokenHasText = parseUntilTokenHasText ?? string.Empty;
+                _nestedMarkTokenType = nestedMarkTokenType ?? string.Empty;
                 CurrentLinkedToken = originalStartToken;
                 _currentToken = originalStartToken.Token;
             }
@@ -453,24 +521,42 @@ namespace NotepadBasedCalculator.Core
                         return false;
                     }
 
+                    _currentToken = CurrentLinkedToken.Token;
+
+                    if (CurrentLinkedToken.Token.IsOfType(_nestedMarkTokenType))
+                    {
+                        _nestedPartCount++;
+                    }
+
                     if (string.IsNullOrEmpty(_parseUntilTokenHasText))
                     {
                         if (CurrentLinkedToken.Token.IsOfType(_parseUntilTokenIsOfType ?? string.Empty))
                         {
-                            _currentToken = null;
-                            return false;
+                            if (_nestedPartCount > 0)
+                            {
+                                _nestedPartCount--;
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                     }
                     else
                     {
                         if (CurrentLinkedToken.Token.Is(_parseUntilTokenIsOfType ?? string.Empty, _parseUntilTokenHasText!))
                         {
-                            _currentToken = null;
-                            return false;
+                            if (_nestedPartCount > 0)
+                            {
+                                _nestedPartCount--;
+                            }
+                            else
+                            {
+                                return false;
+                            }
                         }
                     }
 
-                    _currentToken = CurrentLinkedToken.Token;
                     return true;
                 }
             }

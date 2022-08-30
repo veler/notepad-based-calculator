@@ -29,9 +29,23 @@
                                 token: tokenEnumerator.Current,
                                 tokenEnumerator);
                     }
+                    else if (tokenEnumerator.Current is not null)
+                    {
+                        return new LinkedToken(
+                                previous: this,
+                                token: tokenEnumerator.Current);
+                    }
 
                     return null;
                 });
+        }
+
+        private LinkedToken(LinkedToken? previous, IToken token)
+        {
+            Guard.IsNotNull(token);
+            Previous = previous;
+            Token = token;
+            _nextToken = new Lazy<LinkedToken?>(() => null);
         }
 
         public override string? ToString()

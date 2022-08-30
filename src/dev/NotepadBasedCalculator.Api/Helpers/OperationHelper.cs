@@ -190,5 +190,52 @@ namespace NotepadBasedCalculator.Api
 
             return leftNumericData.FromStandardUnit(result).MergeDataLocations(rightNumericData);
         }
+
+
+
+
+
+
+
+        public static IData? NewPerformOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
+        {
+            if (leftData is not null)
+            {
+                switch (binaryOperatorType)
+                {
+                    case BinaryOperatorType.Equality:
+                    case BinaryOperatorType.NoEquality:
+                    case BinaryOperatorType.LessThan:
+                    case BinaryOperatorType.LessThanOrEqualTo:
+                    case BinaryOperatorType.GreaterThan:
+                    case BinaryOperatorType.GreaterThanOrEqualTo:
+                        break;
+
+                    case BinaryOperatorType.Addition:
+                    case BinaryOperatorType.Subtraction:
+                    case BinaryOperatorType.Multiply:
+                    case BinaryOperatorType.Division:
+                        break;
+
+                    default:
+                        ThrowHelper.ThrowNotSupportedException();
+                        break;
+                }
+            }
+
+            return null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IData? NewPerformBinaryOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
+        {
+            return null;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static IData? NewPerformAlgebraOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
+        {
+            return null;
+        }
     }
 }

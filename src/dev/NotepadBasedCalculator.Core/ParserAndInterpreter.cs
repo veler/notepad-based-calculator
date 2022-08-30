@@ -265,10 +265,13 @@ namespace NotepadBasedCalculator.Core
             for (int i = 0; i < rawDataBag.Count; i++)
             {
                 IData currentData = rawDataBag[i];
-                if (currentData is not null
-                    && !IsDataOverlapped(rawDataBag, currentData))
+                if (currentData is not null)
                 {
-                    nonOverlappingData.Add(currentData);
+                    IData? dataToAdd = SolvePotentialDataOverlapping(rawDataBag, currentData);
+                    if (dataToAdd is not null && !nonOverlappingData.Contains(dataToAdd))
+                    {
+                        nonOverlappingData.Add(dataToAdd);
+                    }
                 }
             }
 
@@ -278,7 +281,7 @@ namespace NotepadBasedCalculator.Core
             return nonOverlappingData;
         }
 
-        private static bool IsDataOverlapped(IReadOnlyList<IData> allData, IData currentData)
+        private static IData? SolvePotentialDataOverlapping(IReadOnlyList<IData> allData, IData currentData)
         {
             for (int i = 0; i < allData.Count; i++)
             {
@@ -288,11 +291,32 @@ namespace NotepadBasedCalculator.Core
                     && data.StartInLine <= currentData.StartInLine
                     && data.EndInLine >= currentData.EndInLine)
                 {
-                    return true;
+                    // Two data are overlapping.
+
+                    if (data.StartInLine == currentData.StartInLine
+                        && data.EndInLine == currentData.EndInLine)
+                    {
+                        // The two data have the exact same location in the document.
+                        // It may indicate a conflict of data type. For example "1m" can be detected as "1 minute" and "1 meter".
+                        // To solve the conflict:
+                        // 1. If there are other data and that they have the same type than one of the 2 data we're conflicting with
+                        //    then let's use that type because they may be compatible.
+                        // 2. Otheriwse, let's prompt the user to clarify the type of data.
+                        IData? overlapResolution = SolveOverlappingData(currentData, data, allData);
+                        if (overlapResolution is null)
+                        {
+                            // TODO: Show to the user that there is an error.
+                            // We should tell the user something like "Do you mean 1 meter or 1 minute? Please clarify".
+                        }
+                        return overlapResolution;
+                    }
+
+                    // Overlap situation.
+                    return null;
                 }
             }
 
-            return false;
+            return currentData;
         }
 
         private static int DetermineLineFromWhichSomethingHasChanged(
@@ -322,6 +346,36 @@ namespace NotepadBasedCalculator.Core
             }
 
             return Math.Max(Math.Min(oldTokenizedTextLines?.Count ?? 0, newTokenizedTextLines.Count) - 1, 0);
+        }
+
+        private static IData? SolveOverlappingData(IData left, IData right, IReadOnlyList<IData> allData)
+        {
+            if (left.IsOfType(right.Type) && left.IsOfSubtype(right.Subtype ?? string.Empty))
+            {
+                return left;
+            }
+
+            if (allData.Count > 2)
+            {
+                for (int i = 0; i < allData.Count; i++)
+                {
+                    IData data = allData[i];
+                    if (data != left
+                        && data != right)
+                    {
+                        if (left.IsOfSubtype(data.Subtype ?? string.Empty))
+                        {
+                            return left;
+                        }
+                        if (right.IsOfSubtype(data.Subtype ?? string.Empty))
+                        {
+                            return right;
+                        }
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

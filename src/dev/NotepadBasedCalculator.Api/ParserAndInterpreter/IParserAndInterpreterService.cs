@@ -10,7 +10,7 @@
             CancellationToken cancellationToken);
 
         Task<bool> TryParseAndInterpretExpressionAsync(
-            string expressionParserName,
+            string expressionParserAndInterpreterName,
             string culture,
             LinkedToken? currentToken,
             IVariableService variableService,
@@ -27,11 +27,32 @@
             CancellationToken cancellationToken);
 
         Task<bool> TryParseAndInterpretExpressionAsync(
-            string expressionParserName,
             string culture,
             LinkedToken? currentToken,
             string? parseUntilTokenIsOfType,
             string? parseUntilTokenHasText,
+            string? nestedTokenType,
+            IVariableService variableService,
+            ExpressionParserAndInterpreterResult result,
+            CancellationToken cancellationToken);
+
+        Task<bool> TryParseAndInterpretExpressionAsync(
+            string expressionParserAndInterpreterName,
+            string culture,
+            LinkedToken? currentToken,
+            string? parseUntilTokenIsOfType,
+            string? parseUntilTokenHasText,
+            IVariableService variableService,
+            ExpressionParserAndInterpreterResult result,
+            CancellationToken cancellationToken);
+
+        Task<bool> TryParseAndInterpretExpressionAsync(
+            string expressionParserAndInterpreterName,
+            string culture,
+            LinkedToken? currentToken,
+            string? parseUntilTokenIsOfType,
+            string? parseUntilTokenHasText,
+            string? nestedTokenType,
             IVariableService variableService,
             ExpressionParserAndInterpreterResult result,
             CancellationToken cancellationToken);

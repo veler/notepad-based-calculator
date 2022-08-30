@@ -274,5 +274,18 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal(isNegative, dateTimeData.IsNegative);
             Assert.Equal(value, dateTimeData.Value.Ticks);
         }
+
+        [Theory]
+        [InlineData("1km + 1m", "1 km")] // TODO: Should be 1.001 km or 1,001 m
+        [InlineData("1h + 1m", "30.01:00:00")]
+        public async Task ConflictingDataParsingAsync(string input, string output)
+        {
+            _textDocument.Text = input;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults);
+            Assert.Single(lineResults[0].StatementsAndData);
+            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            Assert.Equal(output, data.DisplayText);
+        }
     }
 }

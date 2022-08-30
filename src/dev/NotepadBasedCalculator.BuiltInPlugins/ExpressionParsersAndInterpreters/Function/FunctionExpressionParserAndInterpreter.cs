@@ -1,11 +1,12 @@
 ﻿using Microsoft.Recognizers.Text;
 
-namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.Function
+namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters.Function
 {
-    [Export(typeof(IStatementParserAndInterpreter))]
+    [Export(typeof(IExpressionParserAndInterpreter))]
+    [Name(PredefinedExpressionParserNames.FunctionExpression)]
     [Culture(SupportedCultures.Any)]
     [Shared]
-    internal sealed class FunctionStatementParserAndInterpreter : IStatementParserAndInterpreter
+    internal sealed class FunctionExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         private readonly Dictionary<string, IEnumerable<IFunctionDefinitionProvider>> _applicableFunctionDefinitionProviders = new();
         private readonly Dictionary<string, IReadOnlyList<FunctionDefinition>> _applicableFunctionDefinitions = new();
@@ -25,11 +26,11 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
         [ImportMany]
         public IEnumerable<Lazy<IFunctionInterpreter, FunctionInterpreterMetadata>> FunctionInterpreters { get; set; } = null!;
 
-        public async Task<bool> TryParseAndInterpretStatementAsync(
+        public async Task<bool> TryParseAndInterpretExpressionAsync(
             string culture,
             LinkedToken currentToken,
             IVariableService variableService,
-            StatementParserAndInterpreterResult result,
+            ExpressionParserAndInterpreterResult result,
             CancellationToken cancellationToken)
         {
             IReadOnlyList<FunctionDefinition> functionDefinitions = GetOrderedFunctionDefinitions(culture);
@@ -83,6 +84,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                             ExpressionParserAndInterpreterResult expressionResult = new();
                             foundStatementOrExpression
                                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
+                                    PredefinedExpressionParserNames.PrimitiveExpression,
                                     culture,
                                     documentToken,
                                     nextExpectedFunctionTokenType,
@@ -103,7 +105,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                         }
 
                         detectedData.Add(resultedData);
-                        documentToken = GetTokenAfter(documentToken, parsedExpressionOrStatement!.LastToken);
+                        documentToken = documentToken.GetTokenAfter(parsedExpressionOrStatement!.LastToken);
                         lastToken = parsedExpressionOrStatement!.LastToken;
                     }
                     else if (!documentToken.Token.Is(functionDefinitionToken.Token.Type, functionDefinitionToken.Token.GetText()))
@@ -135,7 +137,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
 
                     if (functionSucceeded)
                     {
-                        result.ParsedStatement = new FunctionStatement(functionDefinition, currentToken, lastToken);
+                        result.ParsedExpression = new FunctionExpression(functionDefinition, currentToken, lastToken);
                         result.ResultedData = functionResult;
                         return true;
                     }
@@ -322,16 +324,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
             }
 
             return false;
-        }
-
-        private static LinkedToken? GetTokenAfter(LinkedToken? sourceToken, LinkedToken tokenToJump)
-        {
-            while (sourceToken is not null && sourceToken.Token.EndInLine < tokenToJump.Token.EndInLine)
-            {
-                sourceToken = sourceToken.Next;
-            }
-
-            return sourceToken;
         }
     }
 }

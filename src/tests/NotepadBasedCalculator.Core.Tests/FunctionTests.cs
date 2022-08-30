@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using NotepadBasedCalculator.Api;
+using NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.NumericalExpression;
 using Xunit;
 
 namespace NotepadBasedCalculator.Core.Tests
@@ -25,9 +26,30 @@ namespace NotepadBasedCalculator.Core.Tests
         }
 
         [Theory]
+        [InlineData("20% of (60 + (25% of 30))", "13.5")]
+        public async Task RecursiveFunction(string input, string output)
+        {
+            _textDocument.Text = input;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.percentOf", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+        }
+
+        [Theory]
+        [InlineData("20% of 60 + (25% of 30) // equivalent to (20% of 60) + (25% of 30)", "13.5")]
+        [InlineData("20% of 25 + 50 // equivalen to (20% of 25) + 50", "55")]
+        public async Task ConcatenationOfExpression(string input, string output)
+        {
+            _textDocument.Text = input;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+        }
+
+        [Theory]
         [InlineData("20% of 60", "12")]
         [InlineData("20% of 60km", "12 km")]
-        [InlineData("20% of 25 + 50", "15")]
+        [InlineData("20% of (25 + 50)", "15")]
         [InlineData("tax = 40% \r\n tax of 75$", "30 Dollar")]
         [InlineData("20% of 20%", "0.04")]
         public async Task Percentage_PercentOf(string input, string output)
@@ -35,15 +57,14 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("percentage.percentOf", statement.FunctionDefinition.FunctionFullName);
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.percentOf", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
         }
 
         [Theory]
         [InlineData("20% off 60", "48")]
         [InlineData("20% off 60km", "48 km")]
-        [InlineData("20% off 25 + 50", "60")]
         [InlineData("tax = 40% \r\n tax off 75$", "45 Dollar")]
         [InlineData("20% off 20%", "0.16")]
         public async Task Percentage_PercentOff(string input, string output)
@@ -51,15 +72,14 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("percentage.percentOff", statement.FunctionDefinition.FunctionFullName);
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.percentOff", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
         }
 
         [Theory]
         [InlineData("20% on 60", "72")]
         [InlineData("20% on 60km", "72 km")]
-        [InlineData("20% on 25 + 50", "90")]
         [InlineData("tax = 40% \r\n tax on 75$", "105 Dollar")]
         [InlineData("20% on 20%", "0.24")]
         public async Task Percentage_PercentOn(string input, string output)
@@ -67,8 +87,8 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("percentage.percentOn", statement.FunctionDefinition.FunctionFullName);
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.percentOn", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
         }
 
@@ -93,8 +113,8 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("percentage.isWhatPercentOf", statement.FunctionDefinition.FunctionFullName);
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.isWhatPercentOf", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.DisplayText) * 100).ToString() + "%");
         }
 
@@ -113,8 +133,8 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("percentage.isWhatPercentOn", statement.FunctionDefinition.FunctionFullName);
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.isWhatPercentOn", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.DisplayText) * 100).ToString() + "%");
         }
 
@@ -133,8 +153,8 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("percentage.isWhatPercentOff", statement.FunctionDefinition.FunctionFullName);
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.isWhatPercentOff", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.DisplayText) * 100).ToString() + "%");
         }
 
@@ -152,8 +172,8 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("percentage.isPercentOfWhat", statement.FunctionDefinition.FunctionFullName);
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.isPercentOfWhat", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
         }
 
@@ -168,8 +188,8 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("percentage.isPercentOnWhat", statement.FunctionDefinition.FunctionFullName);
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("percentage.isPercentOnWhat", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
         }
 
@@ -179,16 +199,16 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = "random number between 0 and 1";
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("general.random", statement.FunctionDefinition.FunctionFullName);
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("general.random", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             var number = (INumericData)lineResults.Last().StatementsAndData[0].ResultedData;
             Assert.InRange(number.NumericValue, 0d, 1d);
 
             _textDocument.Text = "random between 10km and 100000m";
             lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("general.random", statement.FunctionDefinition.FunctionFullName);
+            statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("general.random", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             number = (INumericData)lineResults.Last().StatementsAndData[0].ResultedData;
             Assert.InRange(number.NumericValue, 10_000, 100_000);
         }
@@ -203,8 +223,8 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults.Last().StatementsAndData);
-            var statement = (FunctionStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
-            Assert.Equal("general.midpoint", statement.FunctionDefinition.FunctionFullName);
+            var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
+            Assert.Equal("general.midpoint", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
         }
     }

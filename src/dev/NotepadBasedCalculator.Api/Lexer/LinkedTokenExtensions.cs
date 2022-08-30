@@ -2,6 +2,16 @@
 {
     public static class LinkedTokenExtensions
     {
+        public static LinkedToken? GetTokenAfter(this LinkedToken? sourceToken, LinkedToken tokenToJump)
+        {
+            while (sourceToken is not null && sourceToken.Token.EndInLine < tokenToJump.Token.EndInLine)
+            {
+                sourceToken = sourceToken.Next;
+            }
+
+            return sourceToken;
+        }
+
         public static LinkedToken? SkipToLastToken(this LinkedToken? currentToken)
         {
             while (currentToken?.Next is not null)
