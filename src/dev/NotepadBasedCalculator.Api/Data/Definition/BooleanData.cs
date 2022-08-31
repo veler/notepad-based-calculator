@@ -6,7 +6,7 @@
 
         public bool IsNegative => false;
 
-        public double NumericValue => Convert.ToInt32(Value);
+        public double NumericValueInCurrentUnit => Convert.ToInt32(Value);
 
         public BooleanData(string lineTextIncludingLineBreak, int startInLine, int endInLine, bool value)
             : base(
@@ -26,26 +26,6 @@
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
                 Value);
-        }
-
-        public double GetNumericValueToRelativeTo(INumericData? relativeData)
-        {
-            return NumericValue;
-        }
-
-        public INumericData ToStandardUnit()
-        {
-            return this;
-        }
-
-        public INumericData FromStandardUnit(double newStandardUnitValue)
-        {
-            if (newStandardUnitValue != 0 && newStandardUnitValue != 1)
-            {
-                return new DecimalData(LineTextIncludingLineBreak, StartInLine, EndInLine, newStandardUnitValue);
-            }
-
-            return new BooleanData(LineTextIncludingLineBreak, StartInLine, EndInLine, newStandardUnitValue != 0);
         }
 
         public override string ToString()

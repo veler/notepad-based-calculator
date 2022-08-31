@@ -45,7 +45,7 @@
                         percentageData.LineTextIncludingLineBreak,
                         percentageData.StartInLine,
                         percentageData.EndInLine,
-                        percentageData.ToStandardUnit().NumericValue / 100));
+                        percentageData.NumericValueInStandardUnit / 100));
             }
 
             return Task.FromResult<IData?>(null);

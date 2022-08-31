@@ -4,7 +4,7 @@
     {
         public bool IsNegative => Value < 0;
 
-        public double NumericValue => Value;
+        public double NumericValueInCurrentUnit => Value;
 
         public override string DisplayText => $"{Math.Round(Value, 2)}"; // TODO => Localize
 
@@ -26,30 +26,6 @@
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
                 Value);
-        }
-
-        public double GetNumericValueToRelativeTo(INumericData? relativeData)
-        {
-            double percentage = NumericValue;
-
-            if (relativeData is null)
-            {
-                return percentage;
-            }
-            else
-            {
-                return percentage * relativeData.NumericValue;
-            }
-        }
-
-        public INumericData ToStandardUnit()
-        {
-            return this;
-        }
-
-        public INumericData FromStandardUnit(double newStandardUnitValue)
-        {
-            return new PercentageData(LineTextIncludingLineBreak, StartInLine, EndInLine, newStandardUnitValue);
         }
 
         public override string ToString()

@@ -24,8 +24,8 @@
                 return Task.FromResult<IData?>(null);
             }
 
-            double first = firstNumber.ToStandardUnit().NumericValue;
-            double second = secondNumber.ToStandardUnit().NumericValue;
+            double first = firstNumber.NumericValueInStandardUnit;
+            double second = secondNumber.NumericValueInStandardUnit;
             double result = (first + second) / 2;
 
             return Task.FromResult((IData?)secondNumber.FromStandardUnit(result).MergeDataLocations(firstNumber));

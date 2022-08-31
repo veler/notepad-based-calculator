@@ -4,7 +4,7 @@
     {
         public bool IsNegative => Value < 0;
 
-        public double NumericValue => Value;
+        public double NumericValueInCurrentUnit => Value;
 
         public override string DisplayText => Value.ToString(); // TODO: Show "th", "st", "rd"...
 
@@ -26,24 +26,6 @@
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
                 Value);
-        }
-
-        public double GetNumericValueToRelativeTo(INumericData? relativeData)
-        {
-            // TODO
-            throw new NotImplementedException();
-        }
-
-        public INumericData ToStandardUnit()
-        {
-            // TODO
-            throw new NotImplementedException();
-        }
-
-        public INumericData FromStandardUnit(double newStandardUnitValue)
-        {
-            // TODO
-            throw new NotImplementedException();
         }
 
         public override string ToString()

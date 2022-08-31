@@ -202,7 +202,7 @@ namespace NotepadBasedCalculator.Core.Tests
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("general.random", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             var number = (INumericData)lineResults.Last().StatementsAndData[0].ResultedData;
-            Assert.InRange(number.NumericValue, 0d, 1d);
+            Assert.InRange(number.NumericValueInStandardUnit, 0d, 1d);
 
             _textDocument.Text = "random between 10km and 100000m";
             lineResults = await _parserAndInterpreter.WaitAsync();
@@ -210,7 +210,7 @@ namespace NotepadBasedCalculator.Core.Tests
             statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("general.random", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
             number = (INumericData)lineResults.Last().StatementsAndData[0].ResultedData;
-            Assert.InRange(number.NumericValue, 10_000, 100_000);
+            Assert.InRange(number.NumericValueInStandardUnit, 10_000, 100_000);
         }
 
         [Theory]

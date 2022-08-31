@@ -46,7 +46,7 @@
                 OperationHelper.PerformAlgebraOperation(
                     numericData,
                     BinaryOperatorType.Division,
-                    numericData.FromStandardUnit(1 + percentageData.NumericValue)));
+                    numericData.FromStandardUnit(1 + percentageData.NumericValueInStandardUnit)));
         }
     }
 }

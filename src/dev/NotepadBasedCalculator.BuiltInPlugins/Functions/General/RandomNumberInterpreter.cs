@@ -27,8 +27,8 @@
             }
 
             double result = 0;
-            double first = firstNumber.ToStandardUnit().NumericValue;
-            double second = secondNumber.ToStandardUnit().NumericValue;
+            double first = firstNumber.NumericValueInStandardUnit;
+            double second = secondNumber.NumericValueInStandardUnit;
 
             if ((first == 0 && second == 1) || (first == 1 && second == 0))
             {

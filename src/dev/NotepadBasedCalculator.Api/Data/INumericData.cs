@@ -4,12 +4,20 @@
     {
         bool IsNegative { get; }
 
-        double NumericValue { get; }
+        double NumericValueInCurrentUnit { get; }
 
-        double GetNumericValueToRelativeTo(INumericData? relativeData);
+        double NumericValueInStandardUnit { get; }
 
-        INumericData ToStandardUnit();
+        INumericData CreateFromStandardUnit(double value);
 
-        INumericData FromStandardUnit(double newStandardUnitValue);
+        INumericData CreateFromCurrentUnit(double value);
+
+        INumericData Substract(INumericData value);
+
+        INumericData Add(INumericData value);
+
+        INumericData Multiply(INumericData value);
+
+        INumericData Divide(INumericData value);
     }
 }

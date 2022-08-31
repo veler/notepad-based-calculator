@@ -1,5 +1,4 @@
 ﻿using UnitsNet;
-using UnitsNet.Units;
 
 namespace NotepadBasedCalculator.Api
 {
@@ -7,9 +6,20 @@ namespace NotepadBasedCalculator.Api
     {
         public bool IsNegative => Value.Value < 0;
 
-        public double NumericValue => (double)Value.Value;
+        public double NumericValueInCurrentUnit => (double)Value.Value;
+
+        public double NumericValueInStandardUnit { get; }
 
         public override string DisplayText => $"{Value}"; // TODO => Localize
+
+        public static AngleData CreateFrom(AngleData origin, Angle value)
+        {
+            return new AngleData(
+                origin.LineTextIncludingLineBreak,
+                origin.StartInLine,
+                origin.EndInLine,
+                value);
+        }
 
         public AngleData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Angle value)
             : base(
@@ -20,6 +30,7 @@ namespace NotepadBasedCalculator.Api
                   PredefinedTokenAndDataTypeNames.Numeric,
                   PredefinedTokenAndDataTypeNames.SubDataTypeNames.Angle)
         {
+            NumericValueInStandardUnit = value.ToUnit(UnitsNet.Units.AngleUnit.Radian).Value;
         }
 
         public override IData MergeDataLocations(IData otherData)
@@ -31,50 +42,26 @@ namespace NotepadBasedCalculator.Api
                 Value);
         }
 
-        public double GetNumericValueToRelativeTo(INumericData? relativeData)
+        public INumericData CreateFromStandardUnit(double value)
         {
-            return NumericValue;
+            return CreateFrom(this, new Angle(value, UnitsNet.Units.AngleUnit.Radian));
         }
 
-        public INumericData ToStandardUnit()
+        public INumericData CreateFromCurrentUnit(double value)
         {
-            return new AngleData(
-                LineTextIncludingLineBreak,
-                StartInLine,
-                EndInLine,
-                Value.ToUnit(AngleUnit.Degree));
+            return CreateFrom(this, new Angle(value, Value.Unit));
         }
 
-        public INumericData FromStandardUnit(double newStandardUnitValue)
+        public IConvertibleNumericData ConvertTo(INumericData data)
         {
-            return new AngleData(
-                LineTextIncludingLineBreak,
-                StartInLine,
-                EndInLine,
-                Angle.FromDegrees(newStandardUnitValue).ToUnit(Value.Unit));
+            Guard.IsOfType<AngleData>(data);
+            var angle = (AngleData)data;
+            return CreateFrom(this, Value.ToUnit(angle.Value.Unit));
         }
 
-        public INumericData? ConvertFrom(INumericData from)
+        public bool CanConvertTo(INumericData data)
         {
-            if (from is AngleData fromAngleData)
-            {
-                return new AngleData(
-                    from.LineTextIncludingLineBreak,
-                    from.StartInLine,
-                    from.EndInLine,
-                    fromAngleData.Value.ToUnit(Value.Unit));
-            }
-
-            return new AngleData(
-                from.LineTextIncludingLineBreak,
-                from.StartInLine,
-                from.EndInLine,
-                new Angle(from.NumericValue, Value.Unit));
-        }
-
-        public bool CanConvertFrom(INumericData from)
-        {
-            return from is DecimalData or AngleData;
+            return data is AngleData;
         }
 
         public override string ToString()

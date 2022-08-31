@@ -4,7 +4,7 @@
     {
         public bool IsNegative => Value < 0;
 
-        public double NumericValue => Value;
+        public double NumericValueInCurrentUnit => Value;
 
         public override string DisplayText => Value.ToString(); // TODO => Localize. For example, in french, double separator is `,` instead of `.`
 
@@ -26,21 +26,6 @@
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
                 Value);
-        }
-
-        public double GetNumericValueToRelativeTo(INumericData? relativeData)
-        {
-            return NumericValue;
-        }
-
-        public INumericData ToStandardUnit()
-        {
-            return this;
-        }
-
-        public INumericData FromStandardUnit(double newStandardUnitValue)
-        {
-            return new DecimalData(LineTextIncludingLineBreak, StartInLine, EndInLine, newStandardUnitValue);
         }
 
         public override string ToString()
