@@ -8,16 +8,16 @@
 
         double NumericValueInStandardUnit { get; }
 
-        INumericData CreateFromStandardUnit(double value);
+        INumericData CreateFromStandardUnit(double valueInStandardUnit);
 
-        INumericData CreateFromCurrentUnit(double value);
+        INumericData CreateFromCurrentUnit(double valueInCurrentUnit);
 
-        INumericData Substract(INumericData value);
+        INumericData Add(INumericData otherData);
 
-        INumericData Add(INumericData value);
+        INumericData Substract(INumericData otherData);
 
-        INumericData Multiply(INumericData value);
+        INumericData Multiply(INumericData otherData);
 
-        INumericData Divide(INumericData value);
+        INumericData Divide(INumericData otherData);
     }
 }

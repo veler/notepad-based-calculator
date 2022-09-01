@@ -49,7 +49,7 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
 
                 if (result is not null && result.Count > 0 && result[0].SummarizedResultData is not null)
                 {
-                    Console.WriteLine(">> " + result[0].SummarizedResultData!.DisplayText);
+                    Console.WriteLine(">> " + result[0].SummarizedResultData!.GetDisplayText);
                 }
                 else
                 {

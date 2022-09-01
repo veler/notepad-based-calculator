@@ -10,7 +10,7 @@
         /// <summary>
         /// Gets a string representation of the data that will be displayed to the user.
         /// </summary>
-        string DisplayText { get; }
+        string GetDisplayText(string culture);
 
         bool IsOfSubtype(string expectedSubtype);
 

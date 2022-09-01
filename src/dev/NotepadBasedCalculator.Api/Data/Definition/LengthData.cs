@@ -1,15 +1,30 @@
-﻿using UnitsNet;
+﻿using System.Globalization;
+using UnitsNet;
 using UnitsNet.Units;
 
 namespace NotepadBasedCalculator.Api
 {
-    public sealed record LengthData : Data<Length>, IConvertibleNumericData
+    public sealed record LengthData : Data<Length>, INumericData, IConvertibleNumericData
     {
         public bool IsNegative => Value.Value < 0;
 
-        public double NumericValueInCurrentUnit => (double)Value.Value;
+        public double NumericValueInCurrentUnit => Value.Value;
 
-        public override string DisplayText => $"{Value}"; // TODO => Localize
+        public double NumericValueInStandardUnit { get; }
+
+        public override string GetDisplayText(string culture)
+        {
+            return ToBestUnitForDisplay(Value).ToString("s4", new CultureInfo(culture));
+        }
+
+        public static LengthData CreateFrom(LengthData origin, Length value)
+        {
+            return new LengthData(
+                origin.LineTextIncludingLineBreak,
+                origin.StartInLine,
+                origin.EndInLine,
+                value);
+        }
 
         public LengthData(string lineTextIncludingLineBreak, int startInLine, int endInLine, Length value)
             : base(
@@ -20,6 +35,7 @@ namespace NotepadBasedCalculator.Api
                   PredefinedTokenAndDataTypeNames.Numeric,
                   PredefinedTokenAndDataTypeNames.SubDataTypeNames.Length)
         {
+            NumericValueInStandardUnit = value.ToUnit(UnitsNet.Length.BaseUnit).Value;
         }
 
         public override IData MergeDataLocations(IData otherData)
@@ -31,9 +47,69 @@ namespace NotepadBasedCalculator.Api
                 Value);
         }
 
+        public INumericData CreateFromStandardUnit(double value)
+        {
+            return CreateFrom(this, new Length(value, UnitsNet.Length.BaseUnit));
+        }
+
+        public INumericData CreateFromCurrentUnit(double value)
+        {
+            return CreateFrom(this, new Length(value, Value.Unit));
+        }
+
+        public INumericData Add(INumericData otherData)
+        {
+            return CreateFrom(this, Value + ((LengthData)otherData).Value);
+        }
+
+        public INumericData Substract(INumericData otherData)
+        {
+            return CreateFrom(this, Value - ((LengthData)otherData).Value);
+        }
+
+        public INumericData Multiply(INumericData otherData)
+        {
+            if (otherData is DecimalData)
+            {
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit * otherData.NumericValueInCurrentUnit);
+            }
+
+            var otherLength = (LengthData)otherData;
+
+            return new AreaData(
+                LineTextIncludingLineBreak,
+                StartInLine,
+                EndInLine,
+                Value * otherLength.Value);
+        }
+
+        public INumericData Divide(INumericData otherData)
+        {
+            return new DecimalData(
+                LineTextIncludingLineBreak,
+                StartInLine,
+                EndInLine,
+                NumericValueInStandardUnit / otherData.NumericValueInStandardUnit);
+        }
+
         public override string ToString()
         {
             return base.ToString();
+        }
+
+        private static UnitsNet.Length ToBestUnitForDisplay(UnitsNet.Length length)
+        {
+            if (length.Unit == UnitsNet.Units.LengthUnit.Meter && length.Meters >= 1_000)
+            {
+                return length.ToUnit(LengthUnit.Kilometer);
+            }
+
+            if (length.Unit == UnitsNet.Units.LengthUnit.Kilometer && length.Meters < 1_000)
+            {
+                return length.ToUnit(LengthUnit.Kilometer);
+            }
+
+            return length;
         }
     }
 }

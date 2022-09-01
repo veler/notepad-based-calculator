@@ -1,8 +1,9 @@
-﻿using UnitsNet;
+﻿using System.Globalization;
+using UnitsNet;
 
 namespace NotepadBasedCalculator.Api
 {
-    public sealed record AngleData : Data<Angle>, IConvertibleNumericData
+    public sealed record AngleData : Data<Angle>, INumericData
     {
         public bool IsNegative => Value.Value < 0;
 
@@ -10,7 +11,10 @@ namespace NotepadBasedCalculator.Api
 
         public double NumericValueInStandardUnit { get; }
 
-        public override string DisplayText => $"{Value}"; // TODO => Localize
+        public override string GetDisplayText(string culture)
+        {
+            return Value.ToString("s4", new CultureInfo(culture));
+        }
 
         public static AngleData CreateFrom(AngleData origin, Angle value)
         {
@@ -30,7 +34,7 @@ namespace NotepadBasedCalculator.Api
                   PredefinedTokenAndDataTypeNames.Numeric,
                   PredefinedTokenAndDataTypeNames.SubDataTypeNames.Angle)
         {
-            NumericValueInStandardUnit = value.ToUnit(UnitsNet.Units.AngleUnit.Radian).Value;
+            NumericValueInStandardUnit = value.ToUnit(Angle.BaseUnit).Value;
         }
 
         public override IData MergeDataLocations(IData otherData)
@@ -44,7 +48,7 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData CreateFromStandardUnit(double value)
         {
-            return CreateFrom(this, new Angle(value, UnitsNet.Units.AngleUnit.Radian));
+            return CreateFrom(this, new Angle(value, Angle.BaseUnit));
         }
 
         public INumericData CreateFromCurrentUnit(double value)
@@ -52,16 +56,24 @@ namespace NotepadBasedCalculator.Api
             return CreateFrom(this, new Angle(value, Value.Unit));
         }
 
-        public IConvertibleNumericData ConvertTo(INumericData data)
+        public INumericData Add(INumericData otherData)
         {
-            Guard.IsOfType<AngleData>(data);
-            var angle = (AngleData)data;
-            return CreateFrom(this, Value.ToUnit(angle.Value.Unit));
+            throw new NotImplementedException();
         }
 
-        public bool CanConvertTo(INumericData data)
+        public INumericData Substract(INumericData otherData)
         {
-            return data is AngleData;
+            throw new NotImplementedException();
+        }
+
+        public INumericData Multiply(INumericData otherData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData Divide(INumericData otherData)
+        {
+            throw new NotImplementedException();
         }
 
         public override string ToString()

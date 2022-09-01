@@ -1,6 +1,8 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Globalization;
+
+namespace NotepadBasedCalculator.Api
 {
-    public sealed record CurrencyData : Data<CurrencyValue>, INumericData, IConvertibleNumericData
+    public sealed record CurrencyData : Data<CurrencyValue>, INumericData
     {
         private readonly Lazy<string> _displayText;
 
@@ -8,7 +10,21 @@
 
         public double NumericValueInCurrentUnit => Value.Value;
 
-        public override string DisplayText => _displayText.Value;
+        public double NumericValueInStandardUnit { get; }
+
+        public override string GetDisplayText(string culture)
+        {
+            return _displayText.Value; // TODO: Localize.
+        }
+
+        public static CurrencyData CreateFrom(CurrencyData origin, CurrencyValue value)
+        {
+            return new CurrencyData(
+                origin.LineTextIncludingLineBreak,
+                origin.StartInLine,
+                origin.EndInLine,
+                value);
+        }
 
         public CurrencyData(string lineTextIncludingLineBreak, int startInLine, int endInLine, CurrencyValue value)
             : base(
@@ -19,6 +35,8 @@
                   PredefinedTokenAndDataTypeNames.Numeric,
                   PredefinedTokenAndDataTypeNames.SubDataTypeNames.Currency)
         {
+            NumericValueInStandardUnit = value.Value; // TODO: Convert to USD.
+
             _displayText = new Lazy<string>(() =>
             {
                 // TODO => Localize.
@@ -38,6 +56,37 @@
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
                 Value);
+        }
+
+        public INumericData CreateFromStandardUnit(double value)
+        {
+            // TODO: is this correct currency text and ISO? Should it be localized?
+            return CreateFrom(this, new CurrencyValue(value, currency: "Dollars", isoCurrency: "USD"));
+        }
+
+        public INumericData CreateFromCurrentUnit(double value)
+        {
+            return CreateFrom(this, new CurrencyValue(value, Value.Currency, Value.IsoCurrency));
+        }
+
+        public INumericData Add(INumericData otherData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData Substract(INumericData otherData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData Multiply(INumericData otherData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData Divide(INumericData otherData)
+        {
+            throw new NotImplementedException();
         }
 
         public override string ToString()

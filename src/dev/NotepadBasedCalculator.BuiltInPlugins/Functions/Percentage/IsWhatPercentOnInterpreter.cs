@@ -37,10 +37,10 @@
                         BinaryOperatorType.Division,
                         secondNumericData);
 
-            if (dividedNumbers is INumericData numericData)
-            {
-                dividedNumbers = numericData.ToStandardUnit();
-            }
+            //if (dividedNumbers is INumericData numericData)
+            //{
+            //    dividedNumbers = numericData.NumericValueInStandardUnit;
+            //}
 
             var percentageData
                 = OperationHelper.PerformAlgebraOperation(

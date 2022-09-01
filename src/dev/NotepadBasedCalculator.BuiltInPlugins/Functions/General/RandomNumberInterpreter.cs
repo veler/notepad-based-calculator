@@ -20,12 +20,6 @@
             var firstNumber = (INumericData)detectedData[0];
             var secondNumber = (INumericData)detectedData[1];
 
-            if ((firstNumber is IConvertibleNumericData firstConvertibleNumericData && !firstConvertibleNumericData.CanConvertFrom(secondNumber))
-                || (secondNumber is IConvertibleNumericData secondConvertibleNumericData && !secondConvertibleNumericData.CanConvertFrom(firstNumber)))
-            {
-                return Task.FromResult<IData?>(null);
-            }
-
             double result = 0;
             double first = firstNumber.NumericValueInStandardUnit;
             double second = secondNumber.NumericValueInStandardUnit;
@@ -43,7 +37,7 @@
                 result = _random.Next((int)first, (int)second);
             }
 
-            return Task.FromResult((IData?)secondNumber.FromStandardUnit(result).MergeDataLocations(firstNumber));
+            return Task.FromResult((IData?)secondNumber.CreateFromStandardUnit(result).MergeDataLocations(firstNumber));
         }
     }
 }

@@ -50,7 +50,7 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
-            Assert.Equal(output, lineResults[0].SummarizedResultData.DisplayText);
+            Assert.Equal(output, lineResults[0].SummarizedResultData.GetDataDisplayText());
         }
 
         [Theory]
@@ -65,7 +65,7 @@ namespace NotepadBasedCalculator.Core.Tests
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
-            Assert.Equal(output, lineResults[0].SummarizedResultData?.DisplayText ?? string.Empty);
+            Assert.Equal(output, lineResults[0].SummarizedResultData?.GetDataDisplayText() ?? string.Empty);
         }
 
         [Fact]

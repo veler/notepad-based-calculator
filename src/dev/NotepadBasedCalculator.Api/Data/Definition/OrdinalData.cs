@@ -1,4 +1,6 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Globalization;
+
+namespace NotepadBasedCalculator.Api
 {
     public sealed record OrdinalData : Data<long>, INumericData
     {
@@ -6,7 +8,22 @@
 
         public double NumericValueInCurrentUnit => Value;
 
-        public override string DisplayText => Value.ToString(); // TODO: Show "th", "st", "rd"...
+        public double NumericValueInStandardUnit => NumericValueInCurrentUnit;
+
+        public override string GetDisplayText(string culture)
+        {
+            // TODO: Show "th", "st", "rd"...
+            return Value.ToString(new CultureInfo(culture));
+        }
+
+        public static OrdinalData CreateFrom(OrdinalData origin, long value)
+        {
+            return new OrdinalData(
+                origin.LineTextIncludingLineBreak,
+                origin.StartInLine,
+                origin.EndInLine,
+                value);
+        }
 
         public OrdinalData(string lineTextIncludingLineBreak, int startInLine, int endInLine, long value)
             : base(
@@ -26,6 +43,36 @@
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
                 Value);
+        }
+
+        public INumericData CreateFromStandardUnit(double value)
+        {
+            return CreateFrom(this, (long)value);
+        }
+
+        public INumericData CreateFromCurrentUnit(double value)
+        {
+            return CreateFromStandardUnit(value);
+        }
+
+        public INumericData Add(INumericData otherData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData Substract(INumericData otherData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData Multiply(INumericData otherData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData Divide(INumericData otherData)
+        {
+            throw new NotImplementedException();
         }
 
         public override string ToString()

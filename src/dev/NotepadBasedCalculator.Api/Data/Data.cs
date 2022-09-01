@@ -6,7 +6,7 @@
 
         public T Value { get; }
 
-        public abstract string DisplayText { get; }
+        public abstract string GetDisplayText(string culture);
 
         protected Data(
             string lineTextIncludingLineBreak,

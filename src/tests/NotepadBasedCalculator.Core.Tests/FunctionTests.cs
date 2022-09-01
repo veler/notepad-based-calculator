@@ -33,7 +33,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.percentOf", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
 
         [Theory]
@@ -43,7 +43,7 @@ namespace NotepadBasedCalculator.Core.Tests
         {
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
-            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
 
         [Theory]
@@ -59,7 +59,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.percentOf", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
 
         [Theory]
@@ -74,7 +74,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.percentOff", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
 
         [Theory]
@@ -89,7 +89,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.percentOn", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
 
         [Theory]
@@ -115,7 +115,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isWhatPercentOf", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.DisplayText) * 100).ToString() + "%");
+            Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText()) * 100).ToString() + "%");
         }
 
         [Theory]
@@ -135,7 +135,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isWhatPercentOn", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.DisplayText) * 100).ToString() + "%");
+            Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText()) * 100).ToString() + "%");
         }
 
         [Theory]
@@ -155,7 +155,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isWhatPercentOff", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.DisplayText) * 100).ToString() + "%");
+            Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText()) * 100).ToString() + "%");
         }
 
         [Theory]
@@ -174,7 +174,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isPercentOfWhat", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
 
         [Theory]
@@ -190,7 +190,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isPercentOnWhat", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
 
         [Fact]
@@ -225,7 +225,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("general.midpoint", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.DisplayText);
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
     }
 }

@@ -28,7 +28,8 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("1.50 + 25%", "1.875")]
         [InlineData("1 + 1.25", "2.25")]
         [InlineData("1.50 + 1.25", "2.75")]
-        [InlineData("1 + the half", "1.5")]
+        [InlineData("2 + the half", "3")]
+        [InlineData("2km + the half", "3 km")]
         [InlineData("a fifth + 2", "2.2")]
         [InlineData("1 + True", "2")]
         [InlineData("1 + False", "1")]
@@ -37,14 +38,15 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("1 - 1.25", "-0.25")]
         [InlineData("1-1.25", "-0.25")]
         [InlineData("1.50 - 1.25", "0.25")]
-        [InlineData("1 - the half", "0.5")]
+        [InlineData("2 - the half", "1")]
+        [InlineData("2km - the half", "1km")]
         [InlineData("1 - True", "0")]
         [InlineData("1 - False", "1")]
         [InlineData("1 x 25%", "0.25")]
         [InlineData("1.50 x 25%", "0.375")]
         [InlineData("1 x 1.25", "1.25")]
         [InlineData("1.50 x 1.25", "1.875")]
-        [InlineData("1 x one third", "0.333333333333333")]
+        [InlineData("1 x one third", "0.3333333333")]
         [InlineData("1 x True", "1")]
         [InlineData("1 x False", "0")]
         [InlineData("True + True", "2")]
@@ -65,7 +67,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            Assert.Equal(output, lineResults[0].StatementsAndData[0].ResultedData.DisplayText);
+            Assert.Equal(output, lineResults[0].StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
     }
 }

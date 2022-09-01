@@ -1,12 +1,29 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Globalization;
+
+namespace NotepadBasedCalculator.Api
 {
-    public sealed record DurationData : Data<TimeSpan>, IConvertibleNumericData
+    public sealed record DurationData : Data<TimeSpan>, INumericData
     {
         public bool IsNegative => Value.Ticks < 0;
 
         public double NumericValueInCurrentUnit => Value.Ticks;
 
-        public override string DisplayText => $"{Value}"; // TODO => Localize
+        public double NumericValueInStandardUnit => NumericValueInCurrentUnit;
+
+        public override string GetDisplayText(string culture)
+        {
+            // TODO: Localize
+            return Value.ToString();
+        }
+
+        public static DurationData CreateFrom(DurationData origin, TimeSpan value)
+        {
+            return new DurationData(
+                origin.LineTextIncludingLineBreak,
+                origin.StartInLine,
+                origin.EndInLine,
+                value);
+        }
 
         public DurationData(string lineTextIncludingLineBreak, int startInLine, int endInLine, TimeSpan value)
             : base(
@@ -26,6 +43,36 @@
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
                 Value);
+        }
+
+        public INumericData CreateFromStandardUnit(double value)
+        {
+            return CreateFrom(this, new TimeSpan((long)value));
+        }
+
+        public INumericData CreateFromCurrentUnit(double value)
+        {
+            return CreateFromStandardUnit(value);
+        }
+
+        public INumericData Add(INumericData otherData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData Substract(INumericData otherData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData Multiply(INumericData otherData)
+        {
+            throw new NotImplementedException();
+        }
+
+        public INumericData Divide(INumericData otherData)
+        {
+            throw new NotImplementedException();
         }
 
         public override string ToString()

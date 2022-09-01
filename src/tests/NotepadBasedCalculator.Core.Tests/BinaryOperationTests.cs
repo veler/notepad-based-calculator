@@ -80,7 +80,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            Assert.Equal(output, lineResults[0].StatementsAndData[0].ResultedData.DisplayText);
+            Assert.Equal(output, lineResults[0].StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
     }
 }

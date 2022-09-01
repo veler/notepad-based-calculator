@@ -285,7 +285,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
             IData data = lineResults[0].StatementsAndData[0].ResultedData;
-            Assert.Equal(output, data.DisplayText);
+            Assert.Equal(output, data.GetDataDisplayText());
         }
     }
 }
