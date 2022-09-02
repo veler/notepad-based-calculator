@@ -29,6 +29,8 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
             ParserAndInterpreterFactory parserAndInterpreterFactory = mefComposer.ExportProvider.GetExport<ParserAndInterpreterFactory>();
             ParserAndInterpreter parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(DefaultCulture, textDocument);
 
+            Task warmupTask = WarmupAsync(textDocument, parserAndInterpreter);
+
             ShowIntro();
 
             while (true)
@@ -42,6 +44,8 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
                     // Close application if user types "exit"
                     break;
                 }
+
+                await warmupTask;
 
                 textDocument.Text += input + Environment.NewLine;
 
@@ -78,6 +82,13 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
             Console.WriteLine("\" 20 tablespoons in teaspoons \"");
             Console.WriteLine("\" $30/day is what per year \"");
             Console.WriteLine();
+        }
+
+        private static async Task WarmupAsync(TextDocument textDocument, ParserAndInterpreter parserAndInterpreter)
+        {
+            textDocument.Text = "20h; 01/01/2022; 1km; 1km/h; 1kg; 25%; 123; 1rad; 2 km2; 1 USD; a fifth; the third; 1 MB; 1F";
+            await parserAndInterpreter.WaitAsync();
+            textDocument.Text = string.Empty;
         }
     }
 }
