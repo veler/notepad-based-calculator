@@ -2,7 +2,7 @@
 
 namespace NotepadBasedCalculator.Api
 {
-    public sealed record DateTimeData : Data<DateTime>, INumericData
+    public sealed record DateTimeData : Data<DateTime>, INumericData, ISupportMultipleDataTypeForArithmeticOperation
     {
         public bool IsNegative => Value.Ticks < 0;
 
@@ -56,22 +56,36 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DurationData otherDuration)
+            {
+                return CreateFrom(this, Value + otherDuration.Value);
+            }
+
+            ThrowIncompatibleUnitsException();
+            return null!;
         }
 
         public INumericData Substract(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DurationData otherDuration)
+            {
+                return CreateFrom(this, Value - otherDuration.Value);
+            }
+
+            ThrowIncompatibleUnitsException();
+            return null!;
         }
 
         public INumericData Multiply(INumericData otherData)
         {
-            throw new NotImplementedException();
+            ThrowUnsupportedArithmeticOperationException();
+            return null!;
         }
 
         public INumericData Divide(INumericData otherData)
         {
-            throw new NotImplementedException();
+            ThrowUnsupportedArithmeticOperationException();
+            return null!;
         }
 
         public override string ToString()

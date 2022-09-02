@@ -276,7 +276,7 @@ namespace NotepadBasedCalculator.Core.Tests
         }
 
         [Theory]
-        [InlineData("1km + 1m", "1 km")] // TODO: Should be 1.001 km or 1,001 m
+        [InlineData("1km + 1m", "1.001 km")]
         [InlineData("1h + 1m", "30.01:00:00")]
         public async Task ConflictingDataParsingAsync(string input, string output)
         {

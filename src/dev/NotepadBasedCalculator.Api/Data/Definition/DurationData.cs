@@ -1,6 +1,6 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public sealed record DurationData : Data<TimeSpan>, INumericData
+    public sealed record DurationData : Data<TimeSpan>, INumericData, ISupportMultipleDataTypeForArithmeticOperation
     {
         public bool IsNegative => Value.Ticks < 0;
 
@@ -55,22 +55,52 @@
 
         public INumericData Add(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DurationData otherDuration)
+            {
+                return CreateFrom(this, Value + otherDuration.Value);
+            }
+            else if (otherData is DateTimeData otherDateTime)
+            {
+                return new DateTimeData(
+                    LineTextIncludingLineBreak,
+                    StartInLine,
+                    EndInLine,
+                    otherDateTime.Value + Value);
+            }
+
+            ThrowIncompatibleUnitsException();
+            return null!;
         }
 
         public INumericData Substract(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DurationData otherDuration)
+            {
+                return CreateFrom(this, Value - otherDuration.Value);
+            }
+            else if (otherData is DateTimeData otherDateTime)
+            {
+                return new DateTimeData(
+                    LineTextIncludingLineBreak,
+                    StartInLine,
+                    EndInLine,
+                    otherDateTime.Value - Value);
+            }
+
+            ThrowIncompatibleUnitsException();
+            return null!;
         }
 
         public INumericData Multiply(INumericData otherData)
         {
-            throw new NotImplementedException();
+            ThrowUnsupportedArithmeticOperationException();
+            return null!;
         }
 
         public INumericData Divide(INumericData otherData)
         {
-            throw new NotImplementedException();
+            ThrowUnsupportedArithmeticOperationException();
+            return null!;
         }
 
         public override string ToString()

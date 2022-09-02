@@ -263,7 +263,8 @@ namespace NotepadBasedCalculator.Api
 
                 Guard.IsTrue(!leftIsDecimal && !rightIsDecimal);
 
-                if (!leftData.IsOfType(rightData.Type) || !leftData.IsOfSubtype(rightData.Subtype!))
+                if (newLeftData is not ISupportMultipleDataTypeForArithmeticOperation
+                    && (!leftData.IsOfType(rightData.Type) || !leftData.IsOfSubtype(rightData.Subtype!)))
                 {
                     throw new IncompatibleUnitsException();
                 }

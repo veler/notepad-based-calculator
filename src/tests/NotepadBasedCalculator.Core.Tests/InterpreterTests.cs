@@ -35,6 +35,16 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Equal("[Numeric] (7, 8): '2'", data.ToString());
         }
 
+        [Fact]
+        public async Task Intepreter_ErrorDisplayed()
+        {
+            _textDocument.Text = "20km + 30h";
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+
+            Assert.Single(lineResults[0].StatementsAndData);
+            Assert.Equal("Incompatible units", lineResults[0].StatementsAndData[0].Error.GetLocalizedMessage(SupportedCultures.English));
+        }
+
         [Theory]
         [InlineData("30+30", "60")]
         [InlineData("30+20%", "36")]
