@@ -59,6 +59,7 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
+            // TODO: Unit tests
             return CreateFrom(this, Value + ((AreaData)otherData).Value);
         }
 
@@ -99,14 +100,14 @@ namespace NotepadBasedCalculator.Api
 
         private static Area ToBestUnitForDisplay(Area area)
         {
-            if (area.Unit == AreaUnit.SquareMeter && area.SquareMeters >= 1_000)
+            if (area.Unit == AreaUnit.SquareMeter && area.SquareKilometers >= 1)
             {
                 return area.ToUnit(AreaUnit.SquareKilometer);
             }
 
-            if (area.Unit == AreaUnit.SquareKilometer && area.SquareMeters < 1_000)
+            if (area.Unit == AreaUnit.SquareKilometer && area.SquareKilometers < 1 && area.SquareKilometers > 0)
             {
-                return area.ToUnit(AreaUnit.SquareKilometer);
+                return area.ToUnit(AreaUnit.SquareMeter);
             }
 
             return area;

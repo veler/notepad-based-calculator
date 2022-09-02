@@ -58,22 +58,37 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateFrom(this, Value + ((SpeedData)otherData).Value);
         }
 
         public INumericData Substract(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateFrom(this, Value - ((SpeedData)otherData).Value);
         }
 
         public INumericData Multiply(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DecimalData)
+            {
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit * otherData.NumericValueInCurrentUnit);
+            }
+
+            ThrowUnsupportedArithmeticOperationException();
+            return null!;
         }
 
         public INumericData Divide(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DecimalData)
+            {
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit / otherData.NumericValueInCurrentUnit);
+            }
+
+            return new DecimalData(
+                LineTextIncludingLineBreak,
+                StartInLine,
+                EndInLine,
+                NumericValueInStandardUnit / otherData.NumericValueInStandardUnit);
         }
 
         public override string ToString()

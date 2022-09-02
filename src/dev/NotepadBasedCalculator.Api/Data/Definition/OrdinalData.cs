@@ -57,6 +57,7 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
+            // TODO: Unit tests
             throw new NotImplementedException();
         }
 

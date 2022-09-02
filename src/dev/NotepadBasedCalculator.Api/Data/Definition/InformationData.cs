@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using UnitsNet;
+using UnitsNet.Units;
 
 namespace NotepadBasedCalculator.Api
 {
@@ -13,7 +14,7 @@ namespace NotepadBasedCalculator.Api
 
         public override string GetDisplayText(string culture)
         {
-            return Value.ToString("s4", new CultureInfo(culture));
+            return ToBestUnitForDisplay(Value).ToString("s4", new CultureInfo(culture));
         }
 
         public static InformationData CreateFrom(InformationData origin, Information value)
@@ -58,27 +59,67 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateFrom(this, Value + ((InformationData)otherData).Value);
         }
 
         public INumericData Substract(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateFrom(this, Value - ((InformationData)otherData).Value);
         }
 
         public INumericData Multiply(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DecimalData)
+            {
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit * otherData.NumericValueInCurrentUnit);
+            }
+
+            ThrowUnsupportedArithmeticOperationException();
+            return null!;
         }
 
         public INumericData Divide(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DecimalData)
+            {
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit / otherData.NumericValueInCurrentUnit);
+            }
+
+            return new DecimalData(
+                LineTextIncludingLineBreak,
+                StartInLine,
+                EndInLine,
+                NumericValueInStandardUnit / otherData.NumericValueInStandardUnit);
         }
 
         public override string ToString()
         {
             return base.ToString();
+        }
+
+        private static Information ToBestUnitForDisplay(Information info)
+        {
+            if (info.Unit == InformationUnit.Terabyte && info.Bytes < 1_000_000_000_000)
+            {
+                return info.ToUnit(InformationUnit.Gigabyte);
+            }
+
+            if (info.Unit == InformationUnit.Gigabyte && info.Bytes < 1_000_000_000)
+            {
+                return info.ToUnit(InformationUnit.Megabyte);
+            }
+
+            if (info.Unit == InformationUnit.Megabyte && info.Bytes < 1_000_000)
+            {
+                return info.ToUnit(InformationUnit.Kilobyte);
+            }
+
+            if (info.Unit == InformationUnit.Kilobyte && info.Bytes < 1_000)
+            {
+                return info.ToUnit(InformationUnit.Byte);
+            }
+
+            return info;
         }
     }
 }

@@ -110,7 +110,7 @@ namespace NotepadBasedCalculator.Api
                 return length.ToUnit(LengthUnit.Kilometer);
             }
 
-            if (length.Unit == LengthUnit.Kilometer && length.Meters < 1_000)
+            if (length.Unit == LengthUnit.Kilometer && length.Meters < 1_000 && length.Meters > 0)
             {
                 return length.ToUnit(LengthUnit.Kilometer);
             }
