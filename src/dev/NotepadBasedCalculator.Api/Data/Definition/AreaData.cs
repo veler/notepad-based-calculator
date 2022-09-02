@@ -59,7 +59,6 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
-            // TODO: Unit tests
             return CreateFrom(this, Value + ((AreaData)otherData).Value);
         }
 
