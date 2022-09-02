@@ -4,205 +4,7 @@ namespace NotepadBasedCalculator.Api
 {
     public static class OperationHelper
     {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static IData? PerformOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
-        {
-            return NewPerformOperation(leftData, binaryOperatorType, rightData);
-            //if (leftData is not null)
-            //{
-            //    switch (binaryOperatorType)
-            //    {
-            //        case BinaryOperatorType.Equality:
-            //        case BinaryOperatorType.NoEquality:
-            //        case BinaryOperatorType.LessThan:
-            //        case BinaryOperatorType.LessThanOrEqualTo:
-            //        case BinaryOperatorType.GreaterThan:
-            //        case BinaryOperatorType.GreaterThanOrEqualTo:
-            //            return PerformBinaryOperation(leftData, binaryOperatorType, rightData);
-
-            //        case BinaryOperatorType.Addition:
-            //        case BinaryOperatorType.Subtraction:
-            //        case BinaryOperatorType.Multiply:
-            //        case BinaryOperatorType.Division:
-            //            return PerformAlgebraOperation(leftData, binaryOperatorType, rightData);
-
-            //        default:
-            //            ThrowHelper.ThrowNotSupportedException();
-            //            break;
-            //    }
-            //}
-
-            //return null;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IData? PerformBinaryOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
-        {
-            return NewPerformBinaryOperation(leftData, binaryOperatorType, rightData);
-            //if (leftData is null || rightData is null)
-            //{
-            //    return leftData;
-            //}
-
-            //if (leftData is not INumericData leftNumericData
-            //    || rightData is not INumericData rightNumericData)
-            //{
-            //    return null;
-            //}
-
-            //bool result;
-
-            //switch (binaryOperatorType)
-            //{
-            //    case BinaryOperatorType.Equality:
-            //        result
-            //            = leftNumericData.NumericValueInStandardUnit
-            //            == rightNumericData.NumericValueInStandardUnit;
-            //        break;
-
-            //    case BinaryOperatorType.NoEquality:
-            //        result
-            //            = leftNumericData.NumericValueInStandardUnit
-            //            != rightNumericData.NumericValueInStandardUnit;
-            //        break;
-
-            //    case BinaryOperatorType.LessThan:
-            //        result
-            //            = leftNumericData.NumericValueInStandardUnit
-            //            < rightNumericData.NumericValueInStandardUnit;
-            //        break;
-
-            //    case BinaryOperatorType.LessThanOrEqualTo:
-            //        result
-            //            = leftNumericData.NumericValueInStandardUnit
-            //            <= rightNumericData.NumericValueInStandardUnit;
-            //        break;
-
-            //    case BinaryOperatorType.GreaterThan:
-            //        result
-            //            = leftNumericData.NumericValueInStandardUnit
-            //            > rightNumericData.NumericValueInStandardUnit;
-            //        break;
-
-            //    case BinaryOperatorType.GreaterThanOrEqualTo:
-            //        result
-            //            = leftNumericData.NumericValueInStandardUnit
-            //            >= rightNumericData.NumericValueInStandardUnit;
-            //        break;
-
-            //    default:
-            //        ThrowHelper.ThrowNotSupportedException();
-            //        return null;
-            //}
-
-            //return new BooleanData(
-            //    leftData.LineTextIncludingLineBreak,
-            //    leftData.StartInLine,
-            //    rightData.EndInLine,
-            //    result);
-            return null;
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IData? PerformAlgebraOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
-        {
-            return NewPerformOperation(leftData, binaryOperatorType, rightData);
-            //if (leftData is null || rightData is null)
-            //{
-            //    return leftData;
-            //}
-
-            //if (leftData is not INumericData leftNumericData
-            //    || rightData is not INumericData rightNumericData)
-            //{
-            //    return null;
-            //}
-
-            //bool tryToConvertLeftData = true;
-            //if (binaryOperatorType is not BinaryOperatorType.Multiply and not BinaryOperatorType.Division
-            //    && leftData is IConvertibleNumericData leftConvertibleNumericData)
-            //{
-            //    if (leftConvertibleNumericData.CanConvertFrom(rightNumericData))
-            //    {
-            //        INumericData? newRightNumericData = leftConvertibleNumericData.ConvertFrom(rightNumericData);
-            //        if (newRightNumericData is not null)
-            //        {
-            //            rightNumericData = newRightNumericData;
-            //            tryToConvertLeftData = false;
-            //        }
-            //    }
-            //}
-
-            //if (tryToConvertLeftData
-            //    && binaryOperatorType is not BinaryOperatorType.Multiply and not BinaryOperatorType.Division
-            //    && rightData is IConvertibleNumericData rightConvertibleNumericData)
-            //{
-            //    if (rightConvertibleNumericData.CanConvertFrom(leftNumericData))
-            //    {
-            //        INumericData? newLeftNumericData = rightConvertibleNumericData.ConvertFrom(leftNumericData);
-            //        if (newLeftNumericData is null)
-            //        {
-            //            return null;
-            //        }
-            //        leftNumericData = newLeftNumericData;
-            //    }
-            //    else
-            //    {
-            //        return null;
-            //    }
-            //}
-
-            //double result;
-            //switch (binaryOperatorType)
-            //{
-            //    case BinaryOperatorType.Addition:
-            //        result
-            //            = leftNumericData.NumericValueInStandardUnit
-            //            + rightNumericData.ToStandardUnit().GetNumericValueToRelativeTo(leftNumericData.ToStandardUnit());
-            //        break;
-
-            //    case BinaryOperatorType.Subtraction:
-            //        result
-            //            = leftNumericData.NumericValueInStandardUnit
-            //            - rightNumericData.ToStandardUnit().GetNumericValueToRelativeTo(leftNumericData.ToStandardUnit());
-            //        break;
-
-            //    case BinaryOperatorType.Multiply:
-            //        result
-            //            = leftNumericData.NumericValueInStandardUnit
-            //            * rightNumericData.NumericValueInStandardUnit;
-            //        break;
-
-            //    case BinaryOperatorType.Division:
-            //        double divisor = rightNumericData.NumericValueInStandardUnit;
-            //        if (divisor == 0)
-            //        {
-            //            result = double.PositiveInfinity;
-            //        }
-            //        else
-            //        {
-            //            result
-            //                = leftNumericData.NumericValueInStandardUnit
-            //                / divisor;
-            //        }
-            //        break;
-
-            //    default:
-            //        ThrowHelper.ThrowNotSupportedException();
-            //        return null;
-            //}
-
-            //return leftNumericData.FromStandardUnit(result).MergeDataLocations(rightNumericData);
-            return null;
-        }
-
-
-
-
-
-
-
-        public static IData? NewPerformOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
         {
             if (leftData is not null)
             {
@@ -214,13 +16,13 @@ namespace NotepadBasedCalculator.Api
                     case BinaryOperatorType.LessThanOrEqualTo:
                     case BinaryOperatorType.GreaterThan:
                     case BinaryOperatorType.GreaterThanOrEqualTo:
-                        return NewPerformBinaryOperation(leftData, binaryOperatorType, rightData);
+                        return PerformBinaryOperation(leftData, binaryOperatorType, rightData);
 
                     case BinaryOperatorType.Addition:
                     case BinaryOperatorType.Subtraction:
                     case BinaryOperatorType.Multiply:
                     case BinaryOperatorType.Division:
-                        return NewPerformAlgebraOperation(leftData, binaryOperatorType, rightData);
+                        return PerformAlgebraOperation(leftData, binaryOperatorType, rightData);
 
                     default:
                         ThrowHelper.ThrowNotSupportedException();
@@ -232,7 +34,7 @@ namespace NotepadBasedCalculator.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IData? NewPerformBinaryOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
+        public static IData? PerformBinaryOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
         {
             if (leftData is not INumericData leftNumericData || rightData is not INumericData rightNumericData)
             {
@@ -300,7 +102,7 @@ namespace NotepadBasedCalculator.Api
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IData? NewPerformAlgebraOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
+        public static IData? PerformAlgebraOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
         {
             if (leftData is not INumericData leftNumericData || rightData is not INumericData rightNumericData)
             {
@@ -314,6 +116,11 @@ namespace NotepadBasedCalculator.Api
                 out leftNumericData,
                 out binaryOperatorType,
                 out rightNumericData);
+
+            if (rightNumericData is IValueRelativeToOtherData rightNumericDataValueRelativeToOtherData)
+            {
+                rightNumericData = leftNumericData.CreateFromStandardUnit(rightNumericDataValueRelativeToOtherData.GetStandardUnitValueRelativeTo(leftNumericData));
+            }
 
             INumericData result;
             switch (binaryOperatorType)
@@ -368,8 +175,8 @@ namespace NotepadBasedCalculator.Api
             newBinaryOperatorType = binaryOperatorType;
             newRightData = rightData;
 
-            bool leftIsDecimal = leftData is DecimalData;
-            bool rightIsDecimal = rightData is DecimalData;
+            bool leftIsDecimal = leftData is IDecimal;
+            bool rightIsDecimal = rightData is IDecimal;
             bool leftIsPercentage = leftData is PercentageData;
             bool rightIsPercentage = rightData is PercentageData;
 
@@ -431,7 +238,7 @@ namespace NotepadBasedCalculator.Api
             Guard.IsFalse(rightIsPercentage);
             Guard.IsFalse(leftIsDecimal && rightIsDecimal);
 
-            if (binaryOperatorType is BinaryOperatorType.Addition or BinaryOperatorType.Subtraction or BinaryOperatorType.Division)
+            if (binaryOperatorType is not BinaryOperatorType.Division and not BinaryOperatorType.Multiply)
             {
                 if (leftIsDecimal)
                 {
@@ -443,6 +250,12 @@ namespace NotepadBasedCalculator.Api
                 else if (rightIsDecimal)
                 {
                     // Convert the right decimal data to the same unit than the left data.
+
+                    if (rightData is IValueRelativeToOtherData rightNumericDataValueRelativeToOtherData)
+                    {
+                        rightData = leftData.CreateFromStandardUnit(rightNumericDataValueRelativeToOtherData.GetStandardUnitValueRelativeTo(leftData));
+                    }
+
                     newRightData = leftData.CreateFromCurrentUnit(rightData.NumericValueInCurrentUnit);
                     Guard.IsNotOfType<DecimalData>(newLeftData);
                     return;
@@ -452,7 +265,7 @@ namespace NotepadBasedCalculator.Api
 
                 if (!leftData.IsOfType(rightData.Type) || !leftData.IsOfSubtype(rightData.Subtype!))
                 {
-                    throw new Exception("Error: incompatible units."); // TODO: find a different message? create a custom exception so it can have a special handling?
+                    throw new IncompatibleUnitsException();
                 }
             }
         }

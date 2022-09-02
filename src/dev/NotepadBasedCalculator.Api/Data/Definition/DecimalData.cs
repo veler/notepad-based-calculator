@@ -1,10 +1,8 @@
-﻿using UnitsNet.Units;
-using UnitsNet;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace NotepadBasedCalculator.Api
 {
-    public sealed record DecimalData : Data<double>, INumericData
+    public sealed record DecimalData : Data<double>, INumericData, IDecimal
     {
         public bool IsNegative => Value < 0;
 

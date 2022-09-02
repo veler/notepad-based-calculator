@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.Api
 {
     public sealed record CurrencyData : Data<CurrencyValue>, INumericData
     {
@@ -71,22 +69,26 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
-            throw new NotImplementedException();
+            // TODO: support currency conversion.
+            return CreateFromCurrentUnit(NumericValueInCurrentUnit + otherData.NumericValueInCurrentUnit);
         }
 
         public INumericData Substract(INumericData otherData)
         {
-            throw new NotImplementedException();
+            // TODO: support currency conversion.
+            return CreateFromCurrentUnit(NumericValueInCurrentUnit - otherData.NumericValueInCurrentUnit);
         }
 
         public INumericData Multiply(INumericData otherData)
         {
-            throw new NotImplementedException();
+            // TODO: support currency conversion.
+            return CreateFromCurrentUnit(NumericValueInCurrentUnit * otherData.NumericValueInCurrentUnit);
         }
 
         public INumericData Divide(INumericData otherData)
         {
-            throw new NotImplementedException();
+            // TODO: support currency conversion.
+            return CreateFromCurrentUnit(NumericValueInCurrentUnit / otherData.NumericValueInCurrentUnit);
         }
 
         public override string ToString()

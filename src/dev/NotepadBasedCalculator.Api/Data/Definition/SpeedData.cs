@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using UnitsNet;
-using UnitsNet.Units;
 
 namespace NotepadBasedCalculator.Api
 {
@@ -49,7 +48,7 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData CreateFromStandardUnit(double value)
         {
-            return CreateFrom(this, new Speed(value, Speed.BaseUnit));
+            return CreateFrom(this, new Speed(value, Speed.BaseUnit).ToUnit(Value.Unit));
         }
 
         public INumericData CreateFromCurrentUnit(double value)

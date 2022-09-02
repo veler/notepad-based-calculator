@@ -28,6 +28,8 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                     expressionResult,
                     cancellationToken);
 
+            result.Error = expressionResult.Error;
+
             if (expressionFound)
             {
                 if (expressionResult.ParsedExpression is BinaryOperatorExpression binaryOperatorExpression

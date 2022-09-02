@@ -48,7 +48,7 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData CreateFromStandardUnit(double value)
         {
-            return CreateFrom(this, new Angle(value, Angle.BaseUnit));
+            return CreateFrom(this, new Angle(value, Angle.BaseUnit).ToUnit(Value.Unit));
         }
 
         public INumericData CreateFromCurrentUnit(double value)
@@ -58,22 +58,38 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateFrom(this, Value + ((AngleData)otherData).Value);
         }
 
         public INumericData Substract(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateFrom(this, Value - ((AngleData)otherData).Value);
         }
 
         public INumericData Multiply(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DecimalData)
+            {
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit * otherData.NumericValueInCurrentUnit);
+            }
+
+            ThrowUnsupportedArithmeticOperationException();
+            return null!;
         }
 
         public INumericData Divide(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DecimalData)
+            {
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit / otherData.NumericValueInCurrentUnit);
+            }
+
+            var otherLength = (AngleData)otherData;
+            return new DecimalData(
+                LineTextIncludingLineBreak,
+                StartInLine,
+                EndInLine,
+                Value / otherLength.Value);
         }
 
         public override string ToString()

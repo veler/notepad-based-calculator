@@ -55,5 +55,15 @@
         {
             return base.ToString();
         }
+
+        protected void ThrowIncompatibleUnitsException()
+        {
+            throw new IncompatibleUnitsException();
+        }
+
+        protected void ThrowUnsupportedArithmeticOperationException()
+        {
+            throw new UnsupportedArithmeticOperationException();
+        }
     }
 }

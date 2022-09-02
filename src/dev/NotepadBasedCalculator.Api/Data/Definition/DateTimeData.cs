@@ -1,6 +1,4 @@
-﻿using UnitsNet.Units;
-using UnitsNet;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace NotepadBasedCalculator.Api
 {

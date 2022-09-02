@@ -123,6 +123,12 @@ namespace NotepadBasedCalculator.Core
                     StatementParserAndInterpreterResult? result = await ParseAndInterpretNextStatementAsync(nextTokenToParse, cancellationToken);
                     if (result is not null)
                     {
+                        if (result.Error is not null)
+                        {
+                            statementResults.Add(result);
+                            break;
+                        }
+
                         Guard.IsNotNull(result.ParsedStatement);
                         nextTokenToParse = result.ParsedStatement.LastToken.Next;
                         statementResults.Add(result);
@@ -158,6 +164,8 @@ namespace NotepadBasedCalculator.Core
 
         private async Task<StatementParserAndInterpreterResult?> ParseAndInterpretNextStatementAsync(LinkedToken currentToken, CancellationToken cancellationToken)
         {
+            var result = new StatementParserAndInterpreterResult();
+
             // Get applicable statement parsers and interpreters.
             IEnumerable<IStatementParserAndInterpreter> statementParsersAndInterpreters
                 = _parserRepository.GetApplicableStatementParsersAndInterpreters(_culture);
@@ -167,7 +175,7 @@ namespace NotepadBasedCalculator.Core
                 try
                 {
                     // Try to parse and interpret a statement.
-                    var result = new StatementParserAndInterpreterResult();
+                    result = new StatementParserAndInterpreterResult();
                     if (await statementParserAndInterpreter.TryParseAndInterpretStatementAsync(_culture, currentToken, _variableService, result, cancellationToken))
                     {
                         cancellationToken.ThrowIfCancellationRequested();
@@ -182,10 +190,20 @@ namespace NotepadBasedCalculator.Core
 
                         return result;
                     }
+
+                    if (result.Error is not null)
+                    {
+                        return result;
+                    }
                 }
                 catch (OperationCanceledException)
                 {
                     // Ignore.
+                }
+                catch (DataOperationException doe)
+                {
+                    result.Error = doe;
+                    return result;
                 }
                 catch (Exception ex)
                 {

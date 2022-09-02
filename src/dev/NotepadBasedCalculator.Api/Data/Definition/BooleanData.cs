@@ -2,7 +2,7 @@
 
 namespace NotepadBasedCalculator.Api
 {
-    public sealed record BooleanData : Data<bool>, INumericData
+    public sealed record BooleanData : Data<bool>, INumericData, IDecimal
     {
         public bool IsNegative => false;
 
@@ -47,13 +47,7 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData CreateFromStandardUnit(double value)
         {
-            if (value == 0 || value == 1)
-            {
-                return CreateFrom(this, value == 0 ? false : true);
-            }
-
-            ThrowHelper.ThrowArgumentException(nameof(value), "The value cannot be converted to a boolean.");
-            return null;
+            return CreateBooleanValue(value);
         }
 
         public INumericData CreateFromCurrentUnit(double value)
@@ -63,27 +57,41 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateBooleanValue(NumericValueInStandardUnit + otherData.NumericValueInStandardUnit);
         }
 
         public INumericData Substract(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateBooleanValue(NumericValueInStandardUnit - otherData.NumericValueInStandardUnit);
         }
 
         public INumericData Multiply(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateBooleanValue(NumericValueInStandardUnit * otherData.NumericValueInStandardUnit);
         }
 
         public INumericData Divide(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateBooleanValue(NumericValueInStandardUnit / otherData.NumericValueInStandardUnit);
         }
 
         public override string ToString()
         {
             return base.ToString();
+        }
+
+        private INumericData CreateBooleanValue(double value)
+        {
+            if (value == 0 || value == 1)
+            {
+                return CreateFrom(this, value == 1);
+            }
+
+            return new DecimalData(
+                LineTextIncludingLineBreak,
+                StartInLine,
+                EndInLine,
+                value);
         }
     }
 }

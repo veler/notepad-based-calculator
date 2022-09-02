@@ -21,26 +21,18 @@
             var firstNumericData = (INumericData)detectedData[0];
             var secondNumericData = (INumericData)detectedData[1];
 
-            var one
-                = new DecimalData(
-                    firstNumericData.LineTextIncludingLineBreak,
-                    firstNumericData.StartInLine,
-                    firstNumericData.EndInLine,
-                    1);
-
             // 1 - (1 / (250 / 62.5)) = 0.75
             // so 62.5 represents 250 - 75% (aka. 75% off 25).
+
+            var divisionResult = OperationHelper.PerformAlgebraOperation(secondNumericData, BinaryOperatorType.Division, firstNumericData) as INumericData;
+            Guard.IsNotNull(divisionResult);
+
             return Task.FromResult(
-                OperationHelper.PerformAlgebraOperation(
-                    one,
-                    BinaryOperatorType.Subtraction,
-                    OperationHelper.PerformAlgebraOperation(
-                        one,
-                        BinaryOperatorType.Division,
-                        OperationHelper.PerformAlgebraOperation(
-                            secondNumericData,
-                            BinaryOperatorType.Division,
-                            firstNumericData))));
+                (IData?)new PercentageData(
+                    firstNumericData.LineTextIncludingLineBreak,
+                    firstNumericData.StartInLine,
+                    secondNumericData.EndInLine,
+                    1d - (1d / divisionResult.NumericValueInStandardUnit)));
         }
     }
 }

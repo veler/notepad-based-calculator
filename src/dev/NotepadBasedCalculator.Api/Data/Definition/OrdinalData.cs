@@ -2,7 +2,7 @@
 
 namespace NotepadBasedCalculator.Api
 {
-    public sealed record OrdinalData : Data<long>, INumericData
+    public sealed record OrdinalData : Data<long>, INumericData, IDecimal
     {
         public bool IsNegative => Value < 0;
 

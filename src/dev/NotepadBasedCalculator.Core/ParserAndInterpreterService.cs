@@ -385,6 +385,10 @@ namespace NotepadBasedCalculator.Core
             {
                 // Ignore.
             }
+            catch (DataOperationException doe)
+            {
+                result.Error = doe;
+            }
             catch (Exception ex)
             {
                 _logger.LogFault(
@@ -439,6 +443,10 @@ namespace NotepadBasedCalculator.Core
             catch (OperationCanceledException)
             {
                 // Ignore.
+            }
+            catch (DataOperationException doe)
+            {
+                result.Error = doe;
             }
             catch (Exception ex)
             {

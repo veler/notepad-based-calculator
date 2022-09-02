@@ -49,7 +49,7 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData CreateFromStandardUnit(double value)
         {
-            return CreateFrom(this, new Temperature(value, Temperature.BaseUnit));
+            return CreateFrom(this, new Temperature(value, Temperature.BaseUnit).ToUnit(Value.Unit));
         }
 
         public INumericData CreateFromCurrentUnit(double value)
@@ -59,22 +59,40 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
-            throw new NotImplementedException();
+            var otherTemperature = (TemperatureData)otherData;
+            Temperature newTemperature = Value + TemperatureDelta.From(otherTemperature.Value.Value, (TemperatureDeltaUnit)otherTemperature.Value.Unit);
+            return CreateFrom(this, newTemperature.ToUnit(otherTemperature.Value.Unit));
         }
 
         public INumericData Substract(INumericData otherData)
         {
-            throw new NotImplementedException();
+            var otherTemperature = (TemperatureData)otherData;
+            Temperature newTemperature = Value - TemperatureDelta.From(otherTemperature.Value.Value, (TemperatureDeltaUnit)otherTemperature.Value.Unit);
+            return CreateFrom(this, newTemperature.ToUnit(otherTemperature.Value.Unit));
         }
 
         public INumericData Multiply(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DecimalData)
+            {
+                Temperature newTemperature = Value.Multiply(otherData.NumericValueInCurrentUnit, Value.Unit);
+                return CreateFrom(this, newTemperature.ToUnit(Value.Unit));
+            }
+
+            ThrowUnsupportedArithmeticOperationException();
+            return null!;
         }
 
         public INumericData Divide(INumericData otherData)
         {
-            throw new NotImplementedException();
+            if (otherData is DecimalData)
+            {
+                Temperature newTemperature = Value.Divide(otherData.NumericValueInCurrentUnit, Value.Unit);
+                return CreateFrom(this, newTemperature.ToUnit(Value.Unit));
+            }
+
+            ThrowUnsupportedArithmeticOperationException();
+            return null!;
         }
 
         public override string ToString()

@@ -37,7 +37,7 @@ namespace NotepadBasedCalculator.Core.Tests
         }
 
         [Theory]
-        [InlineData("20% of 60 + (25% of 30) // equivalent to (20% of 60) + (25% of 30)", "13.5")]
+        [InlineData("20% of 60 + (25% of 30) // equivalent to (20% of 60) + (25% of 30)", "19.5")]
         [InlineData("20% of 25 + 50 // equivalen to (20% of 25) + 50", "55")]
         public async Task ConcatenationOfExpression(string input, string output)
         {
@@ -51,7 +51,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("20% of 60km", "12 km")]
         [InlineData("20% of (25 + 50)", "15")]
         [InlineData("tax = 40% \r\n tax of 75$", "30 Dollar")]
-        [InlineData("20% of 20%", "0.04")]
+        [InlineData("20% of 20%", "4%")]
         public async Task Percentage_PercentOf(string input, string output)
         {
             _textDocument.Text = input;
@@ -66,7 +66,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("20% off 60", "48")]
         [InlineData("20% off 60km", "48 km")]
         [InlineData("tax = 40% \r\n tax off 75$", "45 Dollar")]
-        [InlineData("20% off 20%", "0.16")]
+        [InlineData("20% off 20%", "16%")]
         public async Task Percentage_PercentOff(string input, string output)
         {
             _textDocument.Text = input;
@@ -81,7 +81,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("20% on 60", "72")]
         [InlineData("20% on 60km", "72 km")]
         [InlineData("tax = 40% \r\n tax on 75$", "105 Dollar")]
-        [InlineData("20% on 20%", "0.24")]
+        [InlineData("20% on 20%", "24%")]
         public async Task Percentage_PercentOn(string input, string output)
         {
             _textDocument.Text = input;
@@ -115,7 +115,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isWhatPercentOf", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText()) * 100).ToString() + "%");
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
 
         [Theory]
@@ -135,7 +135,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isWhatPercentOn", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText()) * 100).ToString() + "%");
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
 
         [Theory]
@@ -155,7 +155,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults.Last().StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults.Last().StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isWhatPercentOff", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, (double.Parse(lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText()) * 100).ToString() + "%");
+            Assert.Equal(output, lineResults.Last().StatementsAndData[0].ResultedData.GetDataDisplayText());
         }
 
         [Theory]

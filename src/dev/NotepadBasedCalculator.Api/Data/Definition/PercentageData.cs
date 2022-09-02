@@ -81,11 +81,7 @@ namespace NotepadBasedCalculator.Api
         public INumericData Divide(INumericData otherData)
         {
             Guard.IsOfType<PercentageData>(otherData);
-            return new DecimalData(
-                LineTextIncludingLineBreak,
-                StartInLine,
-                EndInLine,
-                NumericValueInStandardUnit / otherData.NumericValueInStandardUnit);
+            return CreateFrom(this, NumericValueInStandardUnit / otherData.NumericValueInStandardUnit);
         }
 
         public override string ToString()

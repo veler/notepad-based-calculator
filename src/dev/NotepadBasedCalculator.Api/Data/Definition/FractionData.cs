@@ -2,7 +2,7 @@
 
 namespace NotepadBasedCalculator.Api
 {
-    public sealed record FractionData : Data<double>, INumericData
+    public sealed record FractionData : Data<double>, INumericData, IDecimal, IValueRelativeToOtherData
     {
         public bool IsNegative => Value < 0;
 
@@ -57,22 +57,27 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Add(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateFrom(this, NumericValueInStandardUnit + otherData.NumericValueInStandardUnit);
         }
 
         public INumericData Substract(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateFrom(this, NumericValueInStandardUnit - otherData.NumericValueInStandardUnit);
         }
 
         public INumericData Multiply(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateFrom(this, NumericValueInStandardUnit * otherData.NumericValueInStandardUnit);
         }
 
         public INumericData Divide(INumericData otherData)
         {
-            throw new NotImplementedException();
+            return CreateFrom(this, NumericValueInStandardUnit / otherData.NumericValueInStandardUnit);
+        }
+
+        public double GetStandardUnitValueRelativeTo(INumericData other)
+        {
+            return other.NumericValueInStandardUnit * NumericValueInStandardUnit;
         }
 
         public override string ToString()

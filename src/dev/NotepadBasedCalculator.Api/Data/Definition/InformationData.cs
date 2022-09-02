@@ -48,7 +48,7 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData CreateFromStandardUnit(double value)
         {
-            return CreateFrom(this, new Information((decimal)value, Information.BaseUnit));
+            return CreateFrom(this, new Information((decimal)value, Information.BaseUnit).ToUnit(Value.Unit));
         }
 
         public INumericData CreateFromCurrentUnit(double value)

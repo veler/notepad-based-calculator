@@ -78,6 +78,10 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                                     cancellationToken);
                             resultedData = statementResult.ResultedData;
                             parsedExpressionOrStatement = statementResult.ParsedStatement;
+                            if (statementResult.Error is not null)
+                            {
+                                result.Error = statementResult.Error;
+                            }
                         }
                         else
                         {
@@ -94,6 +98,10 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                                     cancellationToken);
                             resultedData = expressionResult.ResultedData;
                             parsedExpressionOrStatement = expressionResult.ParsedExpression;
+                            if (expressionResult.Error is not null)
+                            {
+                                result.Error = expressionResult.Error;
+                            }
                         }
 
                         if (!foundStatementOrExpression
@@ -128,12 +136,17 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
 
                 if (functionDetected)
                 {
-                    (bool functionSucceeded, IData? functionResult)
+                    (bool functionSucceeded, IData? functionResult, DataOperationException? error)
                         = await InterpretFunctionAsync(
                             culture,
                             functionDefinition,
                             detectedData,
                             cancellationToken);
+
+                    if (error is not null)
+                    {
+                        result.Error = error;
+                    }
 
                     if (functionSucceeded)
                     {
@@ -216,13 +229,15 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
             }
         }
 
-        private async Task<(bool, IData?)> InterpretFunctionAsync(
+        private async Task<(bool, IData?, DataOperationException?)> InterpretFunctionAsync(
             string culture,
             FunctionDefinition functionDefinition,
             IReadOnlyList<IData> detectedData,
             CancellationToken cancellationToken)
         {
             IFunctionInterpreter functionInterpreter = GetFunctionInterpreter(culture, functionDefinition);
+
+            DataOperationException? error = null;
 
             try
             {
@@ -233,11 +248,15 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                         detectedData,
                         cancellationToken);
 
-                return (true, data);
+                return (true, data, error);
             }
             catch (OperationCanceledException)
             {
                 // Ignore.
+            }
+            catch (DataOperationException doe)
+            {
+                error = doe;
             }
             catch (Exception ex)
             {
@@ -247,7 +266,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                     ("FunctionName", functionDefinition.FunctionFullName));
             }
 
-            return (false, null);
+            return (false, null, error);
         }
 
         private IFunctionInterpreter GetFunctionInterpreter(string culture, FunctionDefinition functionDefinition)

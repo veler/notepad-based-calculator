@@ -1,6 +1,4 @@
-﻿using System.Globalization;
-
-namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.Api
 {
     public sealed record DurationData : Data<TimeSpan>, INumericData
     {

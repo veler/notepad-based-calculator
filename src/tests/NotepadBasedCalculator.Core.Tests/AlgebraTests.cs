@@ -39,7 +39,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("1-1.25", "-0.25")]
         [InlineData("1.50 - 1.25", "0.25")]
         [InlineData("2 - the half", "1")]
-        [InlineData("2km - the half", "1km")]
+        [InlineData("2km - the half", "1 km")]
         [InlineData("1 - True", "0")]
         [InlineData("1 - False", "1")]
         [InlineData("1 x 25%", "0.25")]

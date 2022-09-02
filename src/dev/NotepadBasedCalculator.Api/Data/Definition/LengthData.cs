@@ -49,7 +49,7 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData CreateFromStandardUnit(double value)
         {
-            return CreateFrom(this, new Length(value, UnitsNet.Length.BaseUnit));
+            return CreateFrom(this, new Length(value, UnitsNet.Length.BaseUnit).ToUnit(Value.Unit));
         }
 
         public INumericData CreateFromCurrentUnit(double value)
@@ -85,11 +85,17 @@ namespace NotepadBasedCalculator.Api
 
         public INumericData Divide(INumericData otherData)
         {
+            if (otherData is DecimalData)
+            {
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit / otherData.NumericValueInCurrentUnit);
+            }
+
+            var otherLength = (LengthData)otherData;
             return new DecimalData(
                 LineTextIncludingLineBreak,
                 StartInLine,
                 EndInLine,
-                NumericValueInStandardUnit / otherData.NumericValueInStandardUnit);
+                Value / otherLength.Value);
         }
 
         public override string ToString()
@@ -97,14 +103,14 @@ namespace NotepadBasedCalculator.Api
             return base.ToString();
         }
 
-        private static UnitsNet.Length ToBestUnitForDisplay(UnitsNet.Length length)
+        private static Length ToBestUnitForDisplay(Length length)
         {
-            if (length.Unit == UnitsNet.Units.LengthUnit.Meter && length.Meters >= 1_000)
+            if (length.Unit == LengthUnit.Meter && length.Meters >= 1_000)
             {
                 return length.ToUnit(LengthUnit.Kilometer);
             }
 
-            if (length.Unit == UnitsNet.Units.LengthUnit.Kilometer && length.Meters < 1_000)
+            if (length.Unit == LengthUnit.Kilometer && length.Meters < 1_000)
             {
                 return length.ToUnit(LengthUnit.Kilometer);
             }
