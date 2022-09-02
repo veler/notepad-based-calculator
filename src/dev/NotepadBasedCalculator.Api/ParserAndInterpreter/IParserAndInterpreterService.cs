@@ -2,6 +2,8 @@
 {
     public interface IParserAndInterpreterService
     {
+        IArithmeticAndRelationOperationService ArithmeticAndRelationOperationService { get; }
+
         Task<bool> TryParseAndInterpretExpressionAsync(
             string culture,
             LinkedToken? currentToken,

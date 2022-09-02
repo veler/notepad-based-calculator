@@ -6,6 +6,9 @@
     [Shared]
     internal sealed class PercentOfInterpreter : IFunctionInterpreter
     {
+        [Import]
+        public IArithmeticAndRelationOperationService ArithmeticAndRelationOperationService { get; set; } = null!;
+
         public Task<IData?> InterpretFunctionAsync(
             string culture,
             FunctionDefinition functionDefinition,
@@ -20,7 +23,7 @@
 
             // x * (% of x)
             return Task.FromResult(
-                OperationHelper.PerformAlgebraOperation(
+                ArithmeticAndRelationOperationService.PerformAlgebraOperation(
                     numericData, BinaryOperatorType.Multiply, percentageData));
         }
     }

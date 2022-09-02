@@ -106,7 +106,7 @@
                                 rightExpressionResult.ParsedExpression!);
 
                         result.ResultedData
-                            = OperationHelper.PerformBinaryOperation(
+                            = ParserAndInterpreterService.ArithmeticAndRelationOperationService.PerformBinaryOperation(
                                 leftExpressionResult.ResultedData,
                                 binaryOperator,
                                 rightExpressionResult.ResultedData);

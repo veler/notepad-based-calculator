@@ -88,7 +88,7 @@
                                 rightExpressionResult.ParsedExpression!);
 
                         result.ResultedData
-                            = OperationHelper.PerformAlgebraOperation(
+                            = ParserAndInterpreterService.ArithmeticAndRelationOperationService.PerformAlgebraOperation(
                                 leftExpressionResult.ResultedData,
                                 binaryOperator,
                                 rightExpressionResult.ResultedData);
@@ -188,7 +188,7 @@
                                 rightExpressionResult.ParsedExpression!);
 
                         result.ResultedData
-                            = OperationHelper.PerformAlgebraOperation(
+                            = ParserAndInterpreterService.ArithmeticAndRelationOperationService.PerformAlgebraOperation(
                                 leftExpressionResult.ResultedData,
                                 binaryOperator,
                                 rightExpressionResult.ResultedData);

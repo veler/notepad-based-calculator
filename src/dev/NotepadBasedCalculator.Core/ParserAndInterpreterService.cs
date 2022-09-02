@@ -3,16 +3,23 @@
 namespace NotepadBasedCalculator.Core
 {
     [Export(typeof(IParserAndInterpreterService))]
+    [Shared]
     internal sealed class ParserAndInterpreterService : IParserAndInterpreterService
     {
         private readonly ILogger _logger;
         private readonly IParserRepository _parserRepository;
 
+        public IArithmeticAndRelationOperationService ArithmeticAndRelationOperationService { get; }
+
         [ImportingConstructor]
-        public ParserAndInterpreterService(ILogger logger, IParserRepository parserRepository)
+        public ParserAndInterpreterService(
+            ILogger logger,
+            IParserRepository parserRepository,
+            IArithmeticAndRelationOperationService arithmeticAndRelationOperationService)
         {
             _logger = logger;
             _parserRepository = parserRepository;
+            ArithmeticAndRelationOperationService = arithmeticAndRelationOperationService;
         }
 
         public async Task<bool> TryParseAndInterpretExpressionAsync(

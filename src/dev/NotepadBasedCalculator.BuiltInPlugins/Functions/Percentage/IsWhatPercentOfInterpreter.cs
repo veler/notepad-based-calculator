@@ -1,12 +1,14 @@
 ﻿namespace NotepadBasedCalculator.BuiltInPlugins.Functions.Percentage
 {
     [Export(typeof(IFunctionInterpreter))]
-    [Export]
     [Name("percentage.isWhatPercentOf")]
     [Culture(SupportedCultures.English)]
     [Shared]
     internal sealed class IsWhatPercentOfInterpreter : IFunctionInterpreter
     {
+        [Import]
+        public IArithmeticAndRelationOperationService ArithmeticAndRelationOperationService { get; set; } = null!;
+
         public Task<IData?> InterpretFunctionAsync(
             string culture,
             FunctionDefinition functionDefinition,
@@ -23,7 +25,7 @@
             // So 62.5 represents 25% of 250.
 
             IData? firstNumericDataMultipliedPerOneHundred
-                = OperationHelper.PerformAlgebraOperation(
+                = ArithmeticAndRelationOperationService.PerformAlgebraOperation(
                     firstNumericData,
                     BinaryOperatorType.Multiply,
                     new DecimalData(
@@ -33,7 +35,7 @@
                         100));
 
             var percentageData
-                = OperationHelper.PerformAlgebraOperation(
+                = ArithmeticAndRelationOperationService.PerformAlgebraOperation(
                     firstNumericDataMultipliedPerOneHundred,
                     BinaryOperatorType.Division,
                     secondNumericData) as INumericData;

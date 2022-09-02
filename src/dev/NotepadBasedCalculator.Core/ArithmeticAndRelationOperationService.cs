@@ -1,11 +1,12 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace NotepadBasedCalculator.Api
+namespace NotepadBasedCalculator.Core
 {
-    // TODO: make it a MEF service. Move the implementation to Core or BuiltInPlugins.
-    public static class OperationHelper
+    [Export(typeof(IArithmeticAndRelationOperationService))]
+    [Shared]
+    internal sealed class ArithmeticAndRelationOperationService : IArithmeticAndRelationOperationService
     {
-        public static IData? PerformOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
+        public IData? PerformOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
         {
             if (leftData is not null)
             {
@@ -34,8 +35,70 @@ namespace NotepadBasedCalculator.Api
             return null;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IData? PerformBinaryOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
+        public IData? PerformAlgebraOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
+        {
+            if (leftData is not INumericData leftNumericData || rightData is not INumericData rightNumericData)
+            {
+                return leftData;
+            }
+
+            StandardizeNumericData(
+                leftNumericData,
+                binaryOperatorType,
+                rightNumericData,
+                out leftNumericData,
+                out binaryOperatorType,
+                out rightNumericData);
+
+            if (rightNumericData is IValueRelativeToOtherData rightNumericDataValueRelativeToOtherData)
+            {
+                rightNumericData
+                    = (INumericData)leftNumericData
+                    .CreateFromStandardUnit(rightNumericDataValueRelativeToOtherData.GetStandardUnitValueRelativeTo(leftNumericData))
+                    .MergeDataLocations(rightNumericData);
+            }
+
+            INumericData result;
+            switch (binaryOperatorType)
+            {
+                case BinaryOperatorType.Addition:
+                    result = leftNumericData.Add(rightNumericData);
+                    break;
+
+                case BinaryOperatorType.Subtraction:
+                    result = leftNumericData.Substract(rightNumericData);
+                    break;
+
+                case BinaryOperatorType.Multiply:
+                    result = leftNumericData.Multiply(rightNumericData);
+                    break;
+
+                case BinaryOperatorType.Division:
+                    double divisor = rightNumericData.NumericValueInStandardUnit;
+                    if (divisor == 0)
+                    {
+                        result
+                            = new DecimalData(
+                                leftData.LineTextIncludingLineBreak,
+                                leftData.StartInLine,
+                                leftData.EndInLine,
+                                double.PositiveInfinity);
+                    }
+                    else
+                    {
+                        result = leftNumericData.Divide(rightNumericData);
+                    }
+                    break;
+
+                default:
+                    ThrowHelper.ThrowNotSupportedException();
+                    return null;
+            }
+
+            return result.MergeDataLocations(rightNumericData);
+        }
+
+        public IData? PerformBinaryOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
         {
             if (leftData is not INumericData leftNumericData || rightData is not INumericData rightNumericData)
             {
@@ -100,70 +163,6 @@ namespace NotepadBasedCalculator.Api
                 Math.Min(leftData.StartInLine, rightData.StartInLine),
                 Math.Max(leftData.EndInLine, rightData.EndInLine),
                 result);
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static IData? PerformAlgebraOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
-        {
-            if (leftData is not INumericData leftNumericData || rightData is not INumericData rightNumericData)
-            {
-                return leftData;
-            }
-
-            StandardizeNumericData(
-                leftNumericData,
-                binaryOperatorType,
-                rightNumericData,
-                out leftNumericData,
-                out binaryOperatorType,
-                out rightNumericData);
-
-            if (rightNumericData is IValueRelativeToOtherData rightNumericDataValueRelativeToOtherData)
-            {
-                rightNumericData
-                    = (INumericData)leftNumericData
-                    .CreateFromStandardUnit(rightNumericDataValueRelativeToOtherData.GetStandardUnitValueRelativeTo(leftNumericData))
-                    .MergeDataLocations(rightNumericData);
-            }
-
-            INumericData result;
-            switch (binaryOperatorType)
-            {
-                case BinaryOperatorType.Addition:
-                    result = leftNumericData.Add(rightNumericData);
-                    break;
-
-                case BinaryOperatorType.Subtraction:
-                    result = leftNumericData.Substract(rightNumericData);
-                    break;
-
-                case BinaryOperatorType.Multiply:
-                    result = leftNumericData.Multiply(rightNumericData);
-                    break;
-
-                case BinaryOperatorType.Division:
-                    double divisor = rightNumericData.NumericValueInStandardUnit;
-                    if (divisor == 0)
-                    {
-                        result
-                            = new DecimalData(
-                                leftData.LineTextIncludingLineBreak,
-                                leftData.StartInLine,
-                                leftData.EndInLine,
-                                double.PositiveInfinity);
-                    }
-                    else
-                    {
-                        result = leftNumericData.Divide(rightNumericData);
-                    }
-                    break;
-
-                default:
-                    ThrowHelper.ThrowNotSupportedException();
-                    return null;
-            }
-
-            return result.MergeDataLocations(rightNumericData);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

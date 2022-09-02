@@ -7,7 +7,7 @@
     internal sealed class IsPercentOnWhatInterpreter : IFunctionInterpreter
     {
         [Import]
-        public IsWhatPercentOfInterpreter IsWhatPercentOfInterpreter { get; set; } = null!;
+        public IArithmeticAndRelationOperationService ArithmeticAndRelationOperationService { get; set; } = null!;
 
         public Task<IData?> InterpretFunctionAsync(
             string culture,
@@ -43,7 +43,7 @@
             // = 200
             // so 250 is 25% on 200.
             return Task.FromResult(
-                OperationHelper.PerformAlgebraOperation(
+                ArithmeticAndRelationOperationService.PerformAlgebraOperation(
                     numericData,
                     BinaryOperatorType.Division,
                     numericData.CreateFromStandardUnit(1 + percentageData.NumericValueInStandardUnit)));
