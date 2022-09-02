@@ -13,6 +13,4 @@
       Version="$(AppVersionNumber)" />
   </Target>
   <Target Name="BeforeBuild" DependsOnTargets="UpdateVersionNumber"/>
-
-  <Import Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TextTemplating\Microsoft.TextTemplating.targets" />
 </Project>
