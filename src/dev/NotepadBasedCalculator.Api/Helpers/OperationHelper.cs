@@ -2,6 +2,7 @@
 
 namespace NotepadBasedCalculator.Api
 {
+    // TODO: make it a MEF service. Move the implementation to Core or BuiltInPlugins.
     public static class OperationHelper
     {
         public static IData? PerformOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)
@@ -119,7 +120,10 @@ namespace NotepadBasedCalculator.Api
 
             if (rightNumericData is IValueRelativeToOtherData rightNumericDataValueRelativeToOtherData)
             {
-                rightNumericData = leftNumericData.CreateFromStandardUnit(rightNumericDataValueRelativeToOtherData.GetStandardUnitValueRelativeTo(leftNumericData));
+                rightNumericData
+                    = (INumericData)leftNumericData
+                    .CreateFromStandardUnit(rightNumericDataValueRelativeToOtherData.GetStandardUnitValueRelativeTo(leftNumericData))
+                    .MergeDataLocations(rightNumericData);
             }
 
             INumericData result;
@@ -217,7 +221,10 @@ namespace NotepadBasedCalculator.Api
             {
                 if (binaryOperatorType is BinaryOperatorType.Addition or BinaryOperatorType.Subtraction)
                 {
-                    newRightData = leftData.CreateFromStandardUnit(leftData.NumericValueInStandardUnit * rightData.NumericValueInStandardUnit);
+                    newRightData
+                        = (INumericData)leftData
+                        .CreateFromStandardUnit(leftData.NumericValueInStandardUnit * rightData.NumericValueInStandardUnit)
+                        .MergeDataLocations(rightData);
                     Guard.IsNotOfType<PercentageData>(leftData);
                     Guard.IsNotOfType<PercentageData>(newRightData);
                     return;
@@ -243,7 +250,10 @@ namespace NotepadBasedCalculator.Api
                 if (leftIsDecimal)
                 {
                     // Convert the left decimal data to the same unit than the right data.
-                    newLeftData = rightData.CreateFromCurrentUnit(leftData.NumericValueInCurrentUnit);
+                    newLeftData
+                        = (INumericData)rightData
+                        .CreateFromCurrentUnit(leftData.NumericValueInCurrentUnit)
+                        .MergeDataLocations(leftData);
                     Guard.IsNotOfType<DecimalData>(newLeftData);
                     return;
                 }
@@ -253,10 +263,16 @@ namespace NotepadBasedCalculator.Api
 
                     if (rightData is IValueRelativeToOtherData rightNumericDataValueRelativeToOtherData)
                     {
-                        rightData = leftData.CreateFromStandardUnit(rightNumericDataValueRelativeToOtherData.GetStandardUnitValueRelativeTo(leftData));
+                        rightData
+                            = (INumericData)leftData
+                            .CreateFromStandardUnit(rightNumericDataValueRelativeToOtherData.GetStandardUnitValueRelativeTo(leftData))
+                            .MergeDataLocations(rightData);
                     }
 
-                    newRightData = leftData.CreateFromCurrentUnit(rightData.NumericValueInCurrentUnit);
+                    newRightData
+                            = (INumericData)leftData
+                            .CreateFromCurrentUnit(rightData.NumericValueInCurrentUnit)
+                            .MergeDataLocations(rightData);
                     Guard.IsNotOfType<DecimalData>(newLeftData);
                     return;
                 }

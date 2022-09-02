@@ -86,6 +86,8 @@ namespace NotepadBasedCalculator.Core.Tests
             try
             {
                 IData result = OperationHelper.PerformOperation(leftData, binaryOperatorType, rightData);
+                Assert.Equal(0, result.StartInLine);
+                Assert.Equal(inputLeft.Length + 1 + inputRight.Length, result.Length);
                 Assert.Equal(output, result.GetDataDisplayText());
             }
             catch (DataOperationException ex)

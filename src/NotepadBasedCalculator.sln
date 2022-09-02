@@ -15,11 +15,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9A0C5D13
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Core.Tests", "tests\NotepadBasedCalculator.Core.Tests\NotepadBasedCalculator.Core.Tests.csproj", "{0E5EAA59-F0E5-4A41-B9B3-0EBF4E288AF1}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Language", "Language", "{205F6EB4-225B-4FF8-90D5-3E12AF69C91C}"
-	ProjectSection(SolutionItems) = preProject
-		language\specification.md = language\specification.md
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5D3826F6-5EB5-4B9F-88FF-F97459C1F423}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
