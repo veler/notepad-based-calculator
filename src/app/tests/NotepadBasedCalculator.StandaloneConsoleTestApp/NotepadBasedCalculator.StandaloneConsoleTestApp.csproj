@@ -10,6 +10,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\..\..\..\tools\WebServiceAppId.Debug.txt" Link="WebServiceAppId.Debug.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\..\..\tools\WebServiceUrl.Debug.txt" Link="WebServiceUrl.Debug.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\dev\NotepadBasedCalculator.Core\NotepadBasedCalculator.Core.csproj" />
   </ItemGroup>
 

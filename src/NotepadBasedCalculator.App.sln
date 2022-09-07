@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Core", "dev\NotepadBasedCalculator.Core\NotepadBasedCalculator.Core.csproj", "{533D69F9-1F94-4367-877F-EBE53FDF60EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Core", "app\dev\NotepadBasedCalculator.Core\NotepadBasedCalculator.Core.csproj", "{533D69F9-1F94-4367-877F-EBE53FDF60EC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dev", "dev", "{AA55FAFF-4F97-4251-906F-32984538E57C}"
 	ProjectSection(SolutionItems) = preProject
-		dev\Directory.Build.props = dev\Directory.Build.props
-		dev\Directory.Build.targets = dev\Directory.Build.targets
+		app\dev\Directory.Build.props = app\dev\Directory.Build.props
+		app\dev\Directory.Build.targets = app\dev\Directory.Build.targets
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{9A0C5D13-735C-4552-9E60-E7636AFDB476}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Core.Tests", "tests\NotepadBasedCalculator.Core.Tests\NotepadBasedCalculator.Core.Tests.csproj", "{0E5EAA59-F0E5-4A41-B9B3-0EBF4E288AF1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Core.Tests", "app\tests\NotepadBasedCalculator.Core.Tests\NotepadBasedCalculator.Core.Tests.csproj", "{0E5EAA59-F0E5-4A41-B9B3-0EBF4E288AF1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5D3826F6-5EB5-4B9F-88FF-F97459C1F423}"
 	ProjectSection(SolutionItems) = preProject
@@ -25,23 +25,25 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{FB794DB5-5335-4441-ACE7-8621020F7B19}"
 	ProjectSection(SolutionItems) = preProject
-		dev\shared\GlobalUsings.cs = dev\shared\GlobalUsings.cs
-		dev\shared\SharedAssemblyInfo.cs = dev\shared\SharedAssemblyInfo.cs
-		dev\shared\SharedAssemblyVersion.cs = dev\shared\SharedAssemblyVersion.cs
+		app\dev\shared\GlobalUsings.cs = app\dev\shared\GlobalUsings.cs
+		app\dev\shared\SharedAssemblyInfo.cs = app\dev\shared\SharedAssemblyInfo.cs
+		app\dev\shared\SharedAssemblyVersion.cs = app\dev\shared\SharedAssemblyVersion.cs
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Api", "dev\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj", "{8741C698-2C0C-4825-A953-1467411527A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Api", "app\dev\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj", "{8741C698-2C0C-4825-A953-1467411527A4}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.BuiltInPlugins", "dev\NotepadBasedCalculator.BuiltInPlugins\NotepadBasedCalculator.BuiltInPlugins.csproj", "{A4177E56-2ED5-4F38-829D-903204B86730}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.BuiltInPlugins", "app\dev\NotepadBasedCalculator.BuiltInPlugins\NotepadBasedCalculator.BuiltInPlugins.csproj", "{A4177E56-2ED5-4F38-829D-903204B86730}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.StandaloneConsoleTestApp", "tests\NotepadBasedCalculator.StandaloneConsoleTestApp\NotepadBasedCalculator.StandaloneConsoleTestApp.csproj", "{E10D42CF-52FF-4D3D-B118-125AC6F97512}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.StandaloneConsoleTestApp", "app\tests\NotepadBasedCalculator.StandaloneConsoleTestApp\NotepadBasedCalculator.StandaloneConsoleTestApp.csproj", "{E10D42CF-52FF-4D3D-B118-125AC6F97512}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{26522DDE-E6B2-455A-8489-9184C6F7DFAB}"
 	ProjectSection(SolutionItems) = preProject
-		tools\Directory.Build.props = tools\Directory.Build.props
+		app\tools\Directory.Build.props = app\tools\Directory.Build.props
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Benchmark", "tools\NotepadBasedCalculator.Benchmark\NotepadBasedCalculator.Benchmark.csproj", "{2E081692-6B27-4191-9F8B-32E415D2F011}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Benchmark", "app\tools\NotepadBasedCalculator.Benchmark\NotepadBasedCalculator.Benchmark.csproj", "{2E081692-6B27-4191-9F8B-32E415D2F011}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NotepadBasedCalculator.Shared", "shared\NotepadBasedCalculator.Shared\NotepadBasedCalculator.Shared.shproj", "{8CF4A1C5-9D0E-47EB-8434-17B50331EC0B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,8 +87,13 @@ Global
 		{A4177E56-2ED5-4F38-829D-903204B86730} = {AA55FAFF-4F97-4251-906F-32984538E57C}
 		{E10D42CF-52FF-4D3D-B118-125AC6F97512} = {9A0C5D13-735C-4552-9E60-E7636AFDB476}
 		{2E081692-6B27-4191-9F8B-32E415D2F011} = {26522DDE-E6B2-455A-8489-9184C6F7DFAB}
+		{8CF4A1C5-9D0E-47EB-8434-17B50331EC0B} = {AA55FAFF-4F97-4251-906F-32984538E57C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BCA00D25-9E3C-482D-8D6C-5A93A12A7232}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		shared\NotepadBasedCalculator.Shared\NotepadBasedCalculator.Shared.projitems*{533d69f9-1f94-4367-877f-ebe53fdf60ec}*SharedItemsImports = 5
+		shared\NotepadBasedCalculator.Shared\NotepadBasedCalculator.Shared.projitems*{8cf4a1c5-9d0e-47eb-8434-17b50331ec0b}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

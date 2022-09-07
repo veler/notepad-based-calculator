@@ -25,7 +25,8 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
 
             var mefComposer
                 = new MefComposer(
-                    typeof(MefComposer).Assembly);
+                    typeof(MefComposer).Assembly,
+                    typeof(ConfigurationReader).Assembly);
             ParserAndInterpreterFactory parserAndInterpreterFactory = mefComposer.ExportProvider.GetExport<ParserAndInterpreterFactory>();
             ParserAndInterpreter parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(DefaultCulture, textDocument);
 

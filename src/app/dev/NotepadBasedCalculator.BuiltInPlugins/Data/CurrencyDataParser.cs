@@ -13,6 +13,14 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
         private const string IsoCurrency = "isoCurrency";
         private const string TypeName = "currency";
 
+        private readonly ICurrencyService _currencyService;
+
+        [ImportingConstructor]
+        public CurrencyDataParser(ICurrencyService currencyService)
+        {
+            _currencyService = currencyService;
+        }
+
         public IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine, CancellationToken cancellationToken)
         {
             List<ModelResult> modelResults = NumberWithUnitRecognizer.RecognizeCurrency(tokenizedTextLine.LineTextIncludingLineBreak, culture);
