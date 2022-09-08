@@ -3,7 +3,6 @@
     [Export(typeof(IFunctionInterpreter))]
     [Name("percentage.isPercentOfWhat")]
     [Culture(SupportedCultures.English)]
-    [Shared]
     internal sealed class IsPercentOfWhatInterpreter : IFunctionInterpreter
     {
         [Import]
@@ -47,7 +46,7 @@
                 ArithmeticAndRelationOperationService.PerformAlgebraOperation(
                     numericData,
                     BinaryOperatorType.Multiply,
-                    numericData.CreateFromStandardUnit(1 / percentageData.NumericValueInStandardUnit)));
+                    numericData.CreateFromCurrentUnit(1 / percentageData.NumericValueInCurrentUnit)));
         }
     }
 }

@@ -4,7 +4,6 @@ using System.Collections.Immutable;
 namespace NotepadBasedCalculator.Core
 {
     [Export(typeof(ILexer))]
-    [Shared]
     internal sealed class Lexer : ILexer
     {
         private readonly IEnumerable<Lazy<IGrammarProvider, CultureCodeMetadata>> _grammarProviders;

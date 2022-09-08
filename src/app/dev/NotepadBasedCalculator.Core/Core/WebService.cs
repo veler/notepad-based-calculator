@@ -4,7 +4,6 @@ using NotepadBasedCalculator.Shared;
 namespace NotepadBasedCalculator.Core
 {
     [Export]
-    [Shared]
     internal sealed class WebService
     {
         private readonly IConfigurationReader? _configurationReader;
@@ -59,7 +58,7 @@ namespace NotepadBasedCalculator.Core
                     streamWriter.Write("\"" + _configurationReader.WebServiceAppId + "\"");
                 }
 
-                using var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(true);
+                using var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(false);
                 using var streamReader = new StreamReader(httpResponse.GetResponseStream());
 
                 string result = streamReader.ReadToEnd();

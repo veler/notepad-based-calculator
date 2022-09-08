@@ -3,7 +3,6 @@
     [Export(typeof(IFunctionInterpreter))]
     [Name("percentage.isWhatPercentOf")]
     [Culture(SupportedCultures.English)]
-    [Shared]
     internal sealed class IsWhatPercentOfInterpreter : IFunctionInterpreter
     {
         [Import]
@@ -47,7 +46,7 @@
                         percentageData.LineTextIncludingLineBreak,
                         percentageData.StartInLine,
                         percentageData.EndInLine,
-                        percentageData.NumericValueInStandardUnit / 100));
+                        percentageData.NumericValueInCurrentUnit / 100));
             }
 
             return Task.FromResult<IData?>(null);

@@ -48,7 +48,7 @@ namespace NotepadBasedCalculator.Core
         {
             try
             {
-                await _currentParsingAndInterpretationTask.ConfigureAwait(true);
+                await _currentParsingAndInterpretationTask.ConfigureAwait(false);
             }
             catch (OperationCanceledException)
             {
@@ -223,7 +223,7 @@ namespace NotepadBasedCalculator.Core
                 = await ParseDataAsync(
                     tokenizedLine,
                     cancellationToken)
-                .ConfigureAwait(true);
+                .ConfigureAwait(false);
 
             return _lexer.TokenizeLine(
                 _culture,
@@ -272,7 +272,7 @@ namespace NotepadBasedCalculator.Core
                         cancellationToken));
             }
 
-            await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask()).ConfigureAwait(true);
+            await Task.WhenAny(Task.WhenAll(tasks), cancellationToken.AsTask()).ConfigureAwait(false);
 
             if (cancellationToken.IsCancellationRequested)
             {

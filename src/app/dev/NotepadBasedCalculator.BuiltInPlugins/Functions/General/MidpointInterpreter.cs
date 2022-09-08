@@ -3,7 +3,6 @@
     [Export(typeof(IFunctionInterpreter))]
     [Name("general.midpoint")]
     [Culture(SupportedCultures.English)]
-    [Shared]
     internal sealed class MidpointInterpreter : IFunctionInterpreter
     {
         public Task<IData?> InterpretFunctionAsync(

@@ -1,30 +1,47 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Globalization;
+
+namespace NotepadBasedCalculator.Api
 {
     public sealed record CurrencyData : Data<CurrencyValue>, INumericData
     {
-        private readonly Lazy<string> _displayText;
+        private readonly ICurrencyService _currencyService;
+        private readonly AsyncLazy<double> _numericValueInStandardUnit;
 
         public bool IsNegative => Value.Value < 0;
 
         public double NumericValueInCurrentUnit => Value.Value;
 
-        public double NumericValueInStandardUnit { get; }
+        public double NumericValueInStandardUnit => _numericValueInStandardUnit.GetValueAsync().CompleteOnCurrentThread();
 
         public override string GetDisplayText(string culture)
         {
-            return _displayText.Value; // TODO: Localize.
+            // TODO => Localize.
+
+            string valueString = ((double)decimal.Round((decimal)Value.Value, 2)).ToString(new CultureInfo(culture));
+            if (!string.IsNullOrWhiteSpace(Value.IsoCurrency))
+            {
+                return $"{valueString} {Value.IsoCurrency}";
+            }
+
+            return $"{valueString} {Value.Currency}";
         }
 
-        public static CurrencyData CreateFrom(CurrencyData origin, CurrencyValue value)
+        public static CurrencyData CreateFrom(ICurrencyService currencyService, CurrencyData origin, CurrencyValue value)
         {
             return new CurrencyData(
+                currencyService,
                 origin.LineTextIncludingLineBreak,
                 origin.StartInLine,
                 origin.EndInLine,
                 value);
         }
 
-        public CurrencyData(string lineTextIncludingLineBreak, int startInLine, int endInLine, CurrencyValue value)
+        public CurrencyData(
+            ICurrencyService currencyService,
+            string lineTextIncludingLineBreak,
+            int startInLine,
+            int endInLine,
+            CurrencyValue value)
             : base(
                   lineTextIncludingLineBreak,
                   startInLine,
@@ -33,23 +50,16 @@
                   PredefinedTokenAndDataTypeNames.Numeric,
                   PredefinedTokenAndDataTypeNames.SubDataTypeNames.Currency)
         {
-            NumericValueInStandardUnit = value.Value; // TODO: Convert to USD.
+            Guard.IsNotNull(currencyService);
+            _currencyService = currencyService;
 
-            _displayText = new Lazy<string>(() =>
-            {
-                // TODO => Localize.
-                if (!string.IsNullOrWhiteSpace(Value.IsoCurrency))
-                {
-                    return $"{Value.Value} {Value.IsoCurrency}";
-                }
-
-                return $"{Value.Value} {Value.Currency}";
-            });
+            _numericValueInStandardUnit = new AsyncLazy<double>(() => ConvertAsync(value.IsoCurrency, value.Value, "USD"));
         }
 
         public override IData MergeDataLocations(IData otherData)
         {
             return new CurrencyData(
+                _currencyService,
                 LineTextIncludingLineBreak,
                 Math.Min(StartInLine, otherData.StartInLine),
                 Math.Max(EndInLine, otherData.EndInLine),
@@ -58,42 +68,103 @@
 
         public INumericData CreateFromStandardUnit(double value)
         {
-            // TODO: is this correct currency text and ISO? Should it be localized?
-            return CreateFrom(this, new CurrencyValue(value, currency: "Dollars", isoCurrency: "USD"));
+            double newValue = ConvertAsync("USD", value, Value.IsoCurrency).CompleteOnCurrentThread();
+            return CreateFromCurrentUnit(newValue);
         }
 
         public INumericData CreateFromCurrentUnit(double value)
         {
-            return CreateFrom(this, new CurrencyValue(value, Value.Currency, Value.IsoCurrency));
+            return CreateFrom(_currencyService, this, new CurrencyValue(value, Value.Currency, Value.IsoCurrency));
         }
 
         public INumericData Add(INumericData otherData)
         {
-            // TODO: support currency conversion.
-            return CreateFromCurrentUnit(NumericValueInCurrentUnit + otherData.NumericValueInCurrentUnit);
+            if (otherData is CurrencyData otherCurrencyData)
+            {
+                if (Value.IsoCurrency == otherCurrencyData.Value.IsoCurrency)
+                {
+                    return CreateFromCurrentUnit(NumericValueInCurrentUnit + otherCurrencyData.NumericValueInCurrentUnit);
+                }
+
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit + otherCurrencyData.ConvertAsync(Value.IsoCurrency).CompleteOnCurrentThread());
+            }
+
+            return CreateFromStandardUnit(NumericValueInCurrentUnit + otherData.NumericValueInStandardUnit);
         }
 
         public INumericData Substract(INumericData otherData)
         {
-            // TODO: support currency conversion.
-            return CreateFromCurrentUnit(NumericValueInCurrentUnit - otherData.NumericValueInCurrentUnit);
+            if (otherData is CurrencyData otherCurrencyData)
+            {
+                if (Value.IsoCurrency == otherCurrencyData.Value.IsoCurrency)
+                {
+                    return CreateFromCurrentUnit(NumericValueInCurrentUnit - otherCurrencyData.NumericValueInCurrentUnit);
+                }
+
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit - otherCurrencyData.ConvertAsync(Value.IsoCurrency).CompleteOnCurrentThread());
+            }
+
+            return CreateFromStandardUnit(NumericValueInCurrentUnit - otherData.NumericValueInStandardUnit);
         }
 
         public INumericData Multiply(INumericData otherData)
         {
-            // TODO: support currency conversion.
-            return CreateFromCurrentUnit(NumericValueInCurrentUnit * otherData.NumericValueInCurrentUnit);
+            if (otherData is CurrencyData otherCurrencyData)
+            {
+                if (Value.IsoCurrency == otherCurrencyData.Value.IsoCurrency)
+                {
+                    return CreateFromCurrentUnit(NumericValueInCurrentUnit * otherCurrencyData.NumericValueInCurrentUnit);
+                }
+
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit * otherCurrencyData.ConvertAsync(Value.IsoCurrency).CompleteOnCurrentThread());
+            }
+
+            return CreateFromCurrentUnit(NumericValueInCurrentUnit * otherData.NumericValueInStandardUnit);
         }
 
         public INumericData Divide(INumericData otherData)
         {
-            // TODO: support currency conversion.
-            return CreateFromCurrentUnit(NumericValueInCurrentUnit / otherData.NumericValueInCurrentUnit);
+            if (otherData is CurrencyData otherCurrencyData)
+            {
+                if (Value.IsoCurrency == otherCurrencyData.Value.IsoCurrency)
+                {
+                    return CreateFromCurrentUnit(NumericValueInCurrentUnit / otherCurrencyData.NumericValueInCurrentUnit);
+                }
+
+                return CreateFromCurrentUnit(NumericValueInCurrentUnit / otherCurrencyData.ConvertAsync(Value.IsoCurrency).CompleteOnCurrentThread());
+            }
+
+            return CreateFromCurrentUnit(NumericValueInCurrentUnit / otherData.NumericValueInStandardUnit);
         }
 
         public override string ToString()
         {
             return base.ToString();
+        }
+
+        internal Task<double> ConvertAsync(string to)
+        {
+            return ConvertAsync(Value.IsoCurrency, Value.Value, to);
+        }
+
+        private async Task<double> ConvertAsync(string from, double value, string to)
+        {
+            double? usdValue = await _currencyService.ConvertCurrencyAsync(from, value, to);
+            if (usdValue.HasValue)
+            {
+                return usdValue.Value;
+            }
+
+            throw new ConversionFailedExpression();
+        }
+
+        private class ConversionFailedExpression : DataOperationException
+        {
+            public override string GetLocalizedMessage(string culture)
+            {
+                // TODO: Localize.
+                return "Unable to retrieve exchange rates.";
+            }
         }
     }
 }

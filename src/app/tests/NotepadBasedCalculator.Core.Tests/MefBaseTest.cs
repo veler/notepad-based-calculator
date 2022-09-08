@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Moq;
 using NotepadBasedCalculator.Api;
 using NotepadBasedCalculator.Core.Mef;
 
@@ -17,11 +20,21 @@ namespace NotepadBasedCalculator.Core.Tests
             // Do all the tests in English.
             // LanguageManager.Instance.SetCurrentCulture(new LanguageDefinition("en-US"));
 
-            _mefComposer
-                = new MefComposer(
-                    typeof(MefComposer).Assembly);
+            var mockCurrencyService = new Mock<CurrencyService>();
+            mockCurrencyService.CallBase = true;
+            mockCurrencyService.Setup(s => s.LoadLatestRatesAsync())
+                .Returns(
+                    Task.FromResult(
+                        new Dictionary<string, double>
+                        {
+                            { "USD", 1 },
+                            { "CAD", 1.31 }
+                        }));
 
-            ExportProvider = _mefComposer.ExportProvider.GetExport<IMefProvider>();
+            _mefComposer
+                = new MefComposer(null, mockCurrencyService.As<ICurrencyService>().Object);
+
+            ExportProvider = _mefComposer.ExportProvider.GetExport<IMefProvider>()!.Value;
         }
 
         ~MefBaseTest()

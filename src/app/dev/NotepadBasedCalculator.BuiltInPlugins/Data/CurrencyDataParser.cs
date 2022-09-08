@@ -5,7 +5,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {
     [Export(typeof(IDataParser))]
     [Culture(SupportedCultures.Any)]
-    [Shared]
     public sealed class CurrencyDataParser : IDataParser
     {
         private const string Value = "value";
@@ -46,6 +45,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
 
                             data.Add(
                                 new CurrencyData(
+                                    _currencyService,
                                     tokenizedTextLine.LineTextIncludingLineBreak,
                                     modelResult.Start,
                                     modelResult.End + 1,

@@ -4,7 +4,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
 {
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
-    [Shared]
     internal sealed class ConditionalExpressionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]

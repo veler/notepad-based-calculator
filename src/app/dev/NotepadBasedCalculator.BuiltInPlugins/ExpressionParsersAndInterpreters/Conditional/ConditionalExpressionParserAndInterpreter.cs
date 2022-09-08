@@ -3,7 +3,6 @@
     [Export(typeof(IExpressionParserAndInterpreter))]
     [Name(PredefinedExpressionParserNames.ConditionalExpression)]
     [Culture(SupportedCultures.Any)]
-    [Shared]
     internal sealed class ConditionalExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         [Import]

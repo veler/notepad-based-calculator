@@ -6,7 +6,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins
 {
     [Export(typeof(IGrammarProvider))]
     [Culture(SupportedCultures.English)]
-    [Shared]
     internal class GrammarProvider : IGrammarProvider
     {
         public IReadOnlyList<TokenDefinitionGrammar>? LoadTokenDefinitionGrammar(string culture)

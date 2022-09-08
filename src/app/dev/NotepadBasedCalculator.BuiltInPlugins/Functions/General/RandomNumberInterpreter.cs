@@ -3,7 +3,6 @@
     [Export(typeof(IFunctionInterpreter))]
     [Name("general.random")]
     [Culture(SupportedCultures.English)]
-    [Shared]
     internal sealed class RandomNumberInterpreter : IFunctionInterpreter
     {
         private readonly Random _random = new();

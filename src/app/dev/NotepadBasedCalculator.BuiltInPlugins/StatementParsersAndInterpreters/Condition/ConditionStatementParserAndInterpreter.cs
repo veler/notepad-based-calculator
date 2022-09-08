@@ -2,7 +2,6 @@
 {
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.English)]
-    [Shared]
     internal sealed class ConditionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]

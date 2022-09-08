@@ -100,6 +100,22 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("1000 m2", BinaryOperatorType.Subtraction, "10 m2", "990 m²")]
         [InlineData("1000 m2", BinaryOperatorType.Multiply, "10 m2", "Unsupported arithmetic operation")]
         [InlineData("1000 m2", BinaryOperatorType.Division, "10 m2", "100")]
+        [InlineData("2 CAD", BinaryOperatorType.Addition, "2 USD", "4.62 CAD")]
+        [InlineData("2 CAD", BinaryOperatorType.Subtraction, "2 USD", "-0.62 CAD")]
+        [InlineData("2 CAD", BinaryOperatorType.Multiply, "2 USD", "5.24 CAD")]
+        [InlineData("2 CAD", BinaryOperatorType.Division, "2 USD", "0.76 CAD")]
+        [InlineData("2 USD", BinaryOperatorType.Addition, "2 CAD", "3.53 USD")]
+        [InlineData("2 USD", BinaryOperatorType.Subtraction, "2 CAD", "0.47 USD")]
+        [InlineData("2 USD", BinaryOperatorType.Multiply, "2 CAD", "3.05 USD")]
+        [InlineData("2 USD", BinaryOperatorType.Division, "2 CAD", "1.31 USD")]
+        [InlineData("2 USD", BinaryOperatorType.Addition, "2 USD", "4 USD")]
+        [InlineData("2 USD", BinaryOperatorType.Subtraction, "2 USD", "0 USD")]
+        [InlineData("2 USD", BinaryOperatorType.Multiply, "2 USD", "4 USD")]
+        [InlineData("2 USD", BinaryOperatorType.Division, "2 USD", "1 USD")]
+        [InlineData("2 CAD", BinaryOperatorType.Addition, "2 CAD", "4 CAD")]
+        [InlineData("2 CAD", BinaryOperatorType.Subtraction, "2 CAD", "0 CAD")]
+        [InlineData("2 CAD", BinaryOperatorType.Multiply, "2 CAD", "4 CAD")]
+        [InlineData("2 CAD", BinaryOperatorType.Division, "2 CAD", "1 CAD")]
         public async Task Operation(string inputLeft, BinaryOperatorType binaryOperatorType, string inputRight, string output)
         {
             _textDocument.Text = inputLeft;

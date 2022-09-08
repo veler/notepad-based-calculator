@@ -3,17 +3,12 @@
     /// <summary>
     /// Provides a way to import MEF components on the fly.
     /// </summary>
-    public interface IMefProvider : IServiceProvider
+    public interface IMefProvider
     {
         /// <summary>
         /// Imports the given type.
         /// </summary>
         TExport Import<TExport>();
-
-        /// <summary>
-        /// Imports the given type.
-        /// </summary>
-        object Import(Type type);
 
         /// <summary>
         /// Imports the given type.

@@ -3,7 +3,6 @@
     [Export(typeof(IFunctionInterpreter))]
     [Name("percentage.percentOf")]
     [Culture(SupportedCultures.English)]
-    [Shared]
     internal sealed class PercentOfInterpreter : IFunctionInterpreter
     {
         [Import]

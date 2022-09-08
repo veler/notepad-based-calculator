@@ -25,9 +25,8 @@ namespace NotepadBasedCalculator.Benchmark
             Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
 
             var mefComposer
-                = new MefComposer(
-                    typeof(MefComposer).Assembly);
-            _parserAndInterpreterFactory = mefComposer.ExportProvider.GetExport<ParserAndInterpreterFactory>();
+                = new MefComposer();
+            _parserAndInterpreterFactory = mefComposer.ExportProvider.GetExport<ParserAndInterpreterFactory>()!.Value;
         }
 
         [IterationSetup]

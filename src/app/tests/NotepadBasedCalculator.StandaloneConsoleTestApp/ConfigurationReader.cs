@@ -1,10 +1,9 @@
-﻿using System.Composition;
+﻿using System.ComponentModel.Composition;
 using NotepadBasedCalculator.Shared;
 
 namespace NotepadBasedCalculator.StandaloneConsoleTestApp
 {
     [Export(typeof(IConfigurationReader))]
-    [Shared]
     internal sealed class ConfigurationReader : IConfigurationReader
     {
         private string? _webServiceAppId;

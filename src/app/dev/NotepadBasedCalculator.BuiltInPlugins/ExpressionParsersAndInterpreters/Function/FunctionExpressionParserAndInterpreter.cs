@@ -5,7 +5,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
     [Export(typeof(IExpressionParserAndInterpreter))]
     [Name(PredefinedExpressionParserNames.FunctionExpression)]
     [Culture(SupportedCultures.Any)]
-    [Shared]
     internal sealed class FunctionExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         private readonly Dictionary<string, IEnumerable<IFunctionDefinitionProvider>> _applicableFunctionDefinitionProviders = new();

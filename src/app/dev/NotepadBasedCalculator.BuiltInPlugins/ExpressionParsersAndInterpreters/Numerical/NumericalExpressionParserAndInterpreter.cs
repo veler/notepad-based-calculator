@@ -4,7 +4,6 @@
     [Name(PredefinedExpressionParserNames.NumericalExpression)]
     [Culture(SupportedCultures.Any)]
     [Order(int.MaxValue - 2)]
-    [Shared]
     internal sealed class NumericalExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         [Import]

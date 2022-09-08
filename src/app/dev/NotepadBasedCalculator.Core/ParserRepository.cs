@@ -1,7 +1,6 @@
 ﻿namespace NotepadBasedCalculator.Core
 {
     [Export(typeof(IParserRepository))]
-    [Shared]
     internal sealed class ParserRepository : IParserRepository
     {
         private readonly IEnumerable<Lazy<IDataParser, CultureCodeMetadata>> _dataParsers;

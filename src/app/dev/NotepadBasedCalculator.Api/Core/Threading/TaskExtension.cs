@@ -35,6 +35,11 @@
             }
         }
 
+        public static T CompleteOnCurrentThread<T>(this Task<T> task)
+        {
+            return task.GetAwaiter().GetResult();
+        }
+
         /// <summary>
         /// Gets an awaiter that schedules continuations on the specified scheduler.
         /// </summary>

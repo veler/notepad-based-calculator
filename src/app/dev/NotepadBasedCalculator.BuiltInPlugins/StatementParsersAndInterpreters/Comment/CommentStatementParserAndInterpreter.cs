@@ -3,7 +3,6 @@
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
     [Order(int.MinValue)]
-    [Shared]
     internal sealed class CommentStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         public IParserAndInterpreterService ParserAndInterpreterService => throw new NotImplementedException();

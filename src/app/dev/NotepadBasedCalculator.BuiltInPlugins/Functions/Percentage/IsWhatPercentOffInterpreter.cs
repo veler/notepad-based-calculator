@@ -3,7 +3,6 @@
     [Export(typeof(IFunctionInterpreter))]
     [Name("percentage.isWhatPercentOff")]
     [Culture(SupportedCultures.English)]
-    [Shared]
     internal sealed class IsWhatPercentOffInterpreter : IFunctionInterpreter
     {
         [Import]
@@ -32,7 +31,7 @@
                     firstNumericData.LineTextIncludingLineBreak,
                     firstNumericData.StartInLine,
                     secondNumericData.EndInLine,
-                    1d - (1d / divisionResult.NumericValueInStandardUnit)));
+                    1d - (1d / divisionResult.NumericValueInCurrentUnit)));
         }
     }
 }

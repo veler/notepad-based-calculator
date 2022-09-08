@@ -6,7 +6,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
     [Name(PredefinedExpressionParserNames.PrimitiveExpression)]
     [Culture(SupportedCultures.Any)]
     [Order(int.MaxValue - 1)]
-    [Shared]
     internal sealed class PrimitiveExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         [Import]

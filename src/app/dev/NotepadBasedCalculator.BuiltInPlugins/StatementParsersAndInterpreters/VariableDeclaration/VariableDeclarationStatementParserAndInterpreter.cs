@@ -3,7 +3,6 @@
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
     [Order(int.MinValue + 1)]
-    [Shared]
     internal sealed class VariableDeclarationStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]

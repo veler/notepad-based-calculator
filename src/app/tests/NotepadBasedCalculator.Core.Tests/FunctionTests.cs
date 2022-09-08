@@ -52,6 +52,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("20% of (25 + 50)", "15")]
         [InlineData("tax = 40% \r\n tax of 75$", "30 Dollar")]
         [InlineData("20% of 20%", "4%")]
+        [InlineData("20% of 1 CAD", "0.2 CAD")]
         public async Task Percentage_PercentOf(string input, string output)
         {
             _textDocument.Text = input;
@@ -67,6 +68,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("20% off 60km", "48 km")]
         [InlineData("tax = 40% \r\n tax off 75$", "45 Dollar")]
         [InlineData("20% off 20%", "16%")]
+        [InlineData("20% off 2 CAD", "1.6 CAD")]
         public async Task Percentage_PercentOff(string input, string output)
         {
             _textDocument.Text = input;
@@ -82,6 +84,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("20% on 60km", "72 km")]
         [InlineData("tax = 40% \r\n tax on 75$", "105 Dollar")]
         [InlineData("20% on 20%", "24%")]
+        [InlineData("20% on 2 CAD", "2.4 CAD")]
         public async Task Percentage_PercentOn(string input, string output)
         {
             _textDocument.Text = input;
@@ -108,6 +111,10 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("1km as percent of 10,000m", "10%")]
         [InlineData("1km as a percentage of 10,000m", "10%")]
         [InlineData("1km as percentage of 10,000m", "10%")]
+        [InlineData("1,000 CAD is what percent of 10,000 CAD", "10%")]
+        [InlineData("1,000 USD is what percent of 10,000 USD", "10%")]
+        [InlineData("1,000 CAD is what percent of 10,000 USD", "7.6335877863%")]
+        [InlineData("1,000 USD is what percent of 10,000 CAD", "13.1%")]
         public async Task Percentage_IsWhatPercentOf(string input, string output)
         {
             _textDocument.Text = input;
@@ -128,6 +135,10 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("10,000m as percent on 1km", "900%")]
         [InlineData("10,000m as a percentage on 1km", "900%")]
         [InlineData("10,000m as percentage on 1km", "900%")]
+        [InlineData("10,000 CAD is what percent on 1,000 CAD", "900%")]
+        [InlineData("10,000 USD is what percent on 1,000 USD", "900%")]
+        [InlineData("10,000 CAD is what percent on 1,000 USD", "663.358778626%")]
+        [InlineData("10,000 USD is what percent on 1,000 CAD", "1210%")]
         public async Task Percentage_IsWhatPercentOn(string input, string output)
         {
             _textDocument.Text = input;
@@ -148,6 +159,10 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("1km as percent off 10,000m", "90%")]
         [InlineData("1km as a percentage off 10,000m", "90%")]
         [InlineData("1km as percentage off 10,000m", "90%")]
+        [InlineData("1,000 CAD is what percent off 10,000 CAD", "90%")]
+        [InlineData("1,000 USD is what percent off 10,000 USD", "90%")]
+        [InlineData("1,000 CAD is what percent off 10,000 USD", "92.3664122137%")]
+        [InlineData("1,000 USD is what percent off 10,000 CAD", "86.9%")]
         public async Task Percentage_IsWhatPercentOff(string input, string output)
         {
             _textDocument.Text = input;
@@ -167,6 +182,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("20 percent off what number is 70", "350")]
         [InlineData("70 is 20% off what", "350")]
         [InlineData("70 is 20% off what number", "350")]
+        [InlineData("70 CAD is 20% off what", "350 CAD")]
         public async Task Percentage_IsPercentOfWhat(string input, string output)
         {
             _textDocument.Text = input;
@@ -183,6 +199,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("62.5 is what plus 25%", "50")]
         [InlineData("25% on what is 62.5", "50")]
         [InlineData("25% on what number is 62.5", "50")]
+        [InlineData("25% on what number is 62.5 CAD", "50 CAD")]
         public async Task Percentage_IsPercentOnWhat(string input, string output)
         {
             _textDocument.Text = input;

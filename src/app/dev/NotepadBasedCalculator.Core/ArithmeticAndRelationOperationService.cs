@@ -3,7 +3,6 @@
 namespace NotepadBasedCalculator.Core
 {
     [Export(typeof(IArithmeticAndRelationOperationService))]
-    [Shared]
     internal sealed class ArithmeticAndRelationOperationService : IArithmeticAndRelationOperationService
     {
         public IData? PerformOperation(IData? leftData, BinaryOperatorType binaryOperatorType, IData? rightData)

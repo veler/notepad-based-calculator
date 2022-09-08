@@ -1,32 +1,21 @@
-﻿using System.Composition.Hosting;
+﻿using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 
 namespace NotepadBasedCalculator.Core.Mef
 {
     [Export(typeof(IMefProvider))]
-    [Export(typeof(IServiceProvider))]
-    [Shared]
     internal sealed class MefProvider : IMefProvider
     {
-        internal CompositionHost? ExportProvider { get; set; }
-
-        public object GetService(Type serviceType)
-        {
-            return ExportProvider!.GetExport(serviceType);
-        }
+        internal ExportProvider? ExportProvider { get; set; }
 
         public TExport Import<TExport>()
         {
-            return ExportProvider!.GetExport<TExport>();
-        }
-
-        public object Import(Type type)
-        {
-            return ExportProvider!.GetExport(type);
+            return ExportProvider!.GetExport<TExport>()!.Value;
         }
 
         public IEnumerable<TExport> ImportMany<TExport>()
         {
-            return ExportProvider!.GetExports<TExport>();
+            return ExportProvider!.GetExports<TExport>().Select(e => e.Value);
         }
     }
 }

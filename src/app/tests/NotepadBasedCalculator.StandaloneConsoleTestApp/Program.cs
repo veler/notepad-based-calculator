@@ -24,10 +24,8 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
             var textDocument = new TextDocument();
 
             var mefComposer
-                = new MefComposer(
-                    typeof(MefComposer).Assembly,
-                    typeof(ConfigurationReader).Assembly);
-            ParserAndInterpreterFactory parserAndInterpreterFactory = mefComposer.ExportProvider.GetExport<ParserAndInterpreterFactory>();
+                = new MefComposer(new[] { typeof(ConfigurationReader).Assembly });
+            ParserAndInterpreterFactory parserAndInterpreterFactory = mefComposer.ExportProvider.GetExport<ParserAndInterpreterFactory>()!.Value;
             ParserAndInterpreter parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(DefaultCulture, textDocument);
 
             Task warmupTask = WarmupAsync(textDocument, parserAndInterpreter);

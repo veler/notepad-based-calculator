@@ -5,7 +5,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.English)]
     [Order(int.MinValue + 1)]
-    [Shared]
     internal sealed class FunctionExpressionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]

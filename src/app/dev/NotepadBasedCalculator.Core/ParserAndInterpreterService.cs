@@ -3,7 +3,6 @@
 namespace NotepadBasedCalculator.Core
 {
     [Export(typeof(IParserAndInterpreterService))]
-    [Shared]
     internal sealed class ParserAndInterpreterService : IParserAndInterpreterService
     {
         private readonly ILogger _logger;

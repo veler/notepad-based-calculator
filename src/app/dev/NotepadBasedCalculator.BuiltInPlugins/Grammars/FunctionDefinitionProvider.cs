@@ -6,7 +6,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Grammars
 {
     [Export(typeof(IFunctionDefinitionProvider))]
     [Culture(SupportedCultures.English)]
-    [Shared]
     public sealed class FunctionDefinitionProvider : IFunctionDefinitionProvider
     {
         private readonly Dictionary<string, List<Dictionary<string, Dictionary<string, string[]>>>> _cultureToFunctionDefinition = new();

@@ -8,7 +8,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {
     [Export(typeof(IDataParser))]
     [Culture(SupportedCultures.Any)]
-    [Shared]
     public sealed class TemperatureDataParser : IDataParser
     {
         private const string Value = "value";

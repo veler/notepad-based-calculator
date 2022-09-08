@@ -8,7 +8,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Data
 {
     [Export(typeof(IDataParser))]
     [Culture(SupportedCultures.Any)]
-    [Shared]
     public sealed class DateTimeDataParser : IDataParser
     {
         private const string Value = "value";

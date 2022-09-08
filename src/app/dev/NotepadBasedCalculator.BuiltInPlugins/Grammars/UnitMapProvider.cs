@@ -7,7 +7,6 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Grammars
     [Export(typeof(UnitMapProvider))]
     [Culture(SupportedCultures.English)]
     [Culture(SupportedCultures.French)]
-    [Shared]
     public sealed class UnitMapProvider
     {
         private readonly Dictionary<string, UnitMap> _cultureToUnitMap = new();
