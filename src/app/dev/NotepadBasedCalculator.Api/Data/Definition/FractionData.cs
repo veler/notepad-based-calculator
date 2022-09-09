@@ -4,6 +4,8 @@ namespace NotepadBasedCalculator.Api
 {
     public sealed record FractionData : Data<double>, INumericData, IDecimal, IValueRelativeToOtherData
     {
+        public override int ConflictResolutionPriority => int.MinValue + 1;
+
         public bool IsNegative => Value < 0;
 
         public double NumericValueInCurrentUnit => Value;

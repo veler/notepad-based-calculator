@@ -319,12 +319,11 @@ namespace NotepadBasedCalculator.Core
                         // To solve the conflict:
                         // 1. If there are other data and that they have the same type than one of the 2 data we're conflicting with
                         //    then let's use that type because they may be compatible.
-                        // 2. Otheriwse, let's prompt the user to clarify the type of data.
+                        // 2. Otheriwse, let's decide of what data kind to use based on priority order.
                         IData? overlapResolution = SolveOverlappingData(currentData, data, allData);
                         if (overlapResolution is null)
                         {
-                            // TODO: Show to the user that there is an error.
-                            // We should tell the user something like "Do you mean 1 meter or 1 minute? Please clarify".
+                            overlapResolution = data.ConflictResolutionPriority < currentData.ConflictResolutionPriority ? data : currentData;
                         }
                         return overlapResolution;
                     }

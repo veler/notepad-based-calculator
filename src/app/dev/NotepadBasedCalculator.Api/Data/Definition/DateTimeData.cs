@@ -4,6 +4,8 @@ namespace NotepadBasedCalculator.Api
 {
     public sealed record DateTimeData : Data<DateTime>, INumericData, ISupportMultipleDataTypeForArithmeticOperation
     {
+        public override int ConflictResolutionPriority => int.MinValue;
+
         public bool IsNegative => Value.Ticks < 0;
 
         public double NumericValueInCurrentUnit => Value.Ticks;

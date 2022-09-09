@@ -6,6 +6,8 @@
 
         public T Value { get; }
 
+        public virtual int ConflictResolutionPriority => 0;
+
         public abstract string GetDisplayText(string culture);
 
         protected Data(

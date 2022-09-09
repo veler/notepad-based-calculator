@@ -46,5 +46,19 @@ I got -123 dollars in my pocket. // this is a comment.";
             Assert.IsType<NumericalCalculusStatement>(lineResults[3].StatementsAndData[0].ParsedStatement);
             Assert.IsType<CommentStatement>(lineResults[3].StatementsAndData[1].ParsedStatement);
         }
+
+        [Theory]
+        [InlineData("7/1900", "0.00368421052631579")]
+        [InlineData("1/7/1900", "1/7/1900 12:00:00 AM")]
+        public async Task ConflictingDataAsync(string input, string output)
+        {
+            _textDocument.Text = input;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults);
+            Assert.Single(lineResults[0].StatementsAndData);
+            Assert.Equal(0, lineResults[0].StatementsAndData[0].ResultedData.StartInLine);
+            Assert.Equal(input.Length, lineResults[0].StatementsAndData[0].ResultedData.Length);
+            Assert.Equal(output, lineResults[0].StatementsAndData[0].ResultedData.GetDataDisplayText());
+        }
     }
 }

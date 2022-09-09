@@ -44,6 +44,8 @@
 
             public string LineTextIncludingLineBreak => throw new NotImplementedException();
 
+            public int ConflictResolutionPriority => throw new NotImplementedException();
+
             public ErrorData(DataOperationException dataOperationException)
             {
                 _dataOperationException = dataOperationException;
