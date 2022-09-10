@@ -11,6 +11,7 @@
 
         public NameAttribute(string name)
         {
+            Guard.IsNotEmpty(name);
             Name = name;
         }
     }

@@ -39,7 +39,7 @@
         {
             bool foundLeftExpression
                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                    PredefinedExpressionParserNames.NumericalExpression,
+                    new[] { PredefinedExpressionParserNames.NumericalExpression },
                     culture,
                     currentToken,
                     variableService,
@@ -87,7 +87,7 @@
 
                     bool foundRightExpression
                         = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                            PredefinedExpressionParserNames.NumericalExpression,
+                            new[] { PredefinedExpressionParserNames.NumericalExpression },
                             culture,
                             operatorToken.Next,
                             variableService,

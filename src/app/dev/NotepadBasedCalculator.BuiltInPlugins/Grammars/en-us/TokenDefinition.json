@@ -2,7 +2,8 @@
   "common_tokens": {
     "equal_to_operators": [
       "==",
-      "equal"
+      "equal",
+      "equals"
     ],
     "not_equal_to_operators": [
       "!=",
@@ -30,7 +31,8 @@
     "addition_operators": [
       "+",
       "plus",
-      "and"
+      "and",
+      "along with"
     ],
     "substration_operators": [
       "−", // U+2212

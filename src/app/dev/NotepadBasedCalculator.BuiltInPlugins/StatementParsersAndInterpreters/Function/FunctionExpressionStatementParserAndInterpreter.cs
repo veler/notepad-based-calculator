@@ -4,7 +4,8 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
 {
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.English)]
-    [Order(int.MinValue + 1)]
+    [Name(PredefinedStatementParserNames.FunctionExpressionStatement)]
+    [Order(Before = PredefinedStatementParserNames.NumericalExpressionStatement)]
     internal sealed class FunctionExpressionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]
@@ -21,7 +22,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
 
             bool functionFound
                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                    PredefinedExpressionParserNames.FunctionExpression,
+                    new[] { PredefinedExpressionParserNames.FunctionExpression },
                     culture,
                     currentToken,
                     variableService,

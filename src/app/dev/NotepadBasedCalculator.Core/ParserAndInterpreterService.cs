@@ -57,7 +57,7 @@ namespace NotepadBasedCalculator.Core
         }
 
         public async Task<bool> TryParseAndInterpretExpressionAsync(
-            string expressionParserAndInterpreterName,
+            string[] expressionParserAndInterpreterNames,
             string culture,
             LinkedToken? currentToken,
             IVariableService variableService,
@@ -69,18 +69,18 @@ namespace NotepadBasedCalculator.Core
             if (currentToken is not null)
             {
                 Guard.IsNotNull(culture);
-                Guard.IsNotNullOrEmpty(expressionParserAndInterpreterName);
+                Guard.IsNotEmpty(expressionParserAndInterpreterNames);
 
-                IExpressionParserAndInterpreter parserAndInterpreter
-                    = _parserRepository.GetExpressionParserAndInterpreter(
+                IExpressionParserAndInterpreter[] parserAndInterpreters
+                    = _parserRepository.GetExpressionParserAndInterpreters(
                         culture,
-                        expressionParserAndInterpreterName);
+                        expressionParserAndInterpreterNames);
 
                 expressionFound
                     = await TryParseAndInterpretExpressionInternalAsync(
                         culture,
                         currentToken,
-                        parserAndInterpreter,
+                        parserAndInterpreters,
                         variableService,
                         result,
                         cancellationToken);
@@ -171,12 +171,9 @@ namespace NotepadBasedCalculator.Core
 
                 result.NextTokenToContinueWith = tokenEnumerator.CurrentLinkedToken;
 
-                if ((result.NextTokenToContinueWith is null
+                if (result.NextTokenToContinueWith is null
                     && !string.IsNullOrEmpty(parseUntilTokenIsOfType)
                     && !string.IsNullOrEmpty(parseUntilTokenHasText))
-                    || (result.NextTokenToContinueWith is not null
-                    && string.IsNullOrEmpty(parseUntilTokenIsOfType)
-                    && string.IsNullOrEmpty(parseUntilTokenHasText)))
                 {
                     expressionFound = false;
                 }
@@ -191,7 +188,7 @@ namespace NotepadBasedCalculator.Core
         }
 
         public Task<bool> TryParseAndInterpretExpressionAsync(
-            string expressionParserAndInterpreterName,
+            string[] expressionParserAndInterpreterNames,
             string culture,
             LinkedToken? currentToken,
             string? parseUntilTokenIsOfType,
@@ -201,7 +198,7 @@ namespace NotepadBasedCalculator.Core
             CancellationToken cancellationToken)
         {
             return TryParseAndInterpretExpressionAsync(
-                expressionParserAndInterpreterName,
+                expressionParserAndInterpreterNames,
                 culture,
                 currentToken,
                 parseUntilTokenIsOfType,
@@ -213,7 +210,7 @@ namespace NotepadBasedCalculator.Core
         }
 
         public async Task<bool> TryParseAndInterpretExpressionAsync(
-            string expressionParserAndInterpreterName,
+            string[] expressionParserAndInterpreterNames,
             string culture,
             LinkedToken? currentToken,
             string? parseUntilTokenIsOfType,
@@ -246,30 +243,27 @@ namespace NotepadBasedCalculator.Core
                         token: tokenEnumerator.Current,
                         tokenEnumerator);
 
-                Guard.IsNotNullOrEmpty(expressionParserAndInterpreterName);
+                Guard.IsNotEmpty(expressionParserAndInterpreterNames);
 
-                IExpressionParserAndInterpreter parserAndInterpreter
-                    = _parserRepository.GetExpressionParserAndInterpreter(
+                IExpressionParserAndInterpreter[] parserAndInterpreters
+                    = _parserRepository.GetExpressionParserAndInterpreters(
                         culture,
-                        expressionParserAndInterpreterName);
+                        expressionParserAndInterpreterNames);
 
                 expressionFound
                     = await TryParseAndInterpretExpressionInternalAsync(
                         culture,
                         linkedToken,
-                        parserAndInterpreter,
+                        parserAndInterpreters,
                         variableService,
                         result,
                         cancellationToken);
 
                 result.NextTokenToContinueWith = tokenEnumerator.CurrentLinkedToken;
 
-                if ((result.NextTokenToContinueWith is null
+                if (result.NextTokenToContinueWith is null
                     && !string.IsNullOrEmpty(parseUntilTokenIsOfType)
                     && !string.IsNullOrEmpty(parseUntilTokenHasText))
-                    || (result.NextTokenToContinueWith is not null
-                    && string.IsNullOrEmpty(parseUntilTokenIsOfType)
-                    && string.IsNullOrEmpty(parseUntilTokenHasText)))
                 {
                     expressionFound = false;
                 }
@@ -347,6 +341,40 @@ namespace NotepadBasedCalculator.Core
                 result.ResultedData = null;
             }
             return statementFound;
+        }
+
+        private async Task<bool> TryParseAndInterpretExpressionInternalAsync(
+            string culture,
+            LinkedToken currentToken,
+            IExpressionParserAndInterpreter[] parserAndInterpreters,
+            IVariableService variableService,
+            ExpressionParserAndInterpreterResult result,
+            CancellationToken cancellationToken)
+        {
+            Guard.IsNotEmpty(parserAndInterpreters);
+
+            for (int i = 0; i < parserAndInterpreters.Length; i++)
+            {
+                bool expressionFound
+                    = await TryParseAndInterpretExpressionInternalAsync(
+                        culture,
+                        currentToken,
+                        parserAndInterpreters[i],
+                        variableService,
+                        result,
+                        cancellationToken);
+
+                if (expressionFound)
+                {
+                    return expressionFound;
+                }
+                else if (cancellationToken.IsCancellationRequested)
+                {
+                    return false;
+                }
+            }
+
+            return false;
         }
 
         private async Task<bool> TryParseAndInterpretExpressionInternalAsync(

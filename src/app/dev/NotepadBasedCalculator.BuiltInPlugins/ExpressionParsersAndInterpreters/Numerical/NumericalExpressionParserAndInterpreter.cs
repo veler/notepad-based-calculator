@@ -3,7 +3,7 @@
     [Export(typeof(IExpressionParserAndInterpreter))]
     [Name(PredefinedExpressionParserNames.NumericalExpression)]
     [Culture(SupportedCultures.Any)]
-    [Order(int.MaxValue - 2)]
+    [Order(After = PredefinedExpressionParserNames.ConditionalExpression)]
     internal sealed class NumericalExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         [Import]
@@ -119,7 +119,7 @@
         {
             bool foundLeftExpression
                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                    PredefinedExpressionParserNames.PrimitiveExpression,
+                    new[] { PredefinedExpressionParserNames.PrimitiveExpression, PredefinedExpressionParserNames.FunctionExpression },
                     culture,
                     currentToken,
                     variableService,
@@ -148,13 +148,21 @@
                     }
                     else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.Numeric))
                     {
-                        if (operatorToken.Token is INumericData numericData && numericData.IsNegative)
+                        if (operatorToken.Previous is not null
+                            && operatorToken.Previous.Token.IsOfType(PredefinedTokenAndDataTypeNames.RightParenth))
                         {
-                            binaryOperator = BinaryOperatorType.Addition;
+                            if (operatorToken.Token is INumericData numericData && numericData.IsNegative)
+                            {
+                                binaryOperator = BinaryOperatorType.Addition;
+                            }
+                            else
+                            {
+                                binaryOperator = BinaryOperatorType.Multiply;
+                            }
                         }
                         else
                         {
-                            binaryOperator = BinaryOperatorType.Multiply;
+                            binaryOperator = BinaryOperatorType.Addition;
                         }
 
                         expressionStartToken = operatorToken;
@@ -169,7 +177,7 @@
 
                     bool foundRightExpression
                         = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                            PredefinedExpressionParserNames.PrimitiveExpression,
+                            new[] { PredefinedExpressionParserNames.PrimitiveExpression, PredefinedExpressionParserNames.FunctionExpression },
                             culture,
                             expressionStartToken,
                             variableService,

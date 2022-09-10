@@ -7,6 +7,9 @@
     "midpoint": [
       "midpoint between NUMERIC and NUMERIC",
       "average between NUMERIC and NUMERIC"
+    ],
+    "remainder": [
+      "remainder of NUMERIC divided by NUMERIC"
     ]
   },
   "percentage": {

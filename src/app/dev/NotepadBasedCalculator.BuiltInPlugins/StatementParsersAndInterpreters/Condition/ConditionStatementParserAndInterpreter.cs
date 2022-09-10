@@ -2,6 +2,10 @@
 {
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.English)]
+    [Name(PredefinedStatementParserNames.ConditionStatement)]
+    [Order(After = PredefinedStatementParserNames.CommentStatement)]
+    [Order(After = PredefinedStatementParserNames.HeaderStatement)]
+    [Order(Before = PredefinedStatementParserNames.ConditionExpressionStatement)]
     internal sealed class ConditionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]
@@ -26,7 +30,7 @@
 
             bool expressionFound
                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                    PredefinedExpressionParserNames.ConditionalExpression,
+                    new[] { PredefinedExpressionParserNames.ConditionalExpression },
                     culture,
                     tokenAfterIfIdentifier,
                     PredefinedTokenAndDataTypeNames.ThenIdentifier,

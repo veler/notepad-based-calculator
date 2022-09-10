@@ -33,6 +33,20 @@ namespace NotepadBasedCalculator.Core.Tests
             var statement = (VariableDeclarationStatement)lineResults[0].StatementsAndData[0].ParsedStatement;
             IData data = ((DataExpression)statement.AssignedValue).Data;
             Assert.Equal("[Numeric] (7, 8): '2'", data.ToString());
+
+            _textDocument.Text = "test = 20% off 60 + 50";
+            lineResults = await _parserAndInterpreter.WaitAsync();
+
+            Assert.Single(lineResults[0].StatementsAndData);
+            Assert.IsType<VariableDeclarationStatement>(lineResults[0].StatementsAndData[0].ParsedStatement);
+            Assert.Equal("[Numeric] (7, 22): '20% off 60 + 50'", lineResults[0].SummarizedResultData.ToString());
+
+            _textDocument.Text = "test = 50 + 20% off 60";
+            lineResults = await _parserAndInterpreter.WaitAsync();
+
+            Assert.Single(lineResults[0].StatementsAndData);
+            Assert.IsType<VariableDeclarationStatement>(lineResults[0].StatementsAndData[0].ParsedStatement);
+            Assert.Equal("[Numeric] (7, 22): '50 + 20% off 60'", lineResults[0].SummarizedResultData.ToString());
         }
 
         [Fact]
@@ -70,6 +84,7 @@ namespace NotepadBasedCalculator.Core.Tests
         [InlineData("if 123 > 456 then tax = 12", "")]
         [InlineData("if 123 > 456 then tax = 12 else tax = 13", "13")]
         [InlineData("if 123 < 456 then tax = 12 else tax = 13", "12")]
+        [InlineData("if 20% off 60 + 50 equals 98 then tax = 12 else tax = 13", "12")]
         public async Task Intepreter_Condition(string input, string output)
         {
             _textDocument.Text = input;

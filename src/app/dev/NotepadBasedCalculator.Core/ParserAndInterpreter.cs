@@ -8,6 +8,7 @@ namespace NotepadBasedCalculator.Core
         private readonly ILogger _logger;
         private readonly Lexer _lexer;
         private readonly IParserRepository _parserRepository;
+        private readonly IArithmeticAndRelationOperationService _arithmeticAndRelationOperationService;
         private readonly VariableService _variableService = new();
         private readonly TextDocument _textDocument;
 
@@ -21,12 +22,14 @@ namespace NotepadBasedCalculator.Core
             ILogger logger,
             ILexer lexer,
             IParserRepository parserRepository,
+            IArithmeticAndRelationOperationService arithmeticAndRelationOperationService,
             TextDocument textDocument)
         {
             Guard.IsNotNullOrWhiteSpace(culture);
             Guard.IsNotNull(logger);
             Guard.IsNotNull(lexer);
             Guard.IsNotNull(parserRepository);
+            Guard.IsNotNull(arithmeticAndRelationOperationService);
             Guard.IsNotNull(textDocument);
 
             _culture = Culture.MapToNearestLanguage(culture);
@@ -34,6 +37,7 @@ namespace NotepadBasedCalculator.Core
             _logger = logger;
             _lexer = (Lexer)lexer;
             _parserRepository = parserRepository;
+            _arithmeticAndRelationOperationService = arithmeticAndRelationOperationService;
             _textDocument = textDocument;
             _textDocument.TextChanged += TextDocument_TextChanged;
         }
@@ -142,18 +146,7 @@ namespace NotepadBasedCalculator.Core
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                // If there were multiple statements on the line, let's do the addition of each data produced.
-                if (statementResults.Count > 1)
-                {
-                    IData? mergedResult = null;
-                    for (int i = 0; i < statementResults.Count; i++)
-                    {
-                        // TODO
-                    }
-
-                    return new ParserAndInterpreterResultLine(lineToParseAndInterpret, statementResults, mergedResult);
-                }
-                else if (statementResults.Count == 1)
+                if (statementResults.Count > 0)
                 {
                     return new ParserAndInterpreterResultLine(lineToParseAndInterpret, statementResults, statementResults[0].ResultedData);
                 }

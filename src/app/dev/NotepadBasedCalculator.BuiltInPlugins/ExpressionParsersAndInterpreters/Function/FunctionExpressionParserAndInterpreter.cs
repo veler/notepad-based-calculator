@@ -5,6 +5,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
     [Export(typeof(IExpressionParserAndInterpreter))]
     [Name(PredefinedExpressionParserNames.FunctionExpression)]
     [Culture(SupportedCultures.Any)]
+    [Order(After = PredefinedExpressionParserNames.ConditionalExpression, Before = PredefinedExpressionParserNames.NumericalExpression)]
     internal sealed class FunctionExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         private readonly Dictionary<string, IEnumerable<IFunctionDefinitionProvider>> _applicableFunctionDefinitionProviders = new();
@@ -87,7 +88,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                             ExpressionParserAndInterpreterResult expressionResult = new();
                             foundStatementOrExpression
                                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                                    PredefinedExpressionParserNames.PrimitiveExpression,
+                                    new[] { PredefinedExpressionParserNames.PrimitiveExpression },
                                     culture,
                                     documentToken,
                                     nextExpectedFunctionTokenType,

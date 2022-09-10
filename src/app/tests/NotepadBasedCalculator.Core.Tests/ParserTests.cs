@@ -48,6 +48,7 @@ I got -123 dollars in my pocket. // this is a comment.";
         }
 
         [Theory]
+        [InlineData("20/3", "6.66666666666667")]
         [InlineData("7/1900", "0.00368421052631579")]
         [InlineData("1/7/1900", "1/7/1900 12:00:00 AM")]
         public async Task ConflictingDataAsync(string input, string output)
@@ -56,9 +57,9 @@ I got -123 dollars in my pocket. // this is a comment.";
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            Assert.Equal(0, lineResults[0].StatementsAndData[0].ResultedData.StartInLine);
-            Assert.Equal(input.Length, lineResults[0].StatementsAndData[0].ResultedData.Length);
-            Assert.Equal(output, lineResults[0].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(0, lineResults[0].SummarizedResultData.StartInLine);
+            Assert.Equal(input.Length, lineResults[0].SummarizedResultData.Length);
+            Assert.Equal(output, lineResults[0].SummarizedResultData.GetDataDisplayText());
         }
     }
 }

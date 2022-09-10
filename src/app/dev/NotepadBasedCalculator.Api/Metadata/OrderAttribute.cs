@@ -1,14 +1,36 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
     [MetadataAttribute]
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class OrderAttribute : Attribute
     {
-        public int Order { get; }
+        private string _before = string.Empty;
+        private string _after = string.Empty;
 
-        public OrderAttribute(int order)
+        public string Before
         {
-            Order = order;
+            get
+            {
+                return _before;
+            }
+            set
+            {
+                Guard.IsNotNullOrEmpty(value);
+                _before = value;
+            }
+        }
+
+        public string After
+        {
+            get
+            {
+                return _after;
+            }
+            set
+            {
+                Guard.IsNotNullOrEmpty(value);
+                _after = value;
+            }
         }
     }
 }

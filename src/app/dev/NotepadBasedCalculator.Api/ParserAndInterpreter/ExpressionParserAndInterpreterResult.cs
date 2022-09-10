@@ -1,6 +1,6 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public class ExpressionParserAndInterpreterResult
+    public record ExpressionParserAndInterpreterResult
     {
         public IData? ResultedData { get; set; } = null;
 

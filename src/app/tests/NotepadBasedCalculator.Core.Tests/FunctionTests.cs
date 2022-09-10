@@ -33,17 +33,35 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.percentOf", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
 
         [Theory]
-        [InlineData("20% of 60 + (25% of 30) // equivalent to (20% of 60) + (25% of 30)", "19.5")]
-        [InlineData("20% of 25 + 50 // equivalen to (20% of 25) + 50", "55")]
+        [InlineData("20% off 60 + (25% of 30)            // equivalent to (20% off 60) + (25% of 30)", "55.5")]
+        [InlineData("20% off 60 + 25% of 30              // equivalent to (20% off 60) + (25% of 30)", "55.5")]
+        [InlineData("(20% off 60) + 25% of 30            // equivalent to (20% off 60) + (25% of 30)", "55.5")]
+        [InlineData("(20% off 60) + (25% of 30)          // equivalent to (20% off 60) + (25% of 30)", "55.5")]
+        [InlineData("(20% off 60 + 25% of 30)            // equivalent to (20% off 60) + (25% of 30)", "55.5")]
+        [InlineData("20% off 60 (25% of 30)              // equivalent to (20% off 60) * (25% of 30)", "360")]
+        [InlineData("20% off 60 25% of 30                // equivalent to (20% off 60) + (25% of 30)", "55.5")]
+        [InlineData("(20% off 60) 25% of 30              // equivalent to (20% off 60) * (25% of 30)", "360")]
+        [InlineData("(20% off 60) (25% of 30)            // equivalent to (20% off 60) * (25% of 30)", "360")]
+        [InlineData("(20% off 60 25% of 30)              // equivalent to (20% off 60) + (25% of 30)", "55.5")]
+        [InlineData("20% off 25 + 50                     // equivalent to (20% off 25) + 50", "70")]
+        [InlineData("20% off 25 dfghdfghf + dfghdfghf 50 // equivalent to (20% off 25) + 50", "70")]
+        [InlineData("20% off 25 + (50)                   // equivalent to (20% off 25) + (50)", "70")]
+        [InlineData("20% off 25 50                       // equivalent to (20% off 25) + 50", "70")]
+        [InlineData("20% off 25 dfghdfghf 50             // equivalent to (20% off 25) + 50", "70")]
+        [InlineData("20% off 25 (50)                     // equivalent to (20% off 25) * (50)", "1000")]
+        [InlineData("20% off 25 (+50)                    // equivalent to (20% off 25) * (50)", "1000")]
+        [InlineData("20% off 25 (+ 50)                   // equivalent to (20% off 25) * (50)", "1000")]
+        [InlineData("20% off 25 50 50                    // equivalent to (20% off 25) + (50) + (50)", "120")]
+        [InlineData("20% off 25 * 50                     // equivalent to (20% off 25) * (50)", "1000")]
         public async Task ConcatenationOfExpression(string input, string output)
         {
             _textDocument.Text = input;
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
 
         [Theory]
@@ -60,11 +78,12 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.percentOf", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
 
         [Theory]
         [InlineData("20% off 60", "48")]
+        [InlineData("20% off 25", "20")]
         [InlineData("20% off 60km", "48 km")]
         [InlineData("tax = 40% \r\n tax off 75$", "45 Dollar")]
         [InlineData("20% off 20%", "16%")]
@@ -76,7 +95,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.percentOff", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
 
         [Theory]
@@ -92,7 +111,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.percentOn", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
 
         [Theory]
@@ -122,7 +141,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isWhatPercentOf", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
 
         [Theory]
@@ -146,7 +165,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isWhatPercentOn", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
 
         [Theory]
@@ -170,7 +189,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isWhatPercentOff", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
 
         [Theory]
@@ -190,7 +209,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isPercentOfWhat", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
 
         [Theory]
@@ -207,7 +226,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("percentage.isPercentOnWhat", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
 
         [Fact]
@@ -218,7 +237,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("general.random", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            var number = (INumericData)lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData;
+            var number = (INumericData)lineResults[lineResults.Count - 1].SummarizedResultData;
             Assert.InRange(number.NumericValueInStandardUnit, 0d, 1d);
 
             _textDocument.Text = "random between 10km and 100000m";
@@ -226,7 +245,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("general.random", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            number = (INumericData)lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData;
+            number = (INumericData)lineResults[lineResults.Count - 1].SummarizedResultData;
             Assert.InRange(number.NumericValueInStandardUnit, 10_000, 100_000);
         }
 
@@ -242,7 +261,7 @@ namespace NotepadBasedCalculator.Core.Tests
             Assert.Single(lineResults[lineResults.Count - 1].StatementsAndData);
             var statement = (NumericalCalculusStatement)lineResults[lineResults.Count - 1].StatementsAndData[0].ParsedStatement;
             Assert.Equal("general.midpoint", ((FunctionExpression)statement.NumericalCalculusExpression).FunctionDefinition.FunctionFullName);
-            Assert.Equal(output, lineResults[lineResults.Count - 1].StatementsAndData[0].ResultedData.GetDataDisplayText());
+            Assert.Equal(output, lineResults[lineResults.Count - 1].SummarizedResultData.GetDataDisplayText());
         }
     }
 }

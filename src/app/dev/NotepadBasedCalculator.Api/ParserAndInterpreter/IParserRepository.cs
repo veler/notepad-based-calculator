@@ -8,6 +8,6 @@
 
         IEnumerable<IExpressionParserAndInterpreter> GetApplicableExpressionParsersAndInterpreters(string culture);
 
-        IExpressionParserAndInterpreter GetExpressionParserAndInterpreter(string culture, string expressionParserName);
+        IExpressionParserAndInterpreter[] GetExpressionParserAndInterpreters(string culture, params string[] expressionParserAndInterpreterNames);
     }
 }

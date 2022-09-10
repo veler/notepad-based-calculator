@@ -2,7 +2,9 @@
 {
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
-    [Order(int.MinValue + 1)]
+    [Name(PredefinedStatementParserNames.VariableStatement)]
+    [Order(After = PredefinedStatementParserNames.CommentStatement)]
+    [Order(After = PredefinedStatementParserNames.HeaderStatement)]
     internal sealed class VariableDeclarationStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]

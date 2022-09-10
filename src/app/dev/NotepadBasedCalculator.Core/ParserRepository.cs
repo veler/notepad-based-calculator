@@ -4,8 +4,8 @@
     internal sealed class ParserRepository : IParserRepository
     {
         private readonly IEnumerable<Lazy<IDataParser, CultureCodeMetadata>> _dataParsers;
-        private readonly IEnumerable<Lazy<IStatementParserAndInterpreter, ParserMetadata>> _statementParsersAndInterpreters;
-        private readonly IEnumerable<Lazy<IExpressionParserAndInterpreter, ParserMetadata>> _expressionParsersAndInterpreters;
+        private readonly IEnumerable<Lazy<IStatementParserAndInterpreter, ParserAndInterpreterMetadata>> _statementParsersAndInterpreters;
+        private readonly IEnumerable<Lazy<IExpressionParserAndInterpreter, ParserAndInterpreterMetadata>> _expressionParsersAndInterpreters;
         private readonly Dictionary<SearchQuery, IEnumerable<IDataParser>> _applicableDataParsers = new();
         private readonly Dictionary<SearchQuery, IEnumerable<IStatementParserAndInterpreter>> _applicableStatementParsersAndInterpreters = new();
         private readonly Dictionary<SearchQuery, IEnumerable<IExpressionParserAndInterpreter>> _applicableExpressionParsersAndInterpreters = new();
@@ -13,18 +13,13 @@
         [ImportingConstructor]
         public ParserRepository(
             [ImportMany] IEnumerable<Lazy<IDataParser, CultureCodeMetadata>> dataParsers,
-            [ImportMany] IEnumerable<Lazy<IStatementParserAndInterpreter, ParserMetadata>> statementParsersAndInterpreters,
-            [ImportMany] IEnumerable<Lazy<IExpressionParserAndInterpreter, ParserMetadata>> expressionParsersAndInterpreters)
+            [ImportMany] IEnumerable<Lazy<IStatementParserAndInterpreter, ParserAndInterpreterMetadata>> statementParsersAndInterpreters,
+            [ImportMany] IEnumerable<Lazy<IExpressionParserAndInterpreter, ParserAndInterpreterMetadata>> expressionParsersAndInterpreters)
         {
             _dataParsers = dataParsers;
 
-            _statementParsersAndInterpreters
-                = statementParsersAndInterpreters
-                .OrderBy(p => p.Metadata.Order);
-
-            _expressionParsersAndInterpreters
-                = expressionParsersAndInterpreters
-                .OrderBy(p => p.Metadata.Order);
+            _statementParsersAndInterpreters = ExtensionOrderer.Order(statementParsersAndInterpreters);
+            _expressionParsersAndInterpreters = ExtensionOrderer.Order(expressionParsersAndInterpreters);
         }
 
         public IEnumerable<IDataParser> GetApplicableDataParsers(string culture)
@@ -87,16 +82,17 @@
             }
         }
 
-        public IExpressionParserAndInterpreter GetExpressionParserAndInterpreter(string culture, string expressionParserAndInterpreterName)
+        public IExpressionParserAndInterpreter[] GetExpressionParserAndInterpreters(string culture, params string[] expressionParserAndInterpreterNames)
         {
-            IExpressionParserAndInterpreter parserAndInterpreter
+            IExpressionParserAndInterpreter[] parserAndInterpreters
                 = _expressionParsersAndInterpreters
                     .Where(
-                        p => string.Equals(p.Metadata.Name, expressionParserAndInterpreterName, StringComparison.Ordinal)
+                        p => expressionParserAndInterpreterNames.Any(n => string.Equals(p.Metadata.Name, n, StringComparison.Ordinal))
                             && p.Metadata.CultureCodes.Any(c => CultureHelper.IsCultureApplicable(c, culture)))
-                    .First().Value;
+                    .Select(p => p.Value)
+                    .ToArray();
 
-            return parserAndInterpreter;
+            return parserAndInterpreters;
         }
 
         private struct SearchQuery : IEquatable<SearchQuery>

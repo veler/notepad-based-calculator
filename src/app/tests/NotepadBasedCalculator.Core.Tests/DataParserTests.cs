@@ -35,7 +35,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Decimal, data.Subtype);
             Assert.Equal(output, ((DecimalData)data).Value);
@@ -51,7 +51,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Decimal, data.Subtype);
             Assert.Equal(output, ((DecimalData)data).Value);
@@ -66,7 +66,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Fraction, data.Subtype);
             Assert.Equal(output, ((FractionData)data).Value);
@@ -81,7 +81,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             Assert.Equal(PredefinedTokenAndDataTypeNames.SubDataTypeNames.Percentage, data.Subtype);
             Assert.Equal(output, ((PercentageData)data).Value);
@@ -96,7 +96,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var currency = (CurrencyData)data;
             Assert.Equal(isNegative, currency.IsNegative);
@@ -113,7 +113,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var length = (LengthData)data;
             Assert.Equal(subType, data.Subtype);
@@ -130,7 +130,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var informationData = (InformationData)data;
             Assert.Equal(subType, data.Subtype);
@@ -147,7 +147,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var areaData = (AreaData)data;
             Assert.Equal(subType, data.Subtype);
@@ -164,7 +164,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var speedData = (SpeedData)data;
             Assert.Equal(subType, data.Subtype);
@@ -181,7 +181,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var volumeData = (VolumeData)data;
             Assert.Equal(subType, data.Subtype);
@@ -198,7 +198,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var massData = (MassData)data;
             Assert.Equal(subType, data.Subtype);
@@ -215,7 +215,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var angleData = (AngleData)data;
             Assert.Equal(subType, data.Subtype);
@@ -232,7 +232,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var temperatureData = (TemperatureData)data;
             Assert.Equal(subType, data.Subtype);
@@ -251,7 +251,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var durationData = (DurationData)data;
             Assert.Equal(subType, data.Subtype);
@@ -267,7 +267,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.True(data.IsOfType(PredefinedTokenAndDataTypeNames.Numeric));
             var dateTimeData = (DateTimeData)data;
             Assert.Equal(subType, data.Subtype);
@@ -284,7 +284,7 @@ namespace NotepadBasedCalculator.Core.Tests
             IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
             Assert.Single(lineResults);
             Assert.Single(lineResults[0].StatementsAndData);
-            IData data = lineResults[0].StatementsAndData[0].ResultedData;
+            IData data = lineResults[0].SummarizedResultData;
             Assert.Equal(output, data.GetDataDisplayText());
         }
     }

@@ -4,6 +4,8 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
 {
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
+    [Name(PredefinedStatementParserNames.ConditionExpressionStatement)]
+    [Order(After = PredefinedStatementParserNames.ConditionStatement)]
     internal sealed class ConditionalExpressionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]
@@ -20,7 +22,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
 
             bool expressionFound
                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                    PredefinedExpressionParserNames.ConditionalExpression,
+                    new[] { PredefinedExpressionParserNames.ConditionalExpression },
                     culture,
                     currentToken,
                     variableService,

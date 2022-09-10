@@ -167,5 +167,29 @@ namespace NotepadBasedCalculator.Core.Tests
             expression = (BinaryOperatorExpression)statement.NumericalCalculusExpression;
             Assert.Equal("((([Numeric] (1, 3): '12') * [Numeric] (4, 5): '3') + ((((([Numeric] (7, 8): '1' + [Numeric] (10, 11): '2')) * (([Numeric] (13, 14): '3' * ([Numeric] (15, 16): '2')))) * (([Numeric] (19, 20): '1' + [Numeric] (22, 23): '2'))) + [Numeric] (24, 26): '-3'))", expression.ToString());
         }
+
+        [Theory]
+        [InlineData("2m 2km", "2.002 km")]
+        [InlineData("2m (2km)", "4,000 m²")]
+        [InlineData("25 50", "75")]
+        [InlineData("25 (50)", "1250")]
+        [InlineData("25 50 50", "125")]
+        [InlineData("25 (50) (50)", "62500")]
+        [InlineData("20% off 25 50", "70")]
+        [InlineData("20% off 25 (50)", "1000")]
+        [InlineData("-25 (50)", "-1250")]
+        [InlineData("(25) 50", "1250")]
+        [InlineData("(25) -50", "-25")]
+        [InlineData("-25 -50", "-75")]
+        [InlineData("(-25) (-50)", "1250")]
+        [InlineData("-25 (-50)", "1250")]
+        public async Task NumberDataExpression_ImplicitOperator2(string input, string output)
+        {
+            _textDocument.Text = input;
+            IReadOnlyList<ParserAndInterpreterResultLine> lineResults = await _parserAndInterpreter.WaitAsync();
+            Assert.Single(lineResults);
+            Assert.Single(lineResults[0].StatementsAndData);
+            Assert.Equal(output, lineResults[0].SummarizedResultData.GetDataDisplayText());
+        }
     }
 }

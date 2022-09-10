@@ -5,13 +5,18 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
     [Export(typeof(IExpressionParserAndInterpreter))]
     [Name(PredefinedExpressionParserNames.PrimitiveExpression)]
     [Culture(SupportedCultures.Any)]
-    [Order(int.MaxValue - 1)]
+    [Order(After = PredefinedExpressionParserNames.NumericalExpression)]
     internal sealed class PrimitiveExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         [Import]
         public IParserAndInterpreterService ParserAndInterpreterService { get; set; } = null!;
 
-        public Task<bool> TryParseAndInterpretExpressionAsync(string culture, LinkedToken currentToken, IVariableService variableService, ExpressionParserAndInterpreterResult result, CancellationToken cancellationToken)
+        public Task<bool> TryParseAndInterpretExpressionAsync(
+            string culture,
+            LinkedToken currentToken,
+            IVariableService variableService,
+            ExpressionParserAndInterpreterResult result,
+            CancellationToken cancellationToken)
         {
             return ParserPrimaryExpressionAsync(
                 culture,
@@ -40,7 +45,20 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
             if (currentToken is not null)
             {
                 // Detect Numbers, Percentage, Dates...etc.
-                if (currentToken.Token is IData data)
+                if (currentToken.Previous is null
+                    && currentToken.SkipToken(PredefinedTokenAndDataTypeNames.AdditionOperator, skipWordsToken: false, out LinkedToken? nextToken)
+                    && nextToken is not null)
+                {
+                    if (nextToken.Token is IData data)
+                    {
+                        var expression = new DataExpression(nextToken, nextToken, data);
+                        result.NextTokenToContinueWith = nextToken.Next;
+                        result.ParsedExpression = expression;
+                        result.ResultedData = expression.Data;
+                        return true;
+                    }
+                }
+                else if (currentToken.Token is IData data)
                 {
                     var expression = new DataExpression(currentToken, currentToken, data);
                     result.NextTokenToContinueWith = currentToken.Next;
@@ -61,7 +79,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
 
                 // Detect expression between parenthesis.
                 LinkedToken leftParenthToken = currentToken;
-                if (DiscardLeftParenth(leftParenthToken, out LinkedToken? nextToken))
+                if (DiscardLeftParenth(leftParenthToken, out nextToken))
                 {
                     bool foundExpression
                          = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
