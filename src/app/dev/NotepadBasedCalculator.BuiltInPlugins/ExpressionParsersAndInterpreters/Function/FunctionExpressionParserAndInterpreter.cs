@@ -34,6 +34,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
             CancellationToken cancellationToken)
         {
             IReadOnlyList<FunctionDefinition> functionDefinitions = GetOrderedFunctionDefinitions(culture);
+            Dictionary<Tuple<LinkedToken, string, string>, (bool, ExpressionParserAndInterpreterResult)> parsedExpressionCache = new();
 
             for (int i = 0; i < functionDefinitions.Count; i++)
             {
@@ -85,17 +86,33 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                         }
                         else
                         {
-                            ExpressionParserAndInterpreterResult expressionResult = new();
-                            foundStatementOrExpression
-                                = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                                    new[] { PredefinedExpressionParserNames.PrimitiveExpression },
-                                    culture,
-                                    documentToken,
-                                    nextExpectedFunctionTokenType,
-                                    nextExpectedFunctionTokenText,
-                                    variableService,
-                                    expressionResult,
-                                    cancellationToken);
+                            // Super important!
+                            // We're caching the expression we find, so we can get the expression faster if
+                            // we need it again when trying to parse another function. This optimization
+                            // made  some benchmark going from a mean of 17sec to 400ms.
+                            ExpressionParserAndInterpreterResult expressionResult;
+                            var cacheKey = new Tuple<LinkedToken, string, string>(documentToken, nextExpectedFunctionTokenType, nextExpectedFunctionTokenText);
+                            if (parsedExpressionCache.TryGetValue(cacheKey, out (bool found, ExpressionParserAndInterpreterResult expResult) r))
+                            {
+                                foundStatementOrExpression = r.found;
+                                expressionResult = r.expResult;
+                            }
+                            else
+                            {
+                                expressionResult = new();
+                                foundStatementOrExpression
+                                    = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
+                                        new[] { PredefinedExpressionParserNames.PrimitiveExpression },
+                                        culture,
+                                        documentToken,
+                                        nextExpectedFunctionTokenType,
+                                        nextExpectedFunctionTokenText,
+                                        variableService,
+                                        expressionResult,
+                                        cancellationToken);
+                                parsedExpressionCache[cacheKey] = new(foundStatementOrExpression, expressionResult);
+                            }
+
                             resultedData = expressionResult.ResultedData;
                             parsedExpressionOrStatement = expressionResult.ParsedExpression;
                             if (expressionResult.Error is not null)

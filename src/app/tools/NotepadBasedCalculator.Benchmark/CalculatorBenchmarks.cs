@@ -15,7 +15,7 @@ namespace NotepadBasedCalculator.Benchmark
         private ParserAndInterpreterFactory _parserAndInterpreterFactory;
         private ParserAndInterpreter _parserAndInterpreter;
 
-        [Params(1000)]
+        [Params(100)]
         public int IterationCount { get; set; }
 
         [GlobalSetup]
