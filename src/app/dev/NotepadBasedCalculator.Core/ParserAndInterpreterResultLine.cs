@@ -34,7 +34,7 @@
 
             public string? Subtype => throw new NotImplementedException();
 
-            public string Type => throw new NotImplementedException();
+            public string Type => PredefinedTokenAndDataTypeNames.Error;
 
             public int StartInLine => throw new NotImplementedException();
 
@@ -86,19 +86,19 @@
                 throw new NotImplementedException();
             }
 
-            public bool IsNotOfType(string type)
-            {
-                throw new NotImplementedException();
-            }
-
             public bool IsOfSubtype(string expectedSubtype)
             {
                 throw new NotImplementedException();
             }
 
+            public bool IsNotOfType(string type)
+            {
+                return !IsOfType(type);
+            }
+
             public bool IsOfType(string expectedType)
             {
-                throw new NotImplementedException();
+                return string.Equals(Type, expectedType, StringComparison.OrdinalIgnoreCase);
             }
 
             public bool IsTokenTextEqualTo(string compareTo, StringComparison comparisonType = StringComparison.OrdinalIgnoreCase)

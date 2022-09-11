@@ -2,6 +2,8 @@
 {
     public static class PredefinedTokenAndDataTypeNames
     {
+        public const string Error = nameof(Error);
+
         public const string UnsupportedCharacter = nameof(UnsupportedCharacter);
 
         public const string Whitespace = nameof(Whitespace);
