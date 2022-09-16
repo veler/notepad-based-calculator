@@ -41,7 +41,7 @@ class Build : NukeBuild
         });
 
     Target SetVersion => _ => _
-        .Before(Compile)
+        .DependsOn(Restore)
         .Requires(() => Configuration == Configuration.Debug)
         .Executes(() =>
         {

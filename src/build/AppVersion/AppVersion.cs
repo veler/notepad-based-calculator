@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Nuke.Common.IO;
+using Serilog;
 
 internal static class AppVersion
 {
@@ -13,6 +14,7 @@ internal static class AppVersion
             = rootDirectory.GlobFiles("**/*AssemblyVersion.cs");
         foreach (AbsolutePath file in assemblyVersionFiles)
         {
+            Log.Information("Updating app version in {File}...", file);
             csharpUpdater.UpdateFile(file);
         }
 
@@ -21,6 +23,7 @@ internal static class AppVersion
             = rootDirectory.GlobFiles("**/*.appxmanifest");
         foreach (AbsolutePath file in appxmanifestFiles)
         {
+            Log.Information("Updating app version in {File}...", file);
             appxManifestUpdater.UpdateFile(file);
         }
     }
@@ -30,6 +33,7 @@ internal static class AppVersion
         AbsolutePath appVersionNumberFile = rootDirectory / "tools" / "app-version-number.txt";
         if (!appVersionNumberFile.FileExists())
         {
+            Log.Error("Unable to find the app version number in {AppVersionNumberFile}...", appVersionNumberFile);
             throw new FileNotFoundException("Unable to find the app version number file.", appVersionNumberFile.ToString());
         }
 
