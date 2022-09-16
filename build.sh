@@ -3,8 +3,8 @@
 set -eo pipefail
 SCRIPT_DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
 
-# Run Init.sh
-. "./init.sh" $SCRIPT_DIR
+# Install .Net
+. "./tools/Install-DotNet.sh" $SCRIPT_DIR
 
 # Build the build project.
 echo "Building the pipeline"

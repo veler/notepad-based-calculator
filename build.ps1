@@ -12,8 +12,8 @@ function ExecSafe([scriptblock] $cmd) {
 Set-StrictMode -Version 2.0; $ErrorActionPreference = "Stop"; $ConfirmPreference = "None"; trap { Write-Error $_ -ErrorAction Continue; exit 1 }
 $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent
 
-# Run Init.ps1
-ExecSafe { & $PSScriptRoot\init.ps1 }
+# Install .Net
+ExecSafe { & $PSScriptRoot\tools\Install-DotNet.ps1 -RootFolder $PSScriptRoot }
 
 # Build the builder project.
 Write-Host "Building the pipeline"
