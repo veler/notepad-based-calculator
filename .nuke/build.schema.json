@@ -74,9 +74,14 @@
             "enum": [
               "Clean",
               "Compile",
-              "Restore"
+              "Restore",
+              "SetVersion"
             ]
           }
+        },
+        "Solution": {
+          "type": "string",
+          "description": "Path to a solution file that is automatically loaded"
         },
         "Target": {
           "type": "array",
@@ -86,7 +91,8 @@
             "enum": [
               "Clean",
               "Compile",
-              "Restore"
+              "Restore",
+              "SetVersion"
             ]
           }
         },
