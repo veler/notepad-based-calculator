@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!-- Need to have a TargetFrameworks tag for VS to recognize this as an SDK project. Just use the shared one. -->
-    <TargetFrameworks>$(NetCore)</TargetFrameworks>
+    <TargetFrameworks>$(NetCoreVersion)</TargetFrameworks>
 
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>

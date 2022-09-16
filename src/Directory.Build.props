@@ -16,7 +16,6 @@
     <!-- Define default build configuration -->
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">Any CPU</Platform>
-    <RuntimeIdentifiers Condition="$(IsWindows)">win</RuntimeIdentifiers>
     <Platform>anycpu</Platform>
     <LangVersion>10.0</LangVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>

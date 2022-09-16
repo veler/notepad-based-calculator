@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
 
+    <!-- Has to be here otherwise benchmarks can't run -->
     <OutputPath>$(MSBuildThisFileDirectory)\bin\</OutputPath>
     <OutputType>Exe</OutputType>
     <ImplicitUsings>enable</ImplicitUsings>

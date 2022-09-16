@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- Need to have a TargetFrameworks tag for VS to recognize this as an SDK project. Just use the shared one. -->
+    <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <!--Avalonia doesn't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
+    <TrimMode>copyused</TrimMode>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <UseAppHost>true</UseAppHost>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--This helps with theme dll-s trimming.
+	If you will publish your application in self-contained mode with p:PublishTrimmed=true and it will use Fluent theme Default theme will be trimmed from the output and vice versa.
+	https://github.com/AvaloniaUI/Avalonia/issues/5593 -->
+    <TrimmableAssembly Include="Avalonia.Themes.Fluent" />
+    <TrimmableAssembly Include="Avalonia.Themes.Default" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.AvaloniaEdit" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
+    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
+    <PackageReference Include="XamlNameReferenceGenerator" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj" />
+    <ProjectReference Include="..\NotepadBasedCalculator.BuiltInPlugins\NotepadBasedCalculator.BuiltInPlugins.csproj" />
+    <ProjectReference Include="..\NotepadBasedCalculator.Core\NotepadBasedCalculator.Core.csproj" />
+  </ItemGroup>
+</Project>

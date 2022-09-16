@@ -62,9 +62,41 @@
             "type": "string"
           }
         },
+        "PublishFramework": {
+          "type": "string",
+          "description": "publish-framework"
+        },
+        "PublishProject": {
+          "type": "string",
+          "description": "publish-project"
+        },
+        "PublishReadyToRun": {
+          "type": "boolean",
+          "description": "https://docs.microsoft.com/en-us/dotnet/core/deploying/ready-to-run"
+        },
+        "PublishRuntime": {
+          "type": "string",
+          "description": "publish-runtime"
+        },
+        "PublishSelfContained": {
+          "type": "boolean",
+          "description": "https://docs.microsoft.com/en-us/dotnet/core/deploying/runtime-patch-selection"
+        },
+        "PublishSingleFile": {
+          "type": "boolean",
+          "description": "https://docs.microsoft.com/en-us/dotnet/core/deploying/single-file/overview?tabs=cli"
+        },
+        "PublishTrimmed": {
+          "type": "boolean",
+          "description": "https://docs.microsoft.com/en-us/dotnet/core/deploying/trimming/trim-self-contained"
+        },
         "Root": {
           "type": "string",
           "description": "Root directory during build execution"
+        },
+        "RunTests": {
+          "type": "boolean",
+          "description": "run-tests"
         },
         "Skip": {
           "type": "array",
@@ -74,8 +106,10 @@
             "enum": [
               "Clean",
               "Compile",
+              "Publish",
               "Restore",
-              "SetVersion"
+              "SetVersion",
+              "UnitTests"
             ]
           }
         },
@@ -91,8 +125,10 @@
             "enum": [
               "Clean",
               "Compile",
+              "Publish",
               "Restore",
-              "SetVersion"
+              "SetVersion",
+              "UnitTests"
             ]
           }
         },
