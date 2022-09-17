@@ -1,7 +1,13 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 
 namespace NotepadBasedCalculator.Api
 {
+    [DebuggerDisplay(
+        $"Value = {{{nameof(Value)}}}, " +
+        $"Type = {{{nameof(Type)}}}, " +
+        $"Text = {{{nameof(GetText)}()}}, " +
+        $"StartInLine = {{{nameof(StartInLine)}}}")]
     public sealed record DateTimeData : Data<DateTime>, INumericData, ISupportMultipleDataTypeForArithmeticOperation
     {
         public bool IsNegative => Value.Ticks < 0;

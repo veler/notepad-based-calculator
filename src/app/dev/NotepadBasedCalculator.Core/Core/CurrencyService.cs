@@ -4,6 +4,8 @@ using Newtonsoft.Json;
 
 namespace NotepadBasedCalculator.Core
 {
+    // TODO: Instead of mocking CurrencyService, we should create a new service for LoadLatestRatesAsync
+    // and mock it.
     [Export(typeof(ICurrencyService))]
     public /*sealed // Don't make it sealed or Moq won't work*/ class CurrencyService : ICurrencyService
     {

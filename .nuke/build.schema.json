@@ -64,31 +64,31 @@
         },
         "PublishFramework": {
           "type": "string",
-          "description": "publish-framework"
+          "description": "The target framework - Default is [net6.0]"
         },
         "PublishProject": {
           "type": "string",
-          "description": "publish-project"
+          "description": "The project to publish - Default is [NotepadBasedCalculator.Desktop]"
         },
         "PublishReadyToRun": {
           "type": "boolean",
-          "description": "https://docs.microsoft.com/en-us/dotnet/core/deploying/ready-to-run"
+          "description": "https://bit.ly/3RSEo7w"
         },
         "PublishRuntime": {
           "type": "string",
-          "description": "publish-runtime"
+          "description": "The target runtime - Default is [win-x64]"
         },
         "PublishSelfContained": {
           "type": "boolean",
-          "description": "https://docs.microsoft.com/en-us/dotnet/core/deploying/runtime-patch-selection"
+          "description": "https://bit.ly/2OEU0KO - Enabled by default"
         },
         "PublishSingleFile": {
           "type": "boolean",
-          "description": "https://docs.microsoft.com/en-us/dotnet/core/deploying/single-file/overview?tabs=cli"
+          "description": "https://bit.ly/3xvq7FA - Enabled by default"
         },
         "PublishTrimmed": {
           "type": "boolean",
-          "description": "https://docs.microsoft.com/en-us/dotnet/core/deploying/trimming/trim-self-contained"
+          "description": "https://bit.ly/3RKZkNH"
         },
         "Root": {
           "type": "string",
@@ -96,7 +96,7 @@
         },
         "RunTests": {
           "type": "boolean",
-          "description": "run-tests"
+          "description": "Runs unit tests"
         },
         "Skip": {
           "type": "array",

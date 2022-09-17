@@ -1,5 +1,8 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Diagnostics;
+
+namespace NotepadBasedCalculator.Api
 {
+    [DebuggerDisplay($"FunctionFullName = {{{nameof(FunctionFullName)}}}")]
     public sealed class FunctionDefinition
     {
         private readonly Lazy<int> _tokenCount;

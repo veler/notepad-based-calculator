@@ -1,5 +1,12 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Diagnostics;
+
+namespace NotepadBasedCalculator.Api
 {
+    [DebuggerDisplay(
+        $"Value = {{{nameof(Value)}}}, " +
+        $"Type = {{{nameof(Type)}}}, " +
+        $"Text = {{{nameof(GetText)}()}}, " +
+        $"StartInLine = {{{nameof(StartInLine)}}}")]
     public sealed record DurationData : Data<TimeSpan>, INumericData, ISupportMultipleDataTypeForArithmeticOperation
     {
         public bool IsNegative => Value.Ticks < 0;

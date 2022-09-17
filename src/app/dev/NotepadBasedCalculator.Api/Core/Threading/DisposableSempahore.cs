@@ -1,8 +1,11 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Diagnostics;
+
+namespace NotepadBasedCalculator.Api
 {
     /// <summary>
     /// Represents a semaphore that free other threads when disposing the result of the <see cref="WaitAsync(CancellationToken)"/> method..
     /// </summary>
+    [DebuggerDisplay($"IsBusy = {{{nameof(IsBusy)}}}, Disposed = {{{nameof(Disposed)}}}")]
     public sealed class DisposableSempahore : IDisposable
     {
         private readonly object _lockObject = new();

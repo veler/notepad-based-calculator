@@ -11,7 +11,9 @@
     <PackageVersion Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)"/>
     <PackageVersion Include="Avalonia.AvaloniaEdit" Version="0.10.12.2"/>
     <PackageVersion Include="BenchmarkDotNet" Version="0.13.2" />
+    <PackageVersion Include="CommunityToolkit.Common" Version="8.0.0" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.0.0" />
+    <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.0.0" />
     <PackageVersion Include="coverlet.collector" Version="3.1.2" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
     <PackageVersion Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />

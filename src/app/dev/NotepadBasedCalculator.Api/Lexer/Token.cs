@@ -1,8 +1,11 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Diagnostics;
+
+namespace NotepadBasedCalculator.Api
 {
     /// <summary>
     /// Represents a token.
     /// </summary>
+    [DebuggerDisplay($"Type = {{{nameof(Type)}}}, Text = {{{nameof(GetText)}()}}, StartInLine = {{{nameof(StartInLine)}}}")]
     public record Token : IToken
     {
         private readonly Lazy<string> _getText;

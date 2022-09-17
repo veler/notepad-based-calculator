@@ -1,8 +1,14 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using UnitsNet;
 
 namespace NotepadBasedCalculator.Api
 {
+    [DebuggerDisplay(
+        $"Value = {{{nameof(NumericValueInStandardUnit)}}}, " +
+        $"Type = {{{nameof(Type)}}}, " +
+        $"Text = {{{nameof(GetText)}()}}, " +
+        $"StartInLine = {{{nameof(StartInLine)}}}")]
     public sealed record MassData : Data<Mass>, INumericData
     {
         public bool IsNegative => Value.Value < 0;

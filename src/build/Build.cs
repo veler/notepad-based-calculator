@@ -22,28 +22,28 @@ class Build : NukeBuild
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
     readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
-    [Parameter("publish-framework")]
+    [Parameter("The target framework - Default is [net6.0]")]
     readonly string PublishFramework = "net6.0";
 
-    [Parameter("publish-runtime")]
+    [Parameter("The target runtime - Default is [win-x64]")]
     readonly string PublishRuntime = "win-x64";
 
-    [Parameter("publish-project")]
+    [Parameter("The project to publish - Default is [NotepadBasedCalculator.Desktop]")]
     readonly string PublishProject = "NotepadBasedCalculator.Desktop";
 
-    [Parameter("https://docs.microsoft.com/en-us/dotnet/core/deploying/runtime-patch-selection")]
+    [Parameter("https://bit.ly/2OEU0KO - Enabled by default")]
     readonly bool PublishSelfContained = true;
 
-    [Parameter("https://docs.microsoft.com/en-us/dotnet/core/deploying/single-file/overview?tabs=cli")]
+    [Parameter("https://bit.ly/3xvq7FA - Enabled by default")]
     readonly bool PublishSingleFile = true;
 
-    [Parameter("https://docs.microsoft.com/en-us/dotnet/core/deploying/ready-to-run")]
-    readonly bool PublishReadyToRun = false;
+    [Parameter("https://bit.ly/3RSEo7w")]
+    readonly bool PublishReadyToRun;
 
-    [Parameter("https://docs.microsoft.com/en-us/dotnet/core/deploying/trimming/trim-self-contained")]
-    readonly bool PublishTrimmed = false;
+    [Parameter("https://bit.ly/3RKZkNH")]
+    readonly bool PublishTrimmed;
 
-    [Parameter("run-tests")]
+    [Parameter("Runs unit tests")]
     readonly bool RunTests;
 
     [Solution]

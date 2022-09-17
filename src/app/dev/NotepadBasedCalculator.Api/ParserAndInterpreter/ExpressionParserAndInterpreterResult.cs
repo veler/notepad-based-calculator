@@ -1,5 +1,8 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Diagnostics;
+
+namespace NotepadBasedCalculator.Api
 {
+    [DebuggerDisplay($"ResultedData = {{{nameof(ResultedData)}}}, ParsedExpression = {{{nameof(ParsedExpression)}}}, Error = {{{nameof(Error)}}}")]
     public record ExpressionParserAndInterpreterResult
     {
         public IData? ResultedData { get; set; } = null;

@@ -6,12 +6,7 @@
 
     <NetStandardVersion>netstandard2.0;netstandard2.1</NetStandardVersion>
     <NetCoreVersion>net6.0</NetCoreVersion>
-    <NetCoreVersionWindows>$(NetCoreVersion)-windows</NetCoreVersionWindows>
-    <NetCoreVersionMac>$(NetCoreVersion)-macos10.15</NetCoreVersionMac>
-    <NetCore Condition="$(IsWindows)">$(NetCoreVersionWindows)</NetCore>
-    <NetCore Condition="$(IsMac)">$(NetCoreVersionMac)</NetCore>
-    <NetCoreAndStandard Condition="$(IsWindows)">$(NetStandardVersion);$(NetCoreVersionWindows)</NetCoreAndStandard>
-    <NetCoreAndStandard Condition="$(IsMac)">$(NetStandardVersion);$(NetCoreVersionMac)</NetCoreAndStandard>
+    <NetCoreAndStandard>$(NetStandardVersion);$(NetCoreVersion)</NetCoreAndStandard>
 
     <!-- Define default build configuration -->
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>

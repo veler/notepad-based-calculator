@@ -18,6 +18,7 @@
     <EmbeddedResource Include="Grammars\SpecialTokenDefinition.json" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Common" />
     <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="Microsoft.Recognizers.Text" />
     <PackageReference Include="Microsoft.Recognizers.Text.Number" />

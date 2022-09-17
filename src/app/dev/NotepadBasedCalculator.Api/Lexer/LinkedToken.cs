@@ -1,5 +1,8 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Diagnostics;
+
+namespace NotepadBasedCalculator.Api
 {
+    [DebuggerDisplay($"Token = {{{nameof(Token)}.{nameof(IToken.GetText)}()}}")]
     public sealed class LinkedToken
     {
         private readonly Lazy<LinkedToken?> _nextToken;

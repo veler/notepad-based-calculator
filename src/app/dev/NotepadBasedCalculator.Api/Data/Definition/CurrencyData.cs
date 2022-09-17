@@ -1,7 +1,13 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 
 namespace NotepadBasedCalculator.Api
 {
+    [DebuggerDisplay(
+        $"Value = {{{nameof(NumericValueInStandardUnit)}}}, " +
+        $"Type = {{{nameof(Type)}}}, " +
+        $"Text = {{{nameof(GetText)}()}}, " +
+        $"StartInLine = {{{nameof(StartInLine)}}}")]
     public sealed record CurrencyData : Data<CurrencyValue>, INumericData
     {
         private readonly ICurrencyService _currencyService;

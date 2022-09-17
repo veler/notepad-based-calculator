@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <!-- Need to have a TargetFrameworks tag for VS to recognize this as an SDK project. Just use the shared one. -->
+    <!-- Need to have a TargetFramework tag for VS to recognize this as an SDK project. Just use the shared one. -->
     <TargetFramework>$(NetCoreVersion)</TargetFramework>
     <!--Avalonia doesn't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
     <TrimMode>copyused</TrimMode>
@@ -20,7 +20,9 @@
     <PackageReference Include="Avalonia.AvaloniaEdit" />
     <PackageReference Include="Avalonia.Desktop" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-    <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" />
+    <PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
+    <PackageReference Include="CommunityToolkit.Common" />
+    <PackageReference Include="CommunityToolkit.Diagnostics" />
     <PackageReference Include="XamlNameReferenceGenerator" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,13 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 
 namespace NotepadBasedCalculator.Api
 {
+    [DebuggerDisplay(
+        $"Value = {{{nameof(NumericValueInStandardUnit)}}}, " +
+        $"Type = {{{nameof(Type)}}}, " +
+        $"Text = {{{nameof(GetText)}()}}, " +
+        $"StartInLine = {{{nameof(StartInLine)}}}")]
     public sealed record OrdinalData : Data<long>, INumericData, IDecimal
     {
         public bool IsNegative => Value < 0;

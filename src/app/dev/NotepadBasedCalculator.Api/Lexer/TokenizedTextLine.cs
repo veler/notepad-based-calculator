@@ -1,5 +1,8 @@
-﻿namespace NotepadBasedCalculator.Api
+﻿using System.Diagnostics;
+
+namespace NotepadBasedCalculator.Api
 {
+    [DebuggerDisplay($"LineNumber = {{{nameof(LineNumber)}}}, LengthIncludingLineBreak = {{{nameof(LengthIncludingLineBreak)}}}")]
     public sealed class TokenizedTextLine
     {
         public int Start { get; }

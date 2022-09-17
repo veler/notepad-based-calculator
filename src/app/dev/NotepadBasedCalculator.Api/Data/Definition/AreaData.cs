@@ -1,9 +1,15 @@
-﻿using System.Globalization;
+﻿using System.Diagnostics;
+using System.Globalization;
 using UnitsNet;
 using UnitsNet.Units;
 
 namespace NotepadBasedCalculator.Api
 {
+    [DebuggerDisplay(
+        $"Value = {{{nameof(NumericValueInStandardUnit)}}}, " +
+        $"Type = {{{nameof(Type)}}}, " +
+        $"Text = {{{nameof(GetText)}()}}, " +
+        $"StartInLine = {{{nameof(StartInLine)}}}")]
     public sealed record AreaData : Data<Area>, INumericData
     {
         public bool IsNegative => Value.Value < 0;
