@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.Api
 {
     /// <summary>
     /// Represents a semaphore that free other threads when disposing the result of the <see cref="WaitAsync(CancellationToken)"/> method..

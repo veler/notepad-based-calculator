@@ -1,5 +1,8 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
+    /// <summary>
+    /// Contains a list of pre-defined supported cultures.
+    /// </summary>
     public static class SupportedCultures
     {
         public const string Any = "";

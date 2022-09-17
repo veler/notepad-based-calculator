@@ -6,14 +6,14 @@ namespace NotepadBasedCalculator.Core
     internal sealed class ParserAndInterpreterService : IParserAndInterpreterService
     {
         private readonly ILogger _logger;
-        private readonly IParserRepository _parserRepository;
+        private readonly IParserAndInterpretersRepository _parserRepository;
 
         public IArithmeticAndRelationOperationService ArithmeticAndRelationOperationService { get; }
 
         [ImportingConstructor]
         public ParserAndInterpreterService(
             ILogger logger,
-            IParserRepository parserRepository,
+            IParserAndInterpretersRepository parserRepository,
             IArithmeticAndRelationOperationService arithmeticAndRelationOperationService)
         {
             _logger = logger;
@@ -102,7 +102,7 @@ namespace NotepadBasedCalculator.Core
         public Task<bool> TryParseAndInterpretExpressionAsync(
             string culture,
             LinkedToken? currentToken,
-            string? parseUntilTokenIsOfType,
+            string parseUntilTokenIsOfType,
             string? parseUntilTokenHasText,
             IVariableService variableService,
             ExpressionParserAndInterpreterResult result,
@@ -122,13 +122,15 @@ namespace NotepadBasedCalculator.Core
         public async Task<bool> TryParseAndInterpretExpressionAsync(
             string culture,
             LinkedToken? currentToken,
-            string? parseUntilTokenIsOfType,
+            string parseUntilTokenIsOfType,
             string? parseUntilTokenHasText,
-            string? nestedTokenType,
+            string nestedTokenType,
             IVariableService variableService,
             ExpressionParserAndInterpreterResult result,
             CancellationToken cancellationToken)
         {
+            Guard.IsNotNull(parseUntilTokenIsOfType);
+            Guard.IsNotNull(nestedTokenType);
             Guard.IsNotNull(result);
             bool expressionFound = false;
             result.NextTokenToContinueWith = null;
@@ -191,7 +193,7 @@ namespace NotepadBasedCalculator.Core
             string[] expressionParserAndInterpreterNames,
             string culture,
             LinkedToken? currentToken,
-            string? parseUntilTokenIsOfType,
+            string parseUntilTokenIsOfType,
             string? parseUntilTokenHasText,
             IVariableService variableService,
             ExpressionParserAndInterpreterResult result,
@@ -213,13 +215,15 @@ namespace NotepadBasedCalculator.Core
             string[] expressionParserAndInterpreterNames,
             string culture,
             LinkedToken? currentToken,
-            string? parseUntilTokenIsOfType,
+            string parseUntilTokenIsOfType,
             string? parseUntilTokenHasText,
-            string? nestedTokenType,
+            string nestedTokenType,
             IVariableService variableService,
             ExpressionParserAndInterpreterResult result,
             CancellationToken cancellationToken)
         {
+            Guard.IsNotNull(parseUntilTokenIsOfType);
+            Guard.IsNotNull(nestedTokenType);
             Guard.IsNotNull(result);
             bool expressionFound = false;
             result.NextTokenToContinueWith = null;
@@ -280,12 +284,13 @@ namespace NotepadBasedCalculator.Core
         public async Task<bool> TryParseAndInterpretStatementAsync(
             string culture,
             LinkedToken? currentToken,
-            string? parseUntilTokenIsOfType,
+            string parseUntilTokenIsOfType,
             string? parseUntilTokenHasText,
             IVariableService variableService,
             StatementParserAndInterpreterResult result,
             CancellationToken cancellationToken)
         {
+            Guard.IsNotNull(parseUntilTokenIsOfType);
             Guard.IsNotNull(result);
             bool statementFound = false;
 

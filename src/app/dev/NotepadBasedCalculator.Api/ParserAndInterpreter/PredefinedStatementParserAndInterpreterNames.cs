@@ -1,6 +1,9 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public static class PredefinedStatementParserNames
+    /// <summary>
+    /// Contains a list of pre-defined known statement parser and interpreter names.
+    /// </summary>
+    public static class PredefinedStatementParserAndInterpreterNames
     {
         public const string CommentStatement = nameof(CommentStatement);
 

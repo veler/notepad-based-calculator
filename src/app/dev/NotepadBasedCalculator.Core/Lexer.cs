@@ -55,12 +55,12 @@ namespace NotepadBasedCalculator.Core
         }
 
         /// <summary>
-        /// 
+        /// Tokenize a line of text.
         /// </summary>
-        /// <param name="startPositionInDocument"></param>
-        /// <param name="lineTextIncludingLineBreak"></param>
+        /// <param name="startPositionInDocument">Location of the line in the document.</param>
+        /// <param name="lineTextIncludingLineBreak">The whole text of the line, including the line break characters.</param>
         /// <param name="knownData">An ordered list of <see cref="IData"/> that have already been parsed in the <paramref name="lineTextIncludingLineBreak"/>.</param>
-        /// <returns></returns>
+        /// <returns>A tokenized line.</returns>
         internal TokenizedTextLine TokenizeLine(
             string culture,
             int lineNumber,
@@ -105,7 +105,12 @@ namespace NotepadBasedCalculator.Core
         {
             Guard.IsGreaterThanOrEqualTo(startPositionInDocument, 0);
 
-            var tokenEnumerator = new LineTokenEnumerator(lineTextIncludingLineBreak, orderedTokenDefinitionGrammars, orderedKnownVariableNames, knownData);
+            var tokenEnumerator
+                = new LineTokenEnumerator(
+                    lineTextIncludingLineBreak,
+                    orderedTokenDefinitionGrammars,
+                    orderedKnownVariableNames,
+                    knownData);
             // TODO: should we dispose this enumerator at some point?
 
             int lineBreakLength = 0;
@@ -140,8 +145,6 @@ namespace NotepadBasedCalculator.Core
         /// <summary>
         /// Split an <paramref name="input"/> per lines and keep the break line in the result.
         /// </summary>
-        /// <param name="input"></param>
-        /// <returns></returns>
         private IReadOnlyList<string> SplitLines(string input)
         {
             var lines = new List<string>() { input };
@@ -180,7 +183,7 @@ namespace NotepadBasedCalculator.Core
                     = _grammarProviders.Where(
                         p => p.Metadata.CultureCodes.Any(
                             c => CultureHelper.IsCultureApplicable(c, culture)))
-                    .Select(p => p.Value.LoadTokenDefinitionGrammar(culture))
+                    .Select(p => p.Value.LoadTokenDefinitionGrammars(culture))
                     .Where(g => g is not null)
                     .SelectMany(g => g!)!;
 
@@ -200,6 +203,7 @@ namespace NotepadBasedCalculator.Core
                     }
                 }
 
+                // Order tokens from the longest to the shortest.
                 tokenDefinitions = definitions.ToImmutableSortedSet(new DescendingComparer<TokenDefinition>());
                 _tokenDefinitionGrammars[key] = tokenDefinitions;
                 return tokenDefinitions;
@@ -416,6 +420,7 @@ namespace NotepadBasedCalculator.Core
 
             private bool TryDetectTokenFromGrammarAtPosition(int startIndex, out Token? foundToken)
             {
+                // Detect tokens.
                 if (_orderedTokenDefinitionGrammars is not null)
                 {
                     for (int i = 0; i < _orderedTokenDefinitionGrammars.Count; i++)
@@ -451,36 +456,35 @@ namespace NotepadBasedCalculator.Core
                     }
                 }
 
+                // Detect variables.
                 if (_orderedKnownVariableNames is not null)
                 {
                     for (int i = 0; i < _orderedKnownVariableNames.Count; i++)
                     {
                         string variableName = _orderedKnownVariableNames[i];
-                        if (_lineTextIncludingLineBreak.Length >= startIndex + variableName.Length)
+                        if (_lineTextIncludingLineBreak.Length >= startIndex + variableName.Length
+                            && _lineTextIncludingLineBreak.IndexOf(variableName, startIndex, variableName.Length, StringComparison.Ordinal) == startIndex)
                         {
-                            if (_lineTextIncludingLineBreak.IndexOf(variableName, startIndex, variableName.Length, StringComparison.Ordinal) == startIndex)
+                            bool tokenFound = true;
+                            string lastTokenCharacterType = DetectTokenType(variableName[variableName.Length - 1]);
+                            if (lastTokenCharacterType == PredefinedTokenAndDataTypeNames.Word)
                             {
-                                bool tokenFound = true;
-                                string lastTokenCharacterType = DetectTokenType(variableName[variableName.Length - 1]);
-                                if (lastTokenCharacterType == PredefinedTokenAndDataTypeNames.Word)
+                                int nextCharIndex = GetEndPositionOfRepeatedTokenType(startIndex, lastTokenCharacterType);
+                                if (nextCharIndex > startIndex + variableName.Length)
                                 {
-                                    int nextCharIndex = GetEndPositionOfRepeatedTokenType(startIndex, lastTokenCharacterType);
-                                    if (nextCharIndex > startIndex + variableName.Length)
-                                    {
-                                        tokenFound = false;
-                                    }
+                                    tokenFound = false;
                                 }
+                            }
 
-                                if (tokenFound)
-                                {
-                                    foundToken
-                                    = new Token(
-                                        _lineTextIncludingLineBreak,
-                                        startIndex,
-                                        startIndex + variableName.Length,
-                                        PredefinedTokenAndDataTypeNames.VariableReference);
-                                    return true;
-                                }
+                            if (tokenFound)
+                            {
+                                foundToken
+                                = new Token(
+                                    _lineTextIncludingLineBreak,
+                                    startIndex,
+                                    startIndex + variableName.Length,
+                                    PredefinedTokenAndDataTypeNames.VariableReference);
+                                return true;
                             }
                         }
                     }

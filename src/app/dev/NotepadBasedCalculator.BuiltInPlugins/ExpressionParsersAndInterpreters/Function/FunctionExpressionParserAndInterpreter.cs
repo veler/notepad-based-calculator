@@ -3,9 +3,9 @@
 namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters.Function
 {
     [Export(typeof(IExpressionParserAndInterpreter))]
-    [Name(PredefinedExpressionParserNames.FunctionExpression)]
+    [Name(PredefinedExpressionParserAndInterpreterNames.FunctionExpression)]
     [Culture(SupportedCultures.Any)]
-    [Order(After = PredefinedExpressionParserNames.ConditionalExpression, Before = PredefinedExpressionParserNames.NumericalExpression)]
+    [Order(After = PredefinedExpressionParserAndInterpreterNames.ConditionalExpression, Before = PredefinedExpressionParserAndInterpreterNames.NumericalExpression)]
     internal sealed class FunctionExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         private readonly Dictionary<string, IEnumerable<IFunctionDefinitionProvider>> _applicableFunctionDefinitionProviders = new();
@@ -36,6 +36,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
             IReadOnlyList<FunctionDefinition> functionDefinitions = GetOrderedFunctionDefinitions(culture);
             Dictionary<Tuple<LinkedToken, string, string>, (bool, ExpressionParserAndInterpreterResult)> parsedExpressionCache = new();
 
+            // For each applicable function definition
             for (int i = 0; i < functionDefinitions.Count; i++)
             {
                 // TODO: Optimization:
@@ -49,6 +50,8 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                 LinkedToken lastToken = currentToken;
                 LinkedToken? documentToken = currentToken;
                 LinkedToken? functionDefinitionToken = functionDefinition.TokenizedFunctionDefinition;
+
+                // For each token in the function definition grammar.
                 while (documentToken is not null
                     && functionDefinitionToken is not null)
                 {
@@ -89,7 +92,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                             // Super important!
                             // We're caching the expression we find, so we can get the expression faster if
                             // we need it again when trying to parse another function. This optimization
-                            // made  some benchmark going from a mean of 17sec to 400ms.
+                            // made some benchmark going from a mean of 17sec to 400ms.
                             ExpressionParserAndInterpreterResult expressionResult;
                             var cacheKey = new Tuple<LinkedToken, string, string>(documentToken, nextExpectedFunctionTokenType, nextExpectedFunctionTokenText);
                             if (parsedExpressionCache.TryGetValue(cacheKey, out (bool found, ExpressionParserAndInterpreterResult expResult) r))
@@ -102,7 +105,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                                 expressionResult = new();
                                 foundStatementOrExpression
                                     = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                                        new[] { PredefinedExpressionParserNames.PrimitiveExpression },
+                                        new[] { PredefinedExpressionParserAndInterpreterNames.PrimitiveExpression },
                                         culture,
                                         documentToken,
                                         nextExpectedFunctionTokenType,
@@ -187,9 +190,11 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                 }
 
                 var result = new List<FunctionDefinition>();
+                // For each IFunctionDefinitionProvider
                 foreach (IFunctionDefinitionProvider functionProvider in GetApplicableFunctionDefinitionProviders(culture))
                 {
-                    IReadOnlyList<Dictionary<string, Dictionary<string, string[]>>> parsedJsons = functionProvider.LoadFunctionDefinition(culture);
+                    // Load the function definitions.
+                    IReadOnlyList<Dictionary<string, Dictionary<string, string[]>>> parsedJsons = functionProvider.LoadFunctionDefinitions(culture);
                     if (parsedJsons is not null)
                     {
                         for (int i = 0; i < parsedJsons.Count; i++)
@@ -202,6 +207,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                                     string[] functionGrammars = functionDefinitions[functionName];
                                     for (int j = 0; j < functionGrammars.Length; j++)
                                     {
+                                        // Tokenize the function grammar.
                                         IReadOnlyList<TokenizedTextLine> tokenizedGrammarLines = Lexer.Tokenize(culture, functionGrammars[j]);
                                         Guard.HasSizeEqualTo(tokenizedGrammarLines, 1);
                                         TokenizedTextLine tokenizedGrammar = tokenizedGrammarLines[0];
@@ -214,6 +220,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
                     }
                 }
 
+                // Order the function definitions by amount of tokens, then by grammar length.
                 definitions
                     = result
                     .OrderByDescending(f => f.TokenCount)
@@ -286,6 +293,9 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
             return (false, null, error);
         }
 
+        /// <summary>
+        /// Gets the function interpreter for the given <paramref name="functionDefinition"/> and <paramref name="culture"/>.
+        /// </summary>
         private IFunctionInterpreter GetFunctionInterpreter(string culture, FunctionDefinition functionDefinition)
         {
             IFunctionInterpreter functionInterpreter
@@ -297,6 +307,9 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
             return functionInterpreter;
         }
 
+        /// <summary>
+        /// Checks whether the given <paramref name="token"/> is a special token (STATEMENT, PERCENTAGE...etc).
+        /// </summary>
         private static bool IsSpecialToken(IToken token, out bool isStatement)
         {
             isStatement = false;
@@ -323,14 +336,18 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
             return true;
         }
 
-        private static bool MatchType(IToken functionToken, IData? resultedData, AbstractSyntaxTreeBase? parsedStatementOrExpression)
+        /// <summary>
+        /// Verified whether the current <paramref name="functionDefinitionToken"/> expects the given <paramref name="resultedData"/>
+        /// or more generally the given <paramref name="parsedStatementOrExpression"/>.
+        /// </summary>
+        private static bool MatchType(IToken functionDefinitionToken, IData? resultedData, AbstractSyntaxTreeBase? parsedStatementOrExpression)
         {
             if (resultedData is null)
             {
                 return false;
             }
 
-            string tokenText = functionToken.GetText();
+            string tokenText = functionDefinitionToken.GetText();
 
             switch (tokenText)
             {

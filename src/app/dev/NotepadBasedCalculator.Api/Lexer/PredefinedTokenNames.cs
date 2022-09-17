@@ -1,5 +1,8 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
+    /// <summary>
+    /// Contains a list of pre-defined known token names.
+    /// </summary>
     public static class PredefinedTokenAndDataTypeNames
     {
         public const string Error = nameof(Error);

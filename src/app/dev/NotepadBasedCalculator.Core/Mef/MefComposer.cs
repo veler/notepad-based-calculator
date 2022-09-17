@@ -56,9 +56,11 @@ namespace NotepadBasedCalculator.Core.Mef
                 return ExportProvider;
             }
 
-            var assemblies = new HashSet<Assembly>(_assemblies);
-            assemblies.Add(Assembly.GetExecutingAssembly());
-            assemblies.Add(typeof(NumberDataParser).Assembly);
+            var assemblies = new HashSet<Assembly>(_assemblies)
+            {
+                Assembly.GetExecutingAssembly(),
+                typeof(NumberDataParser).Assembly
+            };
 
             var catalog = new AggregateCatalog();
             foreach (Assembly assembly in assemblies)

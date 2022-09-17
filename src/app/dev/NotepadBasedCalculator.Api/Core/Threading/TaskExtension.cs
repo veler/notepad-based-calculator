@@ -35,6 +35,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets the result of the task synchronously, on the current thread.
+        /// </summary>
         public static T CompleteOnCurrentThread<T>(this Task<T> task)
         {
             return task.GetAwaiter().GetResult();

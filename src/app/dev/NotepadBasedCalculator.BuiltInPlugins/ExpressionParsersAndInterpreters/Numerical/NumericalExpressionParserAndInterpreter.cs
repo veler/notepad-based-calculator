@@ -1,9 +1,9 @@
 ﻿namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters.Numerical
 {
     [Export(typeof(IExpressionParserAndInterpreter))]
-    [Name(PredefinedExpressionParserNames.NumericalExpression)]
+    [Name(PredefinedExpressionParserAndInterpreterNames.NumericalExpression)]
     [Culture(SupportedCultures.Any)]
-    [Order(After = PredefinedExpressionParserNames.ConditionalExpression)]
+    [Order(After = PredefinedExpressionParserAndInterpreterNames.ConditionalExpression)]
     internal sealed class NumericalExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         [Import]
@@ -119,7 +119,7 @@
         {
             bool foundLeftExpression
                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                    new[] { PredefinedExpressionParserNames.PrimitiveExpression, PredefinedExpressionParserNames.FunctionExpression },
+                    new[] { PredefinedExpressionParserAndInterpreterNames.PrimitiveExpression, PredefinedExpressionParserAndInterpreterNames.FunctionExpression },
                     culture,
                     currentToken,
                     variableService,
@@ -143,11 +143,19 @@
                     }
                     else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.LeftParenth))
                     {
+                        // When we have something like `Primary_Expression (Primary_Expression)`, implicitely
+                        // assume it is a multiplication.
                         binaryOperator = BinaryOperatorType.Multiply;
                         expressionStartToken = operatorToken;
                     }
                     else if (operatorToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.Numeric))
                     {
+                        // When we have 2 consecutive expression with no parenthesis or operator,
+                        // for example `I have 2 dogs, 3 cats`, let's assume we should do an addition.
+                        // When there is no operator and that the previous token is a closing parenthesis,
+                        // for example `(Primary_Left_Expression) Primary_Right_Expression`, implicitely assume we should
+                        // do a multiplication, unless the right Primary_Right_Expression is a negative value,
+                        // for example `(123) -10`.
                         if (operatorToken.Previous is not null
                             && operatorToken.Previous.Token.IsOfType(PredefinedTokenAndDataTypeNames.RightParenth))
                         {
@@ -177,7 +185,7 @@
 
                     bool foundRightExpression
                         = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                            new[] { PredefinedExpressionParserNames.PrimitiveExpression, PredefinedExpressionParserNames.FunctionExpression },
+                            new[] { PredefinedExpressionParserAndInterpreterNames.PrimitiveExpression, PredefinedExpressionParserAndInterpreterNames.FunctionExpression },
                             culture,
                             expressionStartToken,
                             variableService,

@@ -3,9 +3,9 @@
 namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters.Numerical
 {
     [Export(typeof(IExpressionParserAndInterpreter))]
-    [Name(PredefinedExpressionParserNames.PrimitiveExpression)]
+    [Name(PredefinedExpressionParserAndInterpreterNames.PrimitiveExpression)]
     [Culture(SupportedCultures.Any)]
-    [Order(After = PredefinedExpressionParserNames.NumericalExpression)]
+    [Order(After = PredefinedExpressionParserAndInterpreterNames.NumericalExpression)]
     internal sealed class PrimitiveExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
         [Import]
@@ -31,7 +31,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters
         /// 
         /// Corresponding grammar :
         ///     Primitive_Value
-        ///     | Identifier
+        ///     | Variable Name
         ///     | '(' Expression ')'
         /// </summary>
         private async Task<bool> ParserPrimaryExpressionAsync(

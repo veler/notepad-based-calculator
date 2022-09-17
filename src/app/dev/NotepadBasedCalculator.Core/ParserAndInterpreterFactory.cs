@@ -5,14 +5,14 @@
     {
         private readonly ILogger _logger;
         private readonly ILexer _lexer;
-        private readonly IParserRepository _parserRepository;
+        private readonly IParserAndInterpretersRepository _parserRepository;
         private readonly IArithmeticAndRelationOperationService _arithmeticAndRelationOperationService;
 
         [ImportingConstructor]
         public ParserAndInterpreterFactory(
             ILogger logger,
             ILexer lexer,
-            IParserRepository parserRepository,
+            IParserAndInterpretersRepository parserRepository,
             IArithmeticAndRelationOperationService arithmeticAndRelationOperationService)
         {
             _logger = logger;

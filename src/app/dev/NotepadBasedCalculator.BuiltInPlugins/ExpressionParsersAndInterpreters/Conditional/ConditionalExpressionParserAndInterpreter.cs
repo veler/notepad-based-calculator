@@ -1,7 +1,7 @@
 ﻿namespace NotepadBasedCalculator.BuiltInPlugins.ExpressionParsersAndInterpreters.Conditional
 {
     [Export(typeof(IExpressionParserAndInterpreter))]
-    [Name(PredefinedExpressionParserNames.ConditionalExpression)]
+    [Name(PredefinedExpressionParserAndInterpreterNames.ConditionalExpression)]
     [Culture(SupportedCultures.Any)]
     internal sealed class ConditionalExpressionParserAndInterpreter : IExpressionParserAndInterpreter
     {
@@ -39,7 +39,7 @@
         {
             bool foundLeftExpression
                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                    new[] { PredefinedExpressionParserNames.NumericalExpression },
+                    new[] { PredefinedExpressionParserAndInterpreterNames.NumericalExpression },
                     culture,
                     currentToken,
                     variableService,
@@ -87,7 +87,7 @@
 
                     bool foundRightExpression
                         = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                            new[] { PredefinedExpressionParserNames.NumericalExpression },
+                            new[] { PredefinedExpressionParserAndInterpreterNames.NumericalExpression },
                             culture,
                             operatorToken.Next,
                             variableService,

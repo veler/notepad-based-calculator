@@ -2,8 +2,8 @@
 {
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
-    [Name(PredefinedStatementParserNames.NumericalExpressionStatement)]
-    [Order(After = PredefinedStatementParserNames.ConditionExpressionStatement)]
+    [Name(PredefinedStatementParserAndInterpreterNames.NumericalExpressionStatement)]
+    [Order(After = PredefinedStatementParserAndInterpreterNames.ConditionExpressionStatement)]
     internal sealed class NumericalExpressionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]
@@ -20,7 +20,7 @@
 
             bool expressionFound
                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                    new[] { PredefinedExpressionParserNames.NumericalExpression },
+                    new[] { PredefinedExpressionParserAndInterpreterNames.NumericalExpression },
                     culture,
                     currentToken,
                     variableService,

@@ -1,5 +1,8 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
+    /// <summary>
+    /// Represents a data.
+    /// </summary>
     public interface IData : IToken, IEquatable<IData>, IComparable<IData>
     {
         /// <summary>
@@ -19,13 +22,25 @@
         /// </summary>
         string GetDisplayText(string culture);
 
+        /// <summary>
+        /// Gets whether the data has the <paramref name="expectedSubtype"/>.
+        /// </summary>
         bool IsOfSubtype(string expectedSubtype);
 
+        /// <summary>
+        /// Merged the locations of the current data with the given <paramref name="otherData"/>.
+        /// </summary>
         IData MergeDataLocations(IData otherData);
     }
 
+    /// <summary>
+    /// Represents a data with a strongly typed value.
+    /// </summary>
     public interface IData<T> : IData
     {
+        /// <summary>
+        /// Gets the value of the data.
+        /// </summary>
         T Value { get; }
     }
 }

@@ -8,7 +8,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins
     [Culture(SupportedCultures.English)]
     internal class GrammarProvider : IGrammarProvider
     {
-        public IReadOnlyList<TokenDefinitionGrammar>? LoadTokenDefinitionGrammar(string culture)
+        public IReadOnlyList<TokenDefinitionGrammar>? LoadTokenDefinitionGrammars(string culture)
         {
             culture = culture.Replace("-", "_");
 

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace NotepadBasedCalculator.Api
 {
@@ -164,6 +163,9 @@ namespace NotepadBasedCalculator.Api
             throw new ConversionFailedExpression();
         }
 
+        /// <summary>
+        /// Exception thrown when a currency conversion failed.
+        /// </summary>
         private class ConversionFailedExpression : DataOperationException
         {
             public override string GetLocalizedMessage(string culture)

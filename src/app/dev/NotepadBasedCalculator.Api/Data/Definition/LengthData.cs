@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.Globalization;
+﻿using System.Globalization;
 using UnitsNet;
 using UnitsNet.Units;
 
@@ -10,7 +9,7 @@ namespace NotepadBasedCalculator.Api
         $"Type = {{{nameof(Type)}}}, " +
         $"Text = {{{nameof(GetText)}()}}, " +
         $"StartInLine = {{{nameof(StartInLine)}}}")]
-    public sealed record LengthData : Data<Length>, INumericData, IConvertibleNumericData
+    public sealed record LengthData : Data<Length>, INumericData
     {
         public bool IsNegative => Value.Value < 0;
 

@@ -4,8 +4,8 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
 {
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
-    [Name(PredefinedStatementParserNames.ConditionExpressionStatement)]
-    [Order(After = PredefinedStatementParserNames.ConditionStatement)]
+    [Name(PredefinedStatementParserAndInterpreterNames.ConditionExpressionStatement)]
+    [Order(After = PredefinedStatementParserAndInterpreterNames.ConditionStatement)]
     internal sealed class ConditionalExpressionStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         [Import]
@@ -22,7 +22,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
 
             bool expressionFound
                 = await ParserAndInterpreterService.TryParseAndInterpretExpressionAsync(
-                    new[] { PredefinedExpressionParserNames.ConditionalExpression },
+                    new[] { PredefinedExpressionParserAndInterpreterNames.ConditionalExpression },
                     culture,
                     currentToken,
                     variableService,
@@ -52,7 +52,9 @@ namespace NotepadBasedCalculator.BuiltInPlugins.StatementParsersAndInterpreters.
                     return true;
                 }
 
-                // Fast path
+                // Fast path. We found an algebric operation. Since it's not a comparison, we can directly
+                // return a numerical calculus statement instead of throwing away this finding and letting
+                // NumericalExpressionStatementParserAndInterpreter redoing the same work and find the same result.
                 if (expressionFound
                     && expressionResult.ParsedExpression
                         is DataExpression

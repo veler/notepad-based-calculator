@@ -1,6 +1,9 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
-    public static class PredefinedExpressionParserNames
+    /// <summary>
+    /// Contains a list of pre-defined known expression parser and interpreter names.
+    /// </summary>
+    public static class PredefinedExpressionParserAndInterpreterNames
     {
         public const string NumericalExpression = nameof(NumericalExpression);
 

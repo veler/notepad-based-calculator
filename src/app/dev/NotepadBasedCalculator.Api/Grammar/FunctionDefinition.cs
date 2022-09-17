@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.Api
 {
     [DebuggerDisplay($"FunctionFullName = {{{nameof(FunctionFullName)}}}")]
     public sealed class FunctionDefinition

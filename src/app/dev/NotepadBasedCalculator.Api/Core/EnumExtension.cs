@@ -33,11 +33,14 @@ namespace NotepadBasedCalculator.Api
             return enumerationValue.ToString()!;
         }
 
-        internal static T ToEnum<T>(this string str) where T : struct, Enum
+        /// <summary>
+        /// Converts the given text into an enum.
+        /// </summary>
+        internal static T ToEnum<T>(this string input) where T : struct, Enum
         {
             Type enumType = typeof(T);
 
-            if (Enum.TryParse<T>(str, out T result))
+            if (Enum.TryParse<T>(input, out T result))
             {
                 return result;
             }
@@ -47,7 +50,7 @@ namespace NotepadBasedCalculator.Api
                 var fieldInfo = enumType.GetField(name)?.GetCustomAttributes(typeof(EnumMemberAttribute), true) as EnumMemberAttribute[];
                 if (fieldInfo is not null && fieldInfo.Length == 1)
                 {
-                    if (fieldInfo[0].Value == str)
+                    if (fieldInfo[0].Value == input)
                     {
                         return (T)Enum.Parse(enumType, name);
                     }

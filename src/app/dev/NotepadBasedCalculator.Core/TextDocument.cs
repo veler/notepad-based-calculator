@@ -1,5 +1,8 @@
 ﻿namespace NotepadBasedCalculator.Core
 {
+    /// <summary>
+    /// Represents a text document.
+    /// </summary>
     internal sealed class TextDocument
     {
         private string _text = string.Empty;

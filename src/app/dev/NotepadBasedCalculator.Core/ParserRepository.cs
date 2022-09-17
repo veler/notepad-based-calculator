@@ -1,7 +1,7 @@
 ﻿namespace NotepadBasedCalculator.Core
 {
-    [Export(typeof(IParserRepository))]
-    internal sealed class ParserRepository : IParserRepository
+    [Export(typeof(IParserAndInterpretersRepository))]
+    internal sealed class ParserRepository : IParserAndInterpretersRepository
     {
         private readonly IEnumerable<Lazy<IDataParser, CultureCodeMetadata>> _dataParsers;
         private readonly IEnumerable<Lazy<IStatementParserAndInterpreter, ParserAndInterpreterMetadata>> _statementParsersAndInterpreters;
@@ -91,6 +91,11 @@
                             && p.Metadata.CultureCodes.Any(c => CultureHelper.IsCultureApplicable(c, culture)))
                     .Select(p => p.Value)
                     .ToArray();
+
+            if (parserAndInterpreters.Length != expressionParserAndInterpreterNames.Length)
+            {
+                ThrowHelper.ThrowArgumentException("One of the given parser name can't be found.");
+            }
 
             return parserAndInterpreters;
         }

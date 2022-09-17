@@ -2,7 +2,7 @@
 {
     [Export(typeof(IStatementParserAndInterpreter))]
     [Culture(SupportedCultures.Any)]
-    [Name(PredefinedStatementParserNames.CommentStatement)]
+    [Name(PredefinedStatementParserAndInterpreterNames.CommentStatement)]
     internal sealed class CommentStatementParserAndInterpreter : IStatementParserAndInterpreter
     {
         public IParserAndInterpreterService ParserAndInterpreterService => throw new NotImplementedException();

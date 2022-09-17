@@ -1,16 +1,26 @@
-﻿using System.Diagnostics;
-
-namespace NotepadBasedCalculator.Api
+﻿namespace NotepadBasedCalculator.Api
 {
+    /// <summary>
+    /// Represents a token and expose the access to the previous and next token.
+    /// </summary>
     [DebuggerDisplay($"Token = {{{nameof(Token)}.{nameof(IToken.GetText)}()}}")]
     public sealed class LinkedToken
     {
         private readonly Lazy<LinkedToken?> _nextToken;
 
+        /// <summary>
+        /// Gets the token before the current one.
+        /// </summary>
         public LinkedToken? Previous { get; }
 
+        /// <summary>
+        /// Gets the token after the current one.
+        /// </summary>
         public LinkedToken? Next => _nextToken.Value;
 
+        /// <summary>
+        /// Gets the current token information.
+        /// </summary>
         public IToken Token { get; }
 
         internal LinkedToken(LinkedToken? previous, IToken token, ITokenEnumerator tokenEnumerator)

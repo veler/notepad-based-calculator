@@ -5,6 +5,9 @@
     /// </summary>
     public interface IDataParser
     {
+        /// <summary>
+        /// Parses the data in the given <paramref name="tokenizedTextLine"/>.
+        /// </summary>
         IReadOnlyList<IData>? Parse(string culture, TokenizedTextLine tokenizedTextLine, CancellationToken cancellationToken);
     }
 }

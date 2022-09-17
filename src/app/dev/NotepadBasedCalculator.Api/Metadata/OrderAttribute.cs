@@ -1,5 +1,8 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
+    /// <summary>
+    /// Defines the priority of this component over others.
+    /// </summary>
     [MetadataAttribute]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class OrderAttribute : Attribute
@@ -7,6 +10,9 @@
         private string _before = string.Empty;
         private string _after = string.Empty;
 
+        /// <summary>
+        /// Gets or sets the internal name of a component to compare with.
+        /// </summary>
         public string Before
         {
             get
@@ -20,6 +26,9 @@
             }
         }
 
+        /// <summary>
+        /// Gets or sets the internal name of a component to compare with.
+        /// </summary>
         public string After
         {
             get

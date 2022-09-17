@@ -7,7 +7,7 @@ namespace NotepadBasedCalculator.Core
         private readonly string _culture;
         private readonly ILogger _logger;
         private readonly Lexer _lexer;
-        private readonly IParserRepository _parserRepository;
+        private readonly IParserAndInterpretersRepository _parserRepository;
         private readonly IArithmeticAndRelationOperationService _arithmeticAndRelationOperationService;
         private readonly VariableService _variableService = new();
         private readonly TextDocument _textDocument;
@@ -21,7 +21,7 @@ namespace NotepadBasedCalculator.Core
             string culture,
             ILogger logger,
             ILexer lexer,
-            IParserRepository parserRepository,
+            IParserAndInterpretersRepository parserRepository,
             IArithmeticAndRelationOperationService arithmeticAndRelationOperationService,
             TextDocument textDocument)
         {
@@ -183,11 +183,6 @@ namespace NotepadBasedCalculator.Core
 
                         return result;
                     }
-
-                    if (result.Error is not null)
-                    {
-                        return result;
-                    }
                 }
                 catch (OperationCanceledException)
                 {
@@ -196,7 +191,6 @@ namespace NotepadBasedCalculator.Core
                 catch (DataOperationException doe)
                 {
                     result.Error = doe;
-                    return result;
                 }
                 catch (Exception ex)
                 {
@@ -204,6 +198,16 @@ namespace NotepadBasedCalculator.Core
                         "ParseAndInterpretStatement.Fault",
                         ex,
                         ("StatementParserAndInterpreterName", statementParserAndInterpreter.GetType().FullName));
+                }
+
+                if (result.Error is not null)
+                {
+                    return result;
+                }
+
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    return null;
                 }
             }
 

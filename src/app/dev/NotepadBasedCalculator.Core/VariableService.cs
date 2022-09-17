@@ -29,6 +29,9 @@
             }
         }
 
+        /// <summary>
+        /// Starts recording all the variable changes. The changes won't be saved if the operation gets canceled.
+        /// </summary>
         internal IDisposable BeginRecordVariableSnapshot(int lineNumber, CancellationToken cancellationToken)
         {
             // Restore variables from the previous line.
@@ -70,29 +73,6 @@
             lock (_variables)
             {
                 return _variables.Keys.ToList();
-            }
-        }
-
-        internal IReadOnlyDictionary<string, IData?> CreateBackup()
-        {
-            lock (_variables)
-            {
-                return new Dictionary<string, IData?>(_variables);
-            }
-        }
-
-        internal void RestoreBackup(IReadOnlyDictionary<string, IData?>? backup)
-        {
-            lock (_variables)
-            {
-                if (backup is null)
-                {
-                    _variables = new();
-                }
-                else
-                {
-                    _variables = backup.ToDictionary(kv => kv.Key, kv => kv.Value);
-                }
             }
         }
 

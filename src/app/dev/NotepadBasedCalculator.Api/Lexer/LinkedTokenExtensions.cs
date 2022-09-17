@@ -2,6 +2,9 @@
 {
     public static class LinkedTokenExtensions
     {
+        /// <summary>
+        /// Gets the next token to the right of <paramref name="tokenToJump"/>.
+        /// </summary>
         public static LinkedToken? GetTokenAfter(this LinkedToken? sourceToken, LinkedToken tokenToJump)
         {
             while (sourceToken is not null && sourceToken.Token.EndInLine < tokenToJump.Token.EndInLine)
@@ -12,6 +15,9 @@
             return sourceToken;
         }
 
+        /// <summary>
+        /// Jumps to the last token.
+        /// </summary>
         public static LinkedToken? SkipToLastToken(this LinkedToken? currentToken)
         {
             while (currentToken?.Next is not null)
@@ -22,6 +28,10 @@
             return currentToken;
         }
 
+        /// <summary>
+        /// Assuming that the <paramref name="currentToken"/> is a <see cref="PredefinedTokenAndDataTypeNames.Word"/>,
+        /// jumps to the next token that isn't a <see cref="PredefinedTokenAndDataTypeNames.Word"/>.
+        /// </summary>
         public static LinkedToken? SkipNextWordTokens(this LinkedToken? currentToken)
         {
             while (currentToken is not null && currentToken.Token.IsOfType(PredefinedTokenAndDataTypeNames.Word))
@@ -32,6 +42,12 @@
             return currentToken;
         }
 
+        /// <summary>
+        /// Assuming that the <paramref name="currentToken"/> has the <paramref name="expectedTokenType"/>,
+        /// skip to the next token that doesn't has the <paramref name="expectedTokenType"/> and return it.
+        /// Optionally, if the <paramref name="currentToken"/> is a <see cref="PredefinedTokenAndDataTypeNames.Word"/>,
+        /// skip it along with all the following <see cref="PredefinedTokenAndDataTypeNames.Word"/>.
+        /// </summary>
         public static bool SkipToken(
             this LinkedToken? currentToken,
             string expectedTokenType,
@@ -54,6 +70,9 @@
             return true;
         }
 
+        /// <summary>
+        /// Jumps to the next token that has the given <paramref name="tokenType"/>.
+        /// </summary>
         public static bool JumpToNextTokenOfType(
             this LinkedToken? currentToken,
             string tokenType,
@@ -62,6 +81,9 @@
             return currentToken.JumpToNextTokenOfType(tokenType, string.Empty, out nextToken);
         }
 
+        /// <summary>
+        /// Jumps to the next token that has the given <paramref name="tokenType"/> and <paramref name="tokenText"/>.
+        /// </summary>
         public static bool JumpToNextTokenOfType(
             this LinkedToken? currentToken,
             string tokenType,

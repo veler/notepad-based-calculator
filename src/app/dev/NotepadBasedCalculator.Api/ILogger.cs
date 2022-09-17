@@ -1,5 +1,8 @@
 ﻿namespace NotepadBasedCalculator.Api
 {
+    /// <summary>
+    /// Provides a way to log information for debugging purpose.
+    /// </summary>
     public interface ILogger
     {
         void Log(string logName, params ValueTuple<string, string?>[]? properties);

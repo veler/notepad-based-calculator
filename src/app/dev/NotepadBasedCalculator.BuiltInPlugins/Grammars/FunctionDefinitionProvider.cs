@@ -10,7 +10,7 @@ namespace NotepadBasedCalculator.BuiltInPlugins.Grammars
     {
         private readonly Dictionary<string, List<Dictionary<string, Dictionary<string, string[]>>>> _cultureToFunctionDefinition = new();
 
-        public IReadOnlyList<Dictionary<string, Dictionary<string, string[]>>> LoadFunctionDefinition(string culture)
+        public IReadOnlyList<Dictionary<string, Dictionary<string, string[]>>> LoadFunctionDefinitions(string culture)
         {
             culture = culture.Replace("-", "_");
 
