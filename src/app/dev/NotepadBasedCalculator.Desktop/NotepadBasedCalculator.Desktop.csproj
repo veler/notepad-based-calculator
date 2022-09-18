@@ -23,6 +23,7 @@
     <PackageReference Include="Avalonia.Diagnostics" Condition="'$(Configuration)' == 'Debug'" />
     <PackageReference Include="CommunityToolkit.Common" />
     <PackageReference Include="CommunityToolkit.Diagnostics" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="XamlNameReferenceGenerator" />
   </ItemGroup>
   <ItemGroup>

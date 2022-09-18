@@ -1,9 +1,49 @@
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        x:Class="NotepadBasedCalculator.Desktop.MainWindow"
-        Title="NotepadBasedCalculator.Desktop">
-    Welcome to Avalonia!
+<Window
+    Name="Root"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:AvalonEdit="clr-namespace:AvaloniaEdit;assembly=AvaloniaEdit"
+    mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+    x:Class="NotepadBasedCalculator.Desktop.MainWindow"
+    Title="NotepadBasedCalculator.Desktop"
+    Background="#272727">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto" MinWidth="150"/>
+        </Grid.ColumnDefinitions>
+
+        <AvalonEdit:TextEditor
+            Grid.Column="0"
+            Name="Editor"
+            FontFamily="Cascadia Code,Cascadia Monospace,Consolas,Menlo,Monospace"
+            HorizontalScrollBarVisibility="Auto"
+            VerticalScrollBarVisibility="Visible"
+            FontSize="14"
+            ShowLineNumbers="False"
+            Margin="10,10,10,0"/>
+
+        <Border
+            Grid.Column="1"
+            BorderThickness="1,0,0,0"
+            BorderBrush="Gray"/>
+        <ItemsControl
+            Grid.Column="1"
+            Margin="10,10,30,0"
+            Items="{Binding ElementName=Root, Path=ResultList, Mode=OneWay}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Vertical"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </Grid>
 </Window>

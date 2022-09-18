@@ -1,4 +1,5 @@
 ﻿using Microsoft.Recognizers.Text;
+using Microsoft.Recognizers.Text.DateTime.Utilities;
 
 namespace NotepadBasedCalculator.Core
 {
@@ -16,6 +17,8 @@ namespace NotepadBasedCalculator.Core
         private Task _currentParsingAndInterpretationTask = Task.CompletedTask;
         private IReadOnlyList<ParserAndInterpreterResultLine>? _lineResults = null;
         private IReadOnlyList<TokenizedTextLine>? _oldTokenizedTextLines;
+
+        internal event EventHandler<ParserAndInterpreterResultUpdatedEventArgs>? ParserAndInterpreterResultUpdated;
 
         internal ParserAndInterpreter(
             string culture,
@@ -68,7 +71,7 @@ namespace NotepadBasedCalculator.Core
             CancellationToken cancellationToken = _cancellationTokenSource.Token;
 
             string newText = _textDocument.Text;
-            _currentParsingAndInterpretationTask = ParseAndIntepretAsync(newText, cancellationToken);
+            _currentParsingAndInterpretationTask = ParseAndIntepretAsync(newText, _oldTokenizedTextLines, _lineResults, cancellationToken);
         }
 
         private void CancelCurrentInterpretationWork()
@@ -78,20 +81,32 @@ namespace NotepadBasedCalculator.Core
             _cancellationTokenSource = new();
         }
 
-        private async Task ParseAndIntepretAsync(string text, CancellationToken cancellationToken)
+        private async Task ParseAndIntepretAsync(string text, IReadOnlyList<TokenizedTextLine>? oldTokenizedTextLines, IReadOnlyList<ParserAndInterpreterResultLine>? oldLineResults, CancellationToken cancellationToken)
         {
             // Make sure to go off the UI thread.
             await TaskScheduler.Default;
             cancellationToken.ThrowIfCancellationRequested();
+            var lineResults = new List<ParserAndInterpreterResultLine>();
 
             // Tokenize the whole document.
             IReadOnlyList<TokenizedTextLine> newTokenizedTextLines = _lexer.Tokenize(_culture, text);
 
             // Determine on which line a change happened.
-            int lineFromWhichSomethingHasChanged = DetermineLineFromWhichSomethingHasChanged(_oldTokenizedTextLines, newTokenizedTextLines);
+            int lineFromWhichSomethingHasChanged;
+            if (oldLineResults is null || oldLineResults.Count == 0)
+            {
+                lineFromWhichSomethingHasChanged = 0;
+            }
+            else
+            {
+                lineFromWhichSomethingHasChanged = DetermineLineFromWhichSomethingHasChanged(oldTokenizedTextLines, newTokenizedTextLines);
+                for (int i = 0; i < lineFromWhichSomethingHasChanged; i++)
+                {
+                    lineResults.Add(oldLineResults[i]);
+                }
+            }
 
             // For each line to parse and interpret.
-            var lineResults = new List<ParserAndInterpreterResultLine>();
             for (int i = lineFromWhichSomethingHasChanged; i < newTokenizedTextLines.Count; i++)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -102,20 +117,25 @@ namespace NotepadBasedCalculator.Core
 
             Interlocked.Exchange(ref _oldTokenizedTextLines, newTokenizedTextLines);
             Interlocked.Exchange(ref _lineResults, lineResults);
+
+            if (ParserAndInterpreterResultUpdated is not null && !cancellationToken.IsCancellationRequested)
+            {
+                await ParserAndInterpreterResultUpdated.InvokeAsync(this, new ParserAndInterpreterResultUpdatedEventArgs(lineResults), cancellationToken);
+            }
         }
 
         private async Task<ParserAndInterpreterResultLine> ParseAndInterpretLineAsync(TokenizedTextLine lineToParseAndInterpret, CancellationToken cancellationToken)
         {
-            // Re-tokenize the line by taking consideration of the data this time.
-            lineToParseAndInterpret = await TokenizeTextLineWithDataDetectionAsync(lineToParseAndInterpret, cancellationToken);
-            if (lineToParseAndInterpret.Tokens is null)
-            {
-                return new ParserAndInterpreterResultLine(lineToParseAndInterpret);
-            }
-
             // Start recording all the variable changes while interpreting the line. The changes won't be saved if the operation gets canceled.
             using (_variableService.BeginRecordVariableSnapshot(lineToParseAndInterpret.LineNumber, cancellationToken))
             {
+                // Re-tokenize the line by taking consideration of the data this time.
+                lineToParseAndInterpret = await TokenizeTextLineWithDataDetectionAsync(lineToParseAndInterpret, cancellationToken);
+                if (lineToParseAndInterpret.Tokens is null)
+                {
+                    return new ParserAndInterpreterResultLine(lineToParseAndInterpret);
+                }
+
                 cancellationToken.ThrowIfCancellationRequested();
 
                 // Try to parse and interpret the line.
