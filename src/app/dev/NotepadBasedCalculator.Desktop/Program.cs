@@ -15,6 +15,11 @@ namespace NotepadBasedCalculator.Desktop
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
-                .LogToTrace();
+                .LogToTrace()
+                .With(new Win32PlatformOptions
+                {
+                    UseWindowsUIComposition = true,
+                    CompositionBackdropCornerRadius = 8f
+                });
     }
 }
