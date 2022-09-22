@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <!-- Need to have a TargetFramework tag for VS to recognize this as an SDK project. Just use the shared one. -->
-    <TargetFramework>$(NetCoreVersion)</TargetFramework>
+    <TargetFramework>$(NetCore)</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>

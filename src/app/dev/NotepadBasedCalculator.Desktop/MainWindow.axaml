@@ -8,12 +8,26 @@
     mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
     x:Class="NotepadBasedCalculator.Desktop.MainWindow"
     Title="NotepadBasedCalculator.Desktop"
-    Background="#272727">
+    TransparencyLevelHint="Mica"
+    Background="Transparent"
+    ExtendClientAreaToDecorationsHint="False">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto" MinWidth="150"/>
         </Grid.ColumnDefinitions>
+
+        <ExperimentalAcrylicBorder
+            Grid.ColumnSpan="2"
+            IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="None"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.75" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
 
         <AvalonEdit:TextEditor
             Grid.Column="0"
@@ -45,5 +59,9 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <StackPanel>
+            <CheckBox Content="Hello there"/>
+            <Button Content="Hello there"/>
+        </StackPanel>
     </Grid>
 </Window>

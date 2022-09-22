@@ -5,8 +5,10 @@
     <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
 
     <NetStandardVersion>netstandard2.0;netstandard2.1</NetStandardVersion>
-    <NetCoreVersion>net6.0</NetCoreVersion>
-    <NetCoreAndStandard>$(NetStandardVersion);$(NetCoreVersion)</NetCoreAndStandard>
+    <NetCore>net6.0</NetCore>
+    <NetCoreWindows>$(NetCore)-windows</NetCoreWindows>
+    <NetCoreMac>$(NetCore)-macos</NetCoreMac>
+    <NetCoreAndStandard>$(NetStandardVersion);$(NetCore)</NetCoreAndStandard>
 
     <!-- Define default build configuration -->
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>

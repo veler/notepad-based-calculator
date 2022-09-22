@@ -1,15 +1,17 @@
 <Project>
   <PropertyGroup>
     <MicrosoftRecognizersTextVersion>1.8.5</MicrosoftRecognizersTextVersion>
-    <AvaloniaVersion>0.10.18</AvaloniaVersion>
+    <AvaloniaVersion>11.0.0-preview1</AvaloniaVersion>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Asp.Versioning.Mvc" Version="6.0.0"/>
-    <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="6.0.0"/>
-    <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)"/>
-    <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersion)"/>
-    <PackageVersion Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)"/>
-    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="0.10.12.2"/>
+    <PackageVersion Include="Asp.Versioning.Mvc" Version="6.0.0" />
+    <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="6.0.0" />
+    <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.AvaloniaEdit" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Themes.Simple" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.13.2" />
     <PackageVersion Include="CommunityToolkit.Common" Version="8.0.0" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.0.0" />
