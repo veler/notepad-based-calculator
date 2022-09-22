@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>$(NetCoreMac)</TargetFrameworks>
+    <UseAppHost>true</UseAppHost>
+    <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
+    <TrimMode>copyused</TrimMode>
+    <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" />
+    <PackageReference Include="Avalonia.Desktop" />
+    <PackageReference Include="CommunityToolkit.Common" />
+    <PackageReference Include="CommunityToolkit.Diagnostics" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NotepadBasedCalculator.Api\NotepadBasedCalculator.Api.csproj" />
+    <ProjectReference Include="..\NotepadBasedCalculator.Desktop\NotepadBasedCalculator.Desktop.csproj" />
+  </ItemGroup>
+
+</Project>

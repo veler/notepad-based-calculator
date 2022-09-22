@@ -11,6 +11,7 @@
     <PackageVersion Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
     <PackageVersion Include="Avalonia.AvaloniaEdit" Version="$(AvaloniaVersion)" />
     <PackageVersion Include="Avalonia.Themes.Simple" Version="$(AvaloniaVersion)" />
+    <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
     <PackageVersion Include="BenchmarkDotNet" Version="0.13.2" />
     <PackageVersion Include="CommunityToolkit.Common" Version="8.0.0" />
     <PackageVersion Include="CommunityToolkit.Diagnostics" Version="8.0.0" />

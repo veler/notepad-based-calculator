@@ -24,5 +24,7 @@ using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("NotepadBasedCalculator.Core")]
 [assembly: InternalsVisibleTo("NotepadBasedCalculator.Core.Tests")]
 [assembly: InternalsVisibleTo("NotepadBasedCalculator.Desktop")]
+[assembly: InternalsVisibleTo("NotepadBasedCalculator.Desktop.Mac")]
+[assembly: InternalsVisibleTo("NotepadBasedCalculator.Desktop.Windows")]
 [assembly: InternalsVisibleTo("NotepadBasedCalculator.StandaloneConsoleTestApp")]
 [assembly: InternalsVisibleTo("NotepadBasedCalculator.Benchmark")]

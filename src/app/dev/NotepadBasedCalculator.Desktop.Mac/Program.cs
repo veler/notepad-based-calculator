@@ -1,6 +1,6 @@
 ﻿using Avalonia;
 
-namespace NotepadBasedCalculator.Desktop
+namespace NotepadBasedCalculator.Desktop.Mac
 {
     internal class Program
     {
@@ -16,10 +16,9 @@ namespace NotepadBasedCalculator.Desktop
             => AppBuilder.Configure<App>()
                 .UsePlatformDetect()
                 .LogToTrace()
-                .With(new Win32PlatformOptions
+                .With(new X11PlatformOptions
                 {
-                    UseWindowsUIComposition = true,
-                    CompositionBackdropCornerRadius = 8f
+                    EnableMultiTouch = true
                 });
     }
 }

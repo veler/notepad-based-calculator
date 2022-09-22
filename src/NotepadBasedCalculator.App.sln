@@ -49,7 +49,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.cspr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{2F3BE40A-B981-428C-BF20-3BAFCC9824FE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotepadBasedCalculator.Desktop", "app\dev\NotepadBasedCalculator.Desktop\NotepadBasedCalculator.Desktop.csproj", "{E14788BF-C7D9-459D-9D2F-A3CA66D6E26E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Desktop", "app\dev\NotepadBasedCalculator.Desktop\NotepadBasedCalculator.Desktop.csproj", "{E14788BF-C7D9-459D-9D2F-A3CA66D6E26E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotepadBasedCalculator.Desktop.Windows", "app\dev\NotepadBasedCalculator.Desktop.Windows\NotepadBasedCalculator.Desktop.Windows.csproj", "{8E871DEB-9858-4136-8B62-7110740A240E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotepadBasedCalculator.Desktop.Mac", "app\dev\NotepadBasedCalculator.Desktop.Mac\NotepadBasedCalculator.Desktop.Mac.csproj", "{0A14B46D-D1DC-4A87-A197-7486ED8BEFC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +91,14 @@ Global
 		{E14788BF-C7D9-459D-9D2F-A3CA66D6E26E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E14788BF-C7D9-459D-9D2F-A3CA66D6E26E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E14788BF-C7D9-459D-9D2F-A3CA66D6E26E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E871DEB-9858-4136-8B62-7110740A240E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E871DEB-9858-4136-8B62-7110740A240E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E871DEB-9858-4136-8B62-7110740A240E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E871DEB-9858-4136-8B62-7110740A240E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A14B46D-D1DC-4A87-A197-7486ED8BEFC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A14B46D-D1DC-4A87-A197-7486ED8BEFC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A14B46D-D1DC-4A87-A197-7486ED8BEFC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A14B46D-D1DC-4A87-A197-7486ED8BEFC9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +114,8 @@ Global
 		{8CF4A1C5-9D0E-47EB-8434-17B50331EC0B} = {AA55FAFF-4F97-4251-906F-32984538E57C}
 		{2D612DDA-9151-4DFC-883F-817907D7D236} = {2F3BE40A-B981-428C-BF20-3BAFCC9824FE}
 		{E14788BF-C7D9-459D-9D2F-A3CA66D6E26E} = {AA55FAFF-4F97-4251-906F-32984538E57C}
+		{8E871DEB-9858-4136-8B62-7110740A240E} = {AA55FAFF-4F97-4251-906F-32984538E57C}
+		{0A14B46D-D1DC-4A87-A197-7486ED8BEFC9} = {AA55FAFF-4F97-4251-906F-32984538E57C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BCA00D25-9E3C-482D-8D6C-5A93A12A7232}

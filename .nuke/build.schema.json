@@ -55,6 +55,20 @@
           "type": "boolean",
           "description": "Shows the execution plan (HTML)"
         },
+        "PlatformTargets": {
+          "type": "array",
+          "description": "The target platform",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Android",
+              "iOS",
+              "Linux",
+              "MacOS",
+              "Windows"
+            ]
+          }
+        },
         "Profile": {
           "type": "array",
           "description": "Defines the profiles to load",
@@ -62,21 +76,9 @@
             "type": "string"
           }
         },
-        "PublishFramework": {
-          "type": "string",
-          "description": "The target framework - Default is [net6.0]"
-        },
-        "PublishProject": {
-          "type": "string",
-          "description": "The project to publish - Default is [NotepadBasedCalculator.Desktop]"
-        },
         "PublishReadyToRun": {
           "type": "boolean",
           "description": "https://bit.ly/3RSEo7w"
-        },
-        "PublishRuntime": {
-          "type": "string",
-          "description": "The target runtime - Default is [win-x64]"
         },
         "PublishSelfContained": {
           "type": "boolean",
@@ -84,7 +86,7 @@
         },
         "PublishSingleFile": {
           "type": "boolean",
-          "description": "https://bit.ly/3xvq7FA - Enabled by default"
+          "description": "https://bit.ly/3xvq7FA"
         },
         "PublishTrimmed": {
           "type": "boolean",

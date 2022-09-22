@@ -10,7 +10,7 @@
     Title="NotepadBasedCalculator.Desktop"
     TransparencyLevelHint="Mica"
     Background="Transparent"
-    ExtendClientAreaToDecorationsHint="True">
+    ExtendClientAreaToDecorationsHint="False">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
