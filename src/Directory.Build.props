@@ -6,7 +6,7 @@
 
     <NetStandardVersion>netstandard2.0;netstandard2.1</NetStandardVersion>
     <NetCore>net6.0</NetCore>
-    <NetCoreWindows>$(NetCore)-windows</NetCoreWindows>
+    <NetCoreWindows>$(NetCore)-windows10.0.17763.0</NetCoreWindows>
     <NetCoreMac>$(NetCore)-macos</NetCoreMac>
     <NetCoreAndStandard>$(NetStandardVersion);$(NetCore)</NetCoreAndStandard>
 

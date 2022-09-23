@@ -2,76 +2,12 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build-mac",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/src/app/dev/NotepadBasedCalculator.Desktop.Mac/NotepadBasedCalculator.Desktop.Mac.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "publish-mac",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/src/app/dev/NotepadBasedCalculator.Desktop.Mac/NotepadBasedCalculator.Desktop.Mac.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch-mac",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "--project",
-                "${workspaceFolder}/src/app/dev/NotepadBasedCalculator.Desktop.Mac/NotepadBasedCalculator.Desktop.Mac.csproj",
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "build-windows",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/src/app/dev/NotepadBasedCalculator.Desktop.Windows/NotepadBasedCalculator.Desktop.Windows.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "publish-windows",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/src/app/dev/NotepadBasedCalculator.Desktop.Windows/NotepadBasedCalculator.Desktop.Windows.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch-windows",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "--project",
-                "${workspaceFolder}/src/app/dev/NotepadBasedCalculator.Desktop.Windows/NotepadBasedCalculator.Desktop.Windows.csproj",
-            ],
-            "problemMatcher": "$msCompile"
+            "label": "build",
+            "type": "shell",
+            "command": "${workspaceFolder}/build.sh Compile --incremental-build true --configuration Debug",
+            "windows": {
+              "command": "${workspaceFolder}\\build.cmd Compile --incremental-build true --configuration Debug"
+            }
         }
     ]
 }

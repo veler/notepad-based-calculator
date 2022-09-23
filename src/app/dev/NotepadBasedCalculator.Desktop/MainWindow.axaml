@@ -29,7 +29,7 @@
             </ExperimentalAcrylicBorder.Material>
         </ExperimentalAcrylicBorder>
 
-        <AvalonEdit:TextEditor
+        <!--<AvalonEdit:TextEditor
             Grid.Column="0"
             Name="Editor"
             FontFamily="Cascadia Code,Cascadia Monospace,Consolas,Menlo,Monospace"
@@ -58,7 +58,7 @@
                     <TextBlock Text="{Binding}"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        </ItemsControl>-->
         <StackPanel>
             <CheckBox Content="Hello there"/>
             <Button Content="Hello there"/>

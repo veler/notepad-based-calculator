@@ -43,6 +43,10 @@
             "VSCode"
           ]
         },
+        "IncrementalBuild": {
+          "type": "boolean",
+          "description": "Do an incremental build"
+        },
         "NoLogo": {
           "type": "boolean",
           "description": "Disables displaying the NUKE logo"
