@@ -8,9 +8,9 @@ namespace NotepadBasedCalculator.Desktop.Platform.Services.Theme
 
         event EventHandler AccentColorChanged;
 
-        Themes AppTheme { get; set; }
+        UserPreferredTheme UserPreferredTheme { get; set; }
 
-        AppThemes AppliedTheme { get; }
+        AppTheme AppliedAppTheme { get; }
 
         Color AccentColor { get; }
     }

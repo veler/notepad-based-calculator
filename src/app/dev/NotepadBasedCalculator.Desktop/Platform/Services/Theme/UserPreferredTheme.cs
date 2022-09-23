@@ -1,6 +1,6 @@
 ﻿namespace NotepadBasedCalculator.Desktop.Platform.Services.Theme
 {
-    internal enum Themes
+    internal enum UserPreferredTheme
     {
         Light,
         Dark,
