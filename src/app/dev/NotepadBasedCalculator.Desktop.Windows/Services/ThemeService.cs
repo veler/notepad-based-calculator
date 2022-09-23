@@ -44,7 +44,7 @@ namespace NotepadBasedCalculator.Desktop.Windows.Services
                 if (_appliedAppTheme != value)
                 {
                     _appliedAppTheme = value;
-                    ThemeChanged?.Invoke(this, EventArgs.Empty);
+                    AppliedAppThemeChanged?.Invoke(this, EventArgs.Empty);
                 }
             }
         }
@@ -62,7 +62,7 @@ namespace NotepadBasedCalculator.Desktop.Windows.Services
             }
         }
 
-        public event EventHandler? ThemeChanged;
+        public event EventHandler? AppliedAppThemeChanged;
 
         public event EventHandler? AccentColorChanged;
 
