@@ -8,6 +8,7 @@ SCRIPT_DIR=$(cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd)
 
 # Restore workloads
 echo "Restoring all workloads"
+"$DOTNET_EXE" workload restore macos -v:quiet
 PROJECTS=$(find ./src/ -type f \( -name "*Mac.csproj" -o -iname "*Windows.csproj" -o -name "*iOS.csproj" -o -name "*Android.csproj" -o -name "*Linux.csproj" \) -print )
 for PROJECT_FILE in $PROJECTS
 do

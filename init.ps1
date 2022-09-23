@@ -11,6 +11,7 @@ ExecSafe { & $PSScriptRoot\tools\Install-DotNet.ps1 -RootFolder $PSScriptRoot }
 
 # Restore workloads
 Write-Host "Restoring all workloads"
+ExecSafe { & $env:DOTNET_EXE workload install macos -v:quiet  }
 Get-ChildItem $PSScriptRoot\src\ -rec |? { $_.FullName.EndsWith('proj') -and ($_.FullName.Contains('Mac') -or $_.FullName.Contains('iOS') -or $_.FullName.Contains('Android') -or $_.FullName.Contains('Windows') -or $_.FullName.Contains('Linux')) } |% {
     $ProjectPath = $_.FullName;
     Write-Host "Restoring workload for $($ProjectPath)..."
