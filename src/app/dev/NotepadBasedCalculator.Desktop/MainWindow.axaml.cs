@@ -5,6 +5,7 @@ using Avalonia.Threading;
 using NotepadBasedCalculator.Core;
 using NotepadBasedCalculator.Core.Mef;
 using NotepadBasedCalculator.Desktop.Platform.Services.Theme;
+using NotepadBasedCalculator.Desktop.Platform;
 
 namespace NotepadBasedCalculator.Desktop
 {
@@ -20,6 +21,7 @@ namespace NotepadBasedCalculator.Desktop
             InitializeComponent();
 
             var mefProvider = AvaloniaLocator.Current.GetService<IMefProvider>();
+            mefProvider.Import<IPlatformInitializer>().Initialize();
             mefProvider.Import<IThemeService>();
             //ParserAndInterpreterFactory parserAndInterpreterFactory = mefProvider.GetExport<ParserAndInterpreterFactory>()!.Value;
             //_parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(SupportedCultures.English, _textDocument);

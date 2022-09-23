@@ -33,22 +33,26 @@ class Build : NukeBuild
     readonly bool PublishSelfContained = true;
 
     [Parameter("https://bit.ly/3xvq7FA")]
-    readonly bool PublishSingleFile = false;
+    readonly bool PublishSingleFile;
 
     [Parameter("https://bit.ly/3RSEo7w")]
-    readonly bool PublishReadyToRun = false;
+    readonly bool PublishReadyToRun;
 
     [Parameter("https://bit.ly/3RKZkNH")]
-    readonly bool PublishTrimmed = false;
+    readonly bool PublishTrimmed;
 
     [Parameter("Runs unit tests")]
     readonly bool RunTests;
+
+    [Parameter("Do an incremental build")]
+    readonly bool IncrementalBuild;
 
     [Solution]
     readonly Solution Solution;
 
     Target Clean => _ => _
         .Before(Restore)
+        .OnlyWhenDynamic(() => !IncrementalBuild)
         .Executes(() =>
         {
             RootDirectory.GlobDirectories("bin", "obj", "publish").ForEach(DeleteDirectory);
@@ -90,6 +94,7 @@ class Build : NukeBuild
                     .SetPublishSingleFile(PublishSingleFile)
                     .SetPublishReadyToRun(PublishReadyToRun)
                     .SetPublishTrimmed(dotnetParameters.PublishTrimmed)
+                    .SetNoIncremental(!IncrementalBuild)
                     .SetVerbosity(DotNetVerbosity.Quiet));
             }
         });

@@ -29,7 +29,6 @@ namespace NotepadBasedCalculator.Desktop.Mac
                 {
                     EnableMultiTouch = true
                 })
-                .With(AppDelegate.Init())
                 .With(new MefComposer(new[]
                 {
                     typeof(Program).Assembly,

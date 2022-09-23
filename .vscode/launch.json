@@ -8,9 +8,9 @@
             "name": "Desktop macOS App (launch)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-mac",
+            "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/bin/Debug/anycpu/NotepadBasedCalculator.Desktop.Mac/net6.0-macos/osx-x64/NotepadBasedCalculator.Desktop.Mac.dll",
+            "program": "${workspaceFolder}/bin/Debug/anycpu/NotepadBasedCalculator.Desktop.Mac/net6.0-macos/osx-x64/NotepadBasedCalculator.Desktop.Mac.app/Contents/MacOS/NotepadBasedCalculator.Desktop.Mac",
             "args": [],
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
@@ -24,9 +24,9 @@
             "name": "Desktop Windows App (launch)",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build-windows",
+            "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/bin/Debug/AnyCPU/NotepadBasedCalculator.Desktop.Windows/net6.0-win10/NotepadBasedCalculator.Desktop.Windows.exe",
+            "program": "${workspaceFolder}\\bin\\Debug\\AnyCPU\\NotepadBasedCalculator.Desktop.Windows\\net6.0-win10\\NotepadBasedCalculator.Desktop.Windows.exe",
             "args": [],
             "cwd": "${workspaceFolder}",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
