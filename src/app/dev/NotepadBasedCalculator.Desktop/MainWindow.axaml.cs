@@ -1,11 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using Avalonia;
+﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Threading;
 using NotepadBasedCalculator.Core;
-using NotepadBasedCalculator.Core.Mef;
 using NotepadBasedCalculator.Desktop.Platform.Services.Theme;
-using NotepadBasedCalculator.Desktop.Platform;
 
 namespace NotepadBasedCalculator.Desktop
 {
@@ -22,8 +19,8 @@ namespace NotepadBasedCalculator.Desktop
 
             IMefProvider mefProvider = AvaloniaLocator.Current.GetService<IMefProvider>()!;
             Guard.IsNotNull(mefProvider);
-            mefProvider.Import<IPlatformInitializer>().Initialize();
             mefProvider.Import<IThemeService>();
+
             //ParserAndInterpreterFactory parserAndInterpreterFactory = mefProvider.GetExport<ParserAndInterpreterFactory>()!.Value;
             //_parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(SupportedCultures.English, _textDocument);
             //Editor.Document.TextChanged += Document_TextChanged;
