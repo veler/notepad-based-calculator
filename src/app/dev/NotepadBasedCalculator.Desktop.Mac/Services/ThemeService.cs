@@ -11,11 +11,55 @@ namespace NotepadBasedCalculator.Desktop.Mac.Services
         private const string Dark = "Dark";
         private const string AppleInterfaceStyle = "AppleInterfaceStyle";
 
-        public UserPreferredTheme UserPreferredTheme { get; set; }
+        private readonly object _syncObj = new();
 
-        public AppTheme AppliedAppTheme { get; private set; }
+        private UserPreferredTheme _userPreferredTheme;
+        private AppTheme _appliedAppTheme;
+        private Color _accentColor;
 
-        public Color AccentColor { get; private set; }
+        public UserPreferredTheme UserPreferredTheme
+        {
+            get => _userPreferredTheme;
+            set
+            {
+                if (_userPreferredTheme != value)
+                {
+                    _userPreferredTheme = value;
+                    lock (_syncObj)
+                    {
+                        AppliedAppTheme = DetectTheme();
+                        AccentColor = DetectAccentColor();
+                    }
+                    // TODO: save setting.
+                }
+            }
+        }
+
+        public AppTheme AppliedAppTheme
+        {
+            get => _appliedAppTheme;
+            private set
+            {
+                if (_appliedAppTheme != value)
+                {
+                    _appliedAppTheme = value;
+                    ThemeChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
+
+        public Color AccentColor
+        {
+            get => _accentColor;
+            private set
+            {
+                if (_accentColor != value)
+                {
+                    _accentColor = value;
+                    AccentColorChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }
 
         public event EventHandler? ThemeChanged;
 
@@ -31,20 +75,29 @@ namespace NotepadBasedCalculator.Desktop.Mac.Services
             NSNotificationCenter.DefaultCenter.AddObserver(
                 new NSString(NSSystemColorsDidChangeNotification),
                 OnAccentColorChanged);
-            
-            UserPreferredTheme = UserPreferredTheme.Auto; // TODO: load from settings.
-            AppliedAppTheme = DetectTheme();
-			AccentColor = DetectAccentColor();
+
+            lock (_syncObj)
+            {
+                UserPreferredTheme = UserPreferredTheme.Auto; // TODO: load from settings.
+                AppliedAppTheme = DetectTheme();
+                AccentColor = DetectAccentColor();
+            }
         }
 
         private void OnThemeChanged(NSNotification notification)
         {
-            AppliedAppTheme = DetectTheme();
+            lock (_syncObj)
+            {
+                AppliedAppTheme = DetectTheme();
+            }
         }
 
         private void OnAccentColorChanged(NSNotification notification)
         {
-			AccentColor = DetectAccentColor();
+            lock (_syncObj)
+            {
+                AccentColor = DetectAccentColor();
+            }
         }
 
         private AppTheme DetectTheme()
@@ -52,7 +105,7 @@ namespace NotepadBasedCalculator.Desktop.Mac.Services
             switch (UserPreferredTheme)
             {
                 case UserPreferredTheme.Auto:
-                    var style = NSUserDefaults.StandardUserDefaults.StringForKey("AppleInterfaceStyle");
+                    string style = NSUserDefaults.StandardUserDefaults.StringForKey(AppleInterfaceStyle);
                     if (style == Dark)
                     {
                         return AppTheme.Dark;
@@ -71,12 +124,12 @@ namespace NotepadBasedCalculator.Desktop.Mac.Services
             }
         }
 
-        private Color DetectAccentColor()
+        private static Color DetectAccentColor()
         {
-			var color = NSColor.ControlAccent.UsingColorSpace(NSColorSpace.GenericRGBColorSpace);
-			color.GetRgba(out nfloat red, out nfloat green, out nfloat blue, out nfloat alpha);
+            NSColor color = NSColor.ControlAccent.UsingColorSpace(NSColorSpace.GenericRGBColorSpace);
+            color.GetRgba(out nfloat red, out nfloat green, out nfloat blue, out nfloat alpha);
 
-			return new Color(
+            return new Color(
                 (byte)(byte.MaxValue * alpha.Value),
                 (byte)(byte.MaxValue * red.Value),
                 (byte)(byte.MaxValue * green.Value),

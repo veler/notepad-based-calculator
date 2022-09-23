@@ -1,6 +1,6 @@
 ﻿using NotepadBasedCalculator.Desktop.Platform;
 
-namespace NotepadBasedCalculator.Desktop.Mac
+namespace NotepadBasedCalculator.Desktop.Windows
 {
     [Export(typeof(IPlatformInitializer))]
     internal sealed class PlatformInitializer : IPlatformInitializer
@@ -12,7 +12,6 @@ namespace NotepadBasedCalculator.Desktop.Mac
             if (!_isInitialized)
             {
                 _isInitialized = true;
-                AppDelegate.Init();
             }
         }
     }
