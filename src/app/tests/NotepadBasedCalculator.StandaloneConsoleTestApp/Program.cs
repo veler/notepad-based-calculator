@@ -13,7 +13,9 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
         // Use English by default
         private const string DefaultCulture = Culture.English;
 
+#pragma warning disable IDE0060 // Remove unused parameter
         public static void Main(string[] args)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;

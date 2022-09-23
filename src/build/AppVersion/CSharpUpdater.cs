@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using System.IO;
+using System;
 
 internal sealed class CSharpUpdater
 {
@@ -43,19 +44,18 @@ internal sealed class CSharpUpdater
 
     private static bool UpdateLineWithRule(ref string line, CSharpVersionUpdateRule rule)
     {
-        VersionString v = null;
         bool updated = false;
         Group g = GetVersionString(line, rule.AttributeName);
         if (g != null)
         {
-            VersionString.TryParse(g.Value, out v);
+            if (VersionString.TryParse(g.Value, out VersionString v) && v is not null)
+            {
+                string newVersion = rule.Update(v);
+                line = string.Concat(line.AsSpan(0, g.Index), newVersion, line.AsSpan(g.Index + g.Length));
+                updated = true;
+            }
         }
-        if (v != null)
-        {
-            string newVersion = rule.Update(v);
-            line = line.Substring(0, g.Index) + newVersion + line.Substring(g.Index + g.Length);
-            updated = true;
-        }
+
         return updated;
     }
 

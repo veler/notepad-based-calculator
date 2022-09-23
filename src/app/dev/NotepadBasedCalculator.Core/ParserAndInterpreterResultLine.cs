@@ -51,12 +51,12 @@
                 _dataOperationException = dataOperationException;
             }
 
-            public int CompareTo(IData other)
+            public int CompareTo(IData? other)
             {
                 throw new NotImplementedException();
             }
 
-            public bool Equals(IData other)
+            public bool Equals(IData? other)
             {
                 throw new NotImplementedException();
             }

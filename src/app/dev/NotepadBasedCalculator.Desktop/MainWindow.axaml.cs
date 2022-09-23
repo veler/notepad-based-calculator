@@ -20,7 +20,8 @@ namespace NotepadBasedCalculator.Desktop
         {
             InitializeComponent();
 
-            var mefProvider = AvaloniaLocator.Current.GetService<IMefProvider>();
+            IMefProvider mefProvider = AvaloniaLocator.Current.GetService<IMefProvider>()!;
+            Guard.IsNotNull(mefProvider);
             mefProvider.Import<IPlatformInitializer>().Initialize();
             mefProvider.Import<IThemeService>();
             //ParserAndInterpreterFactory parserAndInterpreterFactory = mefProvider.GetExport<ParserAndInterpreterFactory>()!.Value;

@@ -21,18 +21,16 @@ internal sealed class AppxManifestUpdater
 
     public string UpdateTextWithRule(string text)
     {
-        VersionString v = null;
-
         Tuple<string, int, int> g = GetVersionString(text);
         if (g != null)
         {
-            VersionString.TryParse(g.Item1, out v);
+            if (VersionString.TryParse(g.Item1, out VersionString v) && v is not null)
+            {
+                string newVersion = new VersionUpdateRule(_versionRule).Update(v);
+                return string.Concat(text.AsSpan(0, g.Item2), newVersion, text.AsSpan(g.Item2 + g.Item3));
+            }
         }
-        if (v != null)
-        {
-            string newVersion = new VersionUpdateRule(_versionRule).Update(v);
-            return text.Substring(0, g.Item2) + newVersion + text.Substring(g.Item2 + g.Item3);
-        }
+
         return text;
     }
 

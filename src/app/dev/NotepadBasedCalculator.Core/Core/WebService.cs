@@ -1,4 +1,6 @@
 ﻿using System.Net;
+using System.Net.Http;
+using System.Text;
 using NotepadBasedCalculator.Shared;
 
 namespace NotepadBasedCalculator.Core
@@ -24,18 +26,24 @@ namespace NotepadBasedCalculator.Core
             }
         }
 
+#pragma warning disable IDE0060 // Remove unused parameter
         internal async Task<T> GetAsync<T>(string route, object? args = null)
+#pragma warning restore IDE0060 // Remove unused parameter
         {
             if (string.IsNullOrEmpty(_urlBase))
             {
-                return default(T)!;
+                return default!;
             }
 
             await AuthenticateAsync().ConfigureAwait(true);
-            return default(T)!;
+            return default!;
         }
 
+#pragma warning disable CA1822 // Can be marked as static
+#pragma warning disable IDE0060 // Remove unused parameter
         internal Task<T> PostAsync<T>(string route, object? args = null)
+#pragma warning restore IDE0060 // Remove unused parameter
+#pragma warning restore CA1822 // Can be marked as static
         {
             return Task.FromResult(default(T)!);
         }
@@ -49,22 +57,19 @@ namespace NotepadBasedCalculator.Core
             {
                 string url = _urlBase + "Authentication/authenticate";
 
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-                httpWebRequest.ContentType = "text/json;charset=UTF-8";
-                httpWebRequest.Method = "POST";
+                using var httpClient = new HttpClient();
+                using HttpResponseMessage httpResponse
+                      = await httpClient.PostAsync(
+                          url,
+                          new StringContent(
+                              "\"" + _configurationReader.WebServiceAppId + "\"",
+                              Encoding.UTF8,
+                              "text/json;charset=UTF-8"));
 
-                using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
-                {
-                    streamWriter.Write("\"" + _configurationReader.WebServiceAppId + "\"");
-                }
-
-                using var httpResponse = (HttpWebResponse)await httpWebRequest.GetResponseAsync().ConfigureAwait(false);
-                using var streamReader = new StreamReader(httpResponse.GetResponseStream());
-
-                string result = streamReader.ReadToEnd();
+                string result = await httpResponse.Content.ReadAsStringAsync();
 
             }
-            catch (Exception ex)
+            catch
             {
 
             }

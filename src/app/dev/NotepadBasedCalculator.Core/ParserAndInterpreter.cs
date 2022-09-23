@@ -338,10 +338,7 @@ namespace NotepadBasedCalculator.Core
                         //    then let's use that type because they may be compatible.
                         // 2. Otheriwse, let's decide of what data kind to use based on priority order.
                         IData? overlapResolution = SolveOverlappingData(currentData, data, allData);
-                        if (overlapResolution is null)
-                        {
-                            overlapResolution = data.ConflictResolutionPriority < currentData.ConflictResolutionPriority ? data : currentData;
-                        }
+                        overlapResolution ??= data.ConflictResolutionPriority < currentData.ConflictResolutionPriority ? data : currentData;
                         return overlapResolution;
                     }
 

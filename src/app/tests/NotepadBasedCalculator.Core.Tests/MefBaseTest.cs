@@ -20,8 +20,10 @@ namespace NotepadBasedCalculator.Core.Tests
             // Do all the tests in English.
             // LanguageManager.Instance.SetCurrentCulture(new LanguageDefinition("en-US"));
 
-            var mockCurrencyService = new Mock<CurrencyService>();
-            mockCurrencyService.CallBase = true;
+            var mockCurrencyService = new Mock<CurrencyService>
+            {
+                CallBase = true
+            };
             mockCurrencyService.Setup(s => s.LoadLatestRatesAsync())
                 .Returns(
                     Task.FromResult(

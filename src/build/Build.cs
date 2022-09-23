@@ -13,6 +13,7 @@ using static Nuke.Common.IO.FileSystemTasks;
 using static Nuke.Common.IO.PathConstruction;
 using static Nuke.Common.Tools.DotNet.DotNetTasks;
 
+#pragma warning disable IDE1006 // Naming Styles
 class Build : NukeBuild
 {
     /// Support plugins are available for:
@@ -194,4 +195,5 @@ class Build : NukeBuild
             }
         }
     }
+#pragma warning restore IDE1006 // Naming Styles
 }

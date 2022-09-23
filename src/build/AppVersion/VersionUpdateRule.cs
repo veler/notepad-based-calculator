@@ -51,8 +51,7 @@ internal sealed class VersionUpdateRule
                 {
                     throw new ArgumentException("Can't increment missing value");
                 }
-                int inNumber = 0;
-                int.TryParse(inPart, out inNumber); // * gets turned into a zero
+                _ = int.TryParse(inPart, out int inNumber); // * gets turned into a zero
                 inNumber++;
                 outParts.Add(inNumber.ToString());
             }
@@ -64,6 +63,4 @@ internal sealed class VersionUpdateRule
         }
         return string.Join(".", outParts.ToArray());
     }
-
-
 }
