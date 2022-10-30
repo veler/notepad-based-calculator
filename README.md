@@ -19,7 +19,7 @@ The calculator engine is about 100% done. But it remains a few features I wanted
 | Comments                                 | 12 + 3 // anything after "//" is ignored   | ✅      |
 | Headers                                  | # Title                                    | ✅      |
 | Variables                                | my income tax = 25%                        | ✅      |
-| Conditions                               | if my tax income > 30% then $123 else $456 | ✅      |
+| Conditions                               | if my income tax > 30% then $123 else $456 | ✅      |
 | Unit calculation                         | 2km + 25% // should result 2.5 km<br>2 USD + 2 CAD // should result something like 3.05 USD<br>3 MB - 2 KB // should result 2.998 MB<br>Supports length, mass, currencies, area, angle, volume, speed, temperature, date and time, percentage, computer data          | ✅      |
 | Function grammars (see detail below)    | PERCENTAGE of what is NUMERIC<br>i.e: 25% of what is 50 // should result 200 | ✅      |
 | Multilanguage                            | deux plus trois | ✅ (partial)      |
@@ -57,6 +57,12 @@ The full grammar for English language can be found here: [FunctionDefinition.jso
 Each function is associated to a [MEF](https://learn.microsoft.com/en-us/dotnet/framework/mef/) extension. The C# implementation automatically binds the class with the function name from the grammar. Here is an example:
 1. [Grammar for `25% of what is 50`](https://github.com/veler/notepad-based-calculator/blob/84c8842b1f15572c9f27608f0c09c0e059a17017/src/app/dev/NotepadBasedCalculator.BuiltInPlugins/Grammars/en-us/FunctionDefinition.json#L25-L33)
 2. [Implementation in C#](https://github.com/veler/notepad-based-calculator/blob/84c8842b1f15572c9f27608f0c09c0e059a17017/src/app/dev/NotepadBasedCalculator.BuiltInPlugins/Functions/Percentage/IsPercentOfWhatInterpreter.cs#L3-L51)
+
+## Main third-party dependencies for the calculator engine
+- [Community Toolkit](https://github.com/CommunityToolkit/dotnet)
+- [Microsoft.Recognizers.Text](https://github.com/microsoft/Recognizers-Text)
+- [UnitsNet](https://github.com/angularsen/UnitsNet)
+- [Newtonsoft.Json](https://www.newtonsoft.com/json)
 
 # How to build and run?
 
