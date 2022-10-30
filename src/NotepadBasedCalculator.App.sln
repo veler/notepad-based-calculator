@@ -43,17 +43,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{26522DDE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Benchmark", "app\tools\NotepadBasedCalculator.Benchmark\NotepadBasedCalculator.Benchmark.csproj", "{2E081692-6B27-4191-9F8B-32E415D2F011}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "NotepadBasedCalculator.Shared", "shared\NotepadBasedCalculator.Shared\NotepadBasedCalculator.Shared.shproj", "{8CF4A1C5-9D0E-47EB-8434-17B50331EC0B}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "_build", "build\_build.csproj", "{2D612DDA-9151-4DFC-883F-817907D7D236}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{2F3BE40A-B981-428C-BF20-3BAFCC9824FE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Desktop", "app\dev\NotepadBasedCalculator.Desktop\NotepadBasedCalculator.Desktop.csproj", "{E14788BF-C7D9-459D-9D2F-A3CA66D6E26E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotepadBasedCalculator.Desktop.Windows", "app\dev\NotepadBasedCalculator.Desktop.Windows\NotepadBasedCalculator.Desktop.Windows.csproj", "{8E871DEB-9858-4136-8B62-7110740A240E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Desktop.Windows", "app\dev\NotepadBasedCalculator.Desktop.Windows\NotepadBasedCalculator.Desktop.Windows.csproj", "{8E871DEB-9858-4136-8B62-7110740A240E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotepadBasedCalculator.Desktop.Mac", "app\dev\NotepadBasedCalculator.Desktop.Mac\NotepadBasedCalculator.Desktop.Mac.csproj", "{0A14B46D-D1DC-4A87-A197-7486ED8BEFC9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotepadBasedCalculator.Desktop.Mac", "app\dev\NotepadBasedCalculator.Desktop.Mac\NotepadBasedCalculator.Desktop.Mac.csproj", "{0A14B46D-D1DC-4A87-A197-7486ED8BEFC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,7 +109,6 @@ Global
 		{A4177E56-2ED5-4F38-829D-903204B86730} = {AA55FAFF-4F97-4251-906F-32984538E57C}
 		{E10D42CF-52FF-4D3D-B118-125AC6F97512} = {9A0C5D13-735C-4552-9E60-E7636AFDB476}
 		{2E081692-6B27-4191-9F8B-32E415D2F011} = {26522DDE-E6B2-455A-8489-9184C6F7DFAB}
-		{8CF4A1C5-9D0E-47EB-8434-17B50331EC0B} = {AA55FAFF-4F97-4251-906F-32984538E57C}
 		{2D612DDA-9151-4DFC-883F-817907D7D236} = {2F3BE40A-B981-428C-BF20-3BAFCC9824FE}
 		{E14788BF-C7D9-459D-9D2F-A3CA66D6E26E} = {AA55FAFF-4F97-4251-906F-32984538E57C}
 		{8E871DEB-9858-4136-8B62-7110740A240E} = {AA55FAFF-4F97-4251-906F-32984538E57C}
@@ -119,9 +116,5 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BCA00D25-9E3C-482D-8D6C-5A93A12A7232}
-	EndGlobalSection
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		shared\NotepadBasedCalculator.Shared\NotepadBasedCalculator.Shared.projitems*{533d69f9-1f94-4367-877f-ebe53fdf60ec}*SharedItemsImports = 5
-		shared\NotepadBasedCalculator.Shared\NotepadBasedCalculator.Shared.projitems*{8cf4a1c5-9d0e-47eb-8434-17b50331ec0b}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal

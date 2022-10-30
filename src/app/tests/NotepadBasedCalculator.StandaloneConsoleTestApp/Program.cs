@@ -31,7 +31,7 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
             var textDocument = new TextDocument();
 
             var mefComposer
-                = new MefComposer(new[] { typeof(ConfigurationReader).Assembly });
+                = new MefComposer(new[] { typeof(Program).Assembly });
             ParserAndInterpreterFactory parserAndInterpreterFactory = mefComposer.ExportProvider.GetExport<ParserAndInterpreterFactory>()!.Value;
             ParserAndInterpreter parserAndInterpreter = parserAndInterpreterFactory.CreateInstance(DefaultCulture, textDocument);
 
@@ -68,7 +68,7 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
 
                     if (results is not null && results.Count > 0 && results[0].SummarizedResultData is not null)
                     {
-                        ParserAndInterpreterResultLine result = results[0];
+                        ParserAndInterpreterResultLine result = results[Math.Max(0, results.Count - 2)];
                         bool isError = result.SummarizedResultData!.IsOfType(PredefinedTokenAndDataTypeNames.Error);
                         string output = result.SummarizedResultData.GetDisplayText(DefaultCulture);
                         if (!string.IsNullOrWhiteSpace(output))
@@ -111,19 +111,23 @@ namespace NotepadBasedCalculator.StandaloneConsoleTestApp
             AnsiConsole.WriteLine();
             AnsiConsole.WriteLine("Here are some examples you could try:");
             AnsiConsole.WriteLine();
-            AnsiConsole.MarkupLine("[grey62]\" What is 10 USD in EUR? \"[/]");
+            AnsiConsole.MarkupLine("[grey62]\" What is 10 USD in EUR? \"[/] // not supported yet");
+            AnsiConsole.MarkupLine("[grey62]\" 10 USD plus 10 EUR \"[/]");
             AnsiConsole.MarkupLine("[grey62]\" Today + 3 months \"[/]");
-            AnsiConsole.MarkupLine("[grey62]\" 10 km in m \"[/]");
+            AnsiConsole.MarkupLine("[grey62]\" 10 km in m \"[/] // not supported yet");
             AnsiConsole.MarkupLine("[grey62]\" 3M + 10% \"[/]");
-            AnsiConsole.MarkupLine("[grey62]\" 0.35 as % \"[/]");
-            AnsiConsole.MarkupLine("[grey62]\" 20 tablespoons in teaspoons \"[/]");
-            AnsiConsole.MarkupLine("[grey62]\" $30/day is what per year \"[/]");
+            AnsiConsole.MarkupLine("[grey62]\" 0.35 as percent of 2\"[/]");
+            AnsiConsole.MarkupLine("[grey62]\" 20 tablespoons in teaspoons \"[/] // not supported yet");
+            AnsiConsole.MarkupLine("[grey62]\" $30/day is what per year \"[/] // not supported yet");
+            AnsiConsole.WriteLine();
+            AnsiConsole.WriteLine("Please check the unit tests for a detailed list of covered scenarios.");
             AnsiConsole.WriteLine();
             AnsiConsole.WriteLine("Enter something to calculate:");
         }
 
         private static async Task WarmupAsync(TextDocument textDocument, ParserAndInterpreter parserAndInterpreter)
         {
+            // Passing this text to the interpreter will force .Net to compile all the regex from Microsoft.Recognizers.Text
             textDocument.Text
                 = @"average between 0 and 10
                     1000 m2 / 10 m2
